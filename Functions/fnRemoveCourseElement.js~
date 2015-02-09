@@ -4,8 +4,7 @@ Created On : 04/02/2015
 Purpose : For remove course element from course timeline
 */
 
-db.system.js.save({_id: "fnRemoveCourseElement",
-		value:function(courseId, courseElemName, tlPoint, index, rmId) {
+function(courseId, courseElemName, tlPoint, index, rmId) {
     
     var key="courseTimeline."+tlPoint+"."+courseElemName;
     var obj={};
@@ -26,4 +25,4 @@ db.system.js.save({_id: "fnRemoveCourseElement",
         }
     }
     return "courseTimeline."+tlPoint;
-}});
+}
