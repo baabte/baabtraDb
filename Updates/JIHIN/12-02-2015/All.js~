@@ -1,0 +1,7 @@
+db.system.js.save({_id:"fnGetCourseElementFields",value:function(){return db.clnCourseElementFields.find({activeFlag:1}).toArray()}});
+
+db.system.js.save({_id:"fnDeleteCourseElementFields",value:function(elementId,manageType,urmId){manageType.updatedDate=Date();manageType.urmId=urmId;db.clnCourseElementFields.update({_id:elementId},{$set:manageType});return db.eval("fnGetCourseElementFields()")}});
+
+
+
+
