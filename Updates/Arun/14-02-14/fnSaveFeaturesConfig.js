@@ -22,6 +22,4 @@ db.clnUserFeatureConfig.update({fkuserLoginId:userid.fkuserLoginId}, {$set:{upda
    var result={'result':resultmsg,'test':test}
    
    
-   return result;
-
-}});
+   return result;}});
