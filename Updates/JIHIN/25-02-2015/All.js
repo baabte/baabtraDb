@@ -1,0 +1,1 @@
+db.system.js.save({_id:"fnInsertBranches",value:function(b,a){if(db.clnBranches.find({companyId:b}).count()){db.clnBranches.update({companyId:b},{$set:{branches:a}})}else{db.clnBranches.insert({companyId:b,branches:a})}return db.clnBranches.find({companyId:b}).toArray()}});
