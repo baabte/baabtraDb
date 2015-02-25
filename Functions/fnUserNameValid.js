@@ -19,7 +19,16 @@ var  userId = db.clnUserLogin.findOne({userName:data.eMail},{_id:1});
         UserDetails.profile.eMail = data.eMail;
         result = {userCheck:1,UserDetails:UserDetails,result:'exsisting user profle not created'};
     	}
-    }       
+    }     
+    else{
+    	var userDetailsDataId= new ObjectId();
+    	var UserDetailsData={_id:userDetailsDataId,fkUserLoginId:userId._id,profile:{},createdDate:Date(),updatedDate:Date()};
+		db.clnUserDetails.insert(UserDetailsData);
+		var UserDetails={};
+		UserDetails._id=userDetailsDataId;
+		UserDetails.profile={eMail:data.eMail};
+		result = {userCheck:1,UserDetails:UserDetails,result:'exsisting user userdetails not filled'};
+    }  
     }
     
     return result;
