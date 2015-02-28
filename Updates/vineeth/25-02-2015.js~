@@ -1,16 +1,11 @@
-/*
-Modified by :Vineeth C
-Created On : 21/02/2015
-Purpose: For adding an extra argument for course filtering while course search
-*/
-
-/*
-Modified by :Vineeth C
-Created On : 28/02/2015
-Purpose:To use fulltextSearch while searching courses
-*/
-
-
+db.clnCourses.ensureIndex(//for adding text index
+                           {
+                             Name: "text",
+                             Technologies:"text",
+                             Domains:"text",
+                             Tags:"text"
+                           }
+                         )
 
 db.system.js.save({_id: "fun_load_publishedCourses",
 		value: function (companyId,searchKey,searchRange) 
@@ -42,3 +37,5 @@ if (searchKey!=''){
  }   
     return {courses:courses,courseCount:courseCount}
 }});
+
+
