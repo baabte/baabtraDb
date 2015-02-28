@@ -12,15 +12,28 @@ db.system.js.save({_id: "fnRegisterUser",
 var mandatoryData=data.mandatoryData;            
 delete data.mandatoryData;
       if(roleId==3){
+      	if(data.course!=undefined){
 	var courseId=ObjectId(data.course._id);
     delete data.course;
 	var course=db.clnCourses.findOne({_id:courseId},{_id:0,Name:1,courseTimeline:1,Duration:1,Description:1,courseImg:1,totalMark:1});
 	var UserCourseMappingDataId= new ObjectId();
+	}
 }
+if(data.loggedusercrmid!=undefined){
 var loggedusercrmid= ObjectId(data.loggedusercrmid);
 delete data.loggedusercrmid;
+}
+else{
+var SAdminRmid=db.clnUserRoleMapping.findOne({fkRoleId:1},{_id:1});
+ var loggedusercrmid=SAdminRmid._id;
+}
+if(data.companyId!=undefined){
 var companyId=ObjectId(data.companyId);
 delete data.companyId;
+}
+else{
+	var companyId='';
+}
 var resultmsg;
 
 
@@ -61,11 +74,13 @@ UserRoleMappingData={_id:UserRoleMappingDataId,fkRoleId:roleId,fkUserLoginId:use
 db.clnUserRoleMapping.insert(UserRoleMappingData);
 
 if(roleId==3){
+	if(course!=undefined){
 //data to clnUserCourseMapping
 var UserCourseMappingData={_id:UserCourseMappingDataId,fkUserLoginId:userLoginDataId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,courseTimeline:course.courseTimeline,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,totalMark:course.totalMark,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0};
 
 // insertion to clnUserCourseMapping
 db.clnUserCourseMapping.insert(UserCourseMappingData);
+	}
  }
  
 resultmsg='new user registered';
