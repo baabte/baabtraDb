@@ -1,1 +1,3 @@
 db.system.js.save({_id:"fnInsertBranches",value:function(b,a){if(db.clnBranches.find({companyId:b}).count()){db.clnBranches.update({companyId:b},{$set:{branches:a}})}else{db.clnBranches.insert({companyId:b,branches:a})}return db.clnBranches.find({companyId:b}).toArray()}});
+
+db.system.js.save({_id:"fnUploadProfilePic",value:function(b,a){db.clnUserRoleMapping.update({_id:a},{$set:{avatar:b,urmId:a,updatedDate:Date()}});db.clnActiveUserData.update({roleMappingId:a},{$set:{"roleMappingObj.avatar":b,urmId:a,updatedDate:Date()}});return"Profile Picture Changed Successfuly"}});
