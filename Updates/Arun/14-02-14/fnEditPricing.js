@@ -18,7 +18,4 @@ db.system.js.save({_id: "fnEditPricing",
        
         db.clnUserBillingHistory.insert(historyobj);   
     
-    db.clnUserBilling.update({fkuserLoginId:userid.fkuserLoginId, 'plan.features.featureId':featureId}, {$set:{'plan.features.$.pricing':data.pricing, updatedDate:Date(), urmId:loggedusercrmid}});
-
-
-      }});
+    db.clnUserBilling.update({fkuserLoginId:userid.fkuserLoginId, 'plan.features.featureId':featureId}, {$set:{'plan.features.$.pricing':data.pricing, updatedDate:Date(), urmId:loggedusercrmid}});}});
