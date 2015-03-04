@@ -10,35 +10,138 @@ Created On : 28/02/2015
 Purpose:To use fulltextSearch while searching courses
 */
 
-
-
 db.system.js.save({_id: "fun_load_publishedCourses",
-		value: function (companyId,searchKey,searchRange) 
+<<<<<<< HEAD
+		value: function (companyId,searchKey,searchRange,type) 
 {
-if (searchKey!=''){
- courses= db.clnCourses.find({$text:{$search:searchKey},
+
+if (searchKey !=''){
+  if(type!=''){
+    switch(type){
+    case 'Domains':  
+    courses= db.clnCourses.find({Domains:searchKey,
     companyId:ObjectId(companyId),
     draftFlag:1, 
     activeFlag:1},
-      {Name:1,courseImg:1,Description:1}).skip(searchRange).limit(12).toArray();
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(12).toArray();
+      
+ courseCount=db.clnCourses.find({Domains:searchKey,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true); 
+      break;
+    case 'Technologies':  
+      courses= db.clnCourses.find({'Technologies.text':searchKey,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(12).toArray();
+      
+ courseCount=db.clnCourses.find({'Technologies.text':searchKey,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true); 
+      break;
+     case 'Branches':  
+      courses= db.clnCourses.find({'Branches':searchKey,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(12).toArray();
+      
+ courseCount=db.clnCourses.find({'Branches':searchKey,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true); 
+      break;   
+      case 'Tags' :
+       courses= db.clnCourses.find({'Tags.text':searchKey,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(12).toArray();
+      
+ courseCount=db.clnCourses.find({'Tags.text':searchKey,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true); 
+      break; 
+      case 'Delivery':
+        if( searchKey=='online'){
+           courses= db.clnCourses.find({'Delivery.online':true,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(12).toArray();
+      
+ courseCount=db.clnCourses.find({'Delivery.online':true,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true); 
+       break;       
+        }else{
+         courses= db.clnCourses.find({'Delivery.offline':true,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(12).toArray();
+      
+ courseCount=db.clnCourses.find({'Delivery.offline':true,
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true); 
+       break;         
+        } 
+      
+     }  
+     
+   }else{ 
+   courses= db.clnCourses.find({$text:{$search:searchKey},
+=======
+		value: fun_load_publishedCourses
+function (companyId,searchKey,searchRange) {
+if (searchKey!=''){
+ courses= db.clnCourses.find({$text:{$search:searchKey},
+>>>>>>> 70d503f08be6499253661fbe14079ed448a3db76
+    companyId:ObjectId(companyId),
+    draftFlag:1, 
+    activeFlag:1},
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(12).toArray();
       
  courseCount=db.clnCourses.find({$text:{$search:searchKey},
     companyId:ObjectId(companyId),
     draftFlag:1, 
     activeFlag:1},
-      {Name:1,courseImg:1,Description:1}).skip(searchRange).limit(13). count(true);      
+<<<<<<< HEAD
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true); 
+  }    
+=======
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true);      
+>>>>>>> 70d503f08be6499253661fbe14079ed448a3db76
  }else{
-  courses= db.clnCourses.find({
+       courses= db.clnCourses.find({
     companyId:ObjectId(companyId),
     draftFlag:1, 
     activeFlag:1},
-      {Name:1,courseImg:1,Description:1}).skip(searchRange).limit(12).toArray();
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(12).toArray();
       
  courseCount=db.clnCourses.find({
     companyId:ObjectId(companyId),
     draftFlag:1, 
     activeFlag:1},
-      {Name:1,courseImg:1,Description:1}).skip(searchRange).limit(13). count(true);      
+<<<<<<< HEAD
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true); 
+    }
+             
+=======
+      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true);      
  }   
+>>>>>>> 70d503f08be6499253661fbe14079ed448a3db76
     return {courses:courses,courseCount:courseCount}
 }});
