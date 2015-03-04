@@ -10,8 +10,6 @@ Created On : 28/02/2015
 Purpose:To use fulltextSearch while searching courses
 */
 
-
-
 db.system.js.save({_id: "fun_load_publishedCourses",
 		value: function (companyId,searchKey,searchRange) 
 {
