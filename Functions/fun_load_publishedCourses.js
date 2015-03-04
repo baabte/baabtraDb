@@ -13,7 +13,6 @@ Purpose:To use fulltextSearch while searching courses
 db.system.js.save({_id: "fun_load_publishedCourses",
 		value: function (companyId,searchKey,searchRange,type) 
 {
-
 if (searchKey !=''){
   if(type!=''){
     switch(type){
