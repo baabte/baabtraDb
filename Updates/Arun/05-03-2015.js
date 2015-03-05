@@ -1,4 +1,3 @@
-// to register a user 
 db.system.js.save({_id: "fnRegisterUser",
                   value:function (data){
 	if(isNaN(data.role.roleId)){
@@ -35,11 +34,7 @@ else{
 	var companyId='';
 }
 var resultmsg;
-
-
       if(data._id==undefined){
-         
-//ids to insert into clnUserRoleMapping,clnUserLogin,clnCompany
 var UserRoleMappingDataId= new ObjectId();
 var userLoginDataId= new ObjectId();
 var menu =db.clnRoleMenuMapping.findOne({fkRoleId:roleId},{_id:0,menuStructure:1});
@@ -47,48 +42,25 @@ if(menu==null){
 	menu={};
 	menu.menuStructure=[];
 }
-
- 
-//data to clnUserLogin
 UserLoginData={_id: userLoginDataId, userName: mandatoryData.eMail, password: mandatoryData.password, roleMappings:[UserRoleMappingDataId],lastLoggedRoleMapping:UserRoleMappingDataId,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1}
-// insertion to clnUserLogin
 db.clnUserLogin.insert(UserLoginData);
-
 delete mandatoryData.eMail;
 delete mandatoryData.password;
-//inserting into user details
 UserDetails={fkUserLoginId:userLoginDataId,profile:mandatoryData,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1};
-
 db.clnUserDetails.insert(UserDetails);
-
-//setting menu for user
-usermenuData={fkUserRoleMappingId :UserRoleMappingDataId,menuStructure :menu.menuStructure ,createdDate : Date(),updatedDate : Date(),crmId :loggedusercrmid,urmId :loggedusercrmid,activeFlag : 1};
-            
+usermenuData={fkUserRoleMappingId :UserRoleMappingDataId,menuStructure :menu.menuStructure ,createdDate : Date(),updatedDate : Date(),crmId :loggedusercrmid,urmId :loggedusercrmid,activeFlag : 1};            
 db.clnUserMenuMapping.insert(usermenuData);
-
-
-
-//data to clnUserRoleMapping
 UserRoleMappingData={_id:UserRoleMappingDataId,fkRoleId:roleId,fkUserLoginId:userLoginDataId,fkCompanyId:companyId,fkEmployeeId:"",fkConsumerId:"",groups:[],profile:data,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1}
-// insertion to clnUserRoleMapping
 db.clnUserRoleMapping.insert(UserRoleMappingData);
-
 if(roleId==3){
 	if(course!=undefined){
-//data to clnUserCourseMapping
 var UserCourseMappingData={_id:UserCourseMappingDataId,fkUserLoginId:userLoginDataId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,courseTimeline:course.courseTimeline,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,totalMark:course.totalMark,selectedDuration:course.selectedDuration,elementOrder:course.elementOrder,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0};
-
-// insertion to clnUserCourseMapping
 db.clnUserCourseMapping.insert(UserCourseMappingData);
 	}
  }
- 
 resultmsg='new user registered';
-
 }
-
 if (data._id!=undefined){ 
-
 var userDetalisId=ObjectId(data._id);
 var userId=db.clnUserDetails.findOne({_id:userDetalisId},{_id:0,fkUserLoginId:1}) 
 delete data._id;
@@ -98,9 +70,7 @@ var setUserDetalis={};
  setUserDetalis.profile=mandatoryData;
  setUserDetalis.updatedDate=Date();
  setUserDetalis.urmId=loggedusercrmid;
-
 db.clnUserDetails.update({_id:userDetalisId},{'$set':setUserDetalis});
-
 var UserRoleMappingCheck=db.clnUserRoleMapping.findOne({fkUserLoginId:userId.fkUserLoginId,fkRoleId:roleId,fkCompanyId:companyId},{_id:1});
 if(UserRoleMappingCheck!=null){
 var roleMappingsId=UserRoleMappingCheck._id;
@@ -108,49 +78,30 @@ var roleMappingsId=UserRoleMappingCheck._id;
  set.profile=data;
  set.updatedDate=Date();
  set.urmId=loggedusercrmid;
- 
- //update to clnUserRoleMapping
 db.clnUserRoleMapping.update({_id:roleMappingsId},{'$set':set});
 resultmsg='exsisting user exsisting role update';
 }
 else{
-
 var UserRoleMappingDataId= new ObjectId();
 var menu =db.clnRoleMenuMapping.findOne({fkRoleId:roleId},{_id:0,menuStructure:1});
 if(menu==null){
 	menu={};
 	menu.menuStructure=[];
 }
-//setting menu for user
-usermenuData={fkUserRoleMappingId :UserRoleMappingDataId,menuStructure :menu.menuStructure ,createdDate : Date(),updatedDate : Date(),crmId :loggedusercrmid,urmId :loggedusercrmid,activeFlag : 1};
-            
+usermenuData={fkUserRoleMappingId :UserRoleMappingDataId,menuStructure :menu.menuStructure ,createdDate : Date(),updatedDate : Date(),crmId :loggedusercrmid,urmId :loggedusercrmid,activeFlag : 1};            
 db.clnUserMenuMapping.insert(usermenuData);
-
-//data to clnUserRoleMapping
 UserRoleMappingData={_id:UserRoleMappingDataId,fkRoleId:roleId,fkUserLoginId:userId.fkUserLoginId,fkCompanyId:companyId,fkEmployeeId:"",fkConsumerId:"",groups:[],profile:data,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1}
-// insertion to clnUserRoleMapping
 db.clnUserRoleMapping.insert(UserRoleMappingData);
 resultmsg='exsisting user new role';
-
 }
- 
-
 if(roleId==3){
-//data to clnUserCourseMapping
 var UserCourseMappingData={fkUserLoginId:userId.fkUserLoginId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,courseTimeline:course.courseTimeline,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,selectedDuration:course.selectedDuration,totalMark:course.totalMark,elementOrder:course.elementOrder,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0};
-// setting all active same course as inactive
 db.clnUserCourseMapping.update({fkUserLoginId:userId.fkUserLoginId,fkCourseId:courseId,activeFlag:1},{$set:{activeFlag:0}});
-
-// insertion to clnUserCourseMapping
 db.clnUserCourseMapping.insert(UserCourseMappingData);
 resultmsg='exsisting mentee new course';
 }
-
-
 }
-
 var result={result:resultmsg};
 return result;
-
-}  });
+}});
 
