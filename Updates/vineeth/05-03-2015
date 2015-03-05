@@ -1,17 +1,4 @@
-/*
-Modified by :Vineeth C
-Created On : 21/02/2015
-Purpose: For adding an extra argument for course filtering while course search
-*/
-
-/*
-Modified by :Vineeth C
-Created On : 28/02/2015
-Purpose:To use fulltextSearch while searching courses
-*/
-
 db.system.js.save({_id: "fun_load_publishedCourses",
-<<<<<<< HEAD
 		value: function (companyId,searchKey,searchRange,type) 
 {
 
@@ -103,12 +90,6 @@ if (searchKey !=''){
      
    }else{ 
    courses= db.clnCourses.find({$text:{$search:searchKey},
-=======
-		value: fun_load_publishedCourses
-function (companyId,searchKey,searchRange) {
-if (searchKey!=''){
- courses= db.clnCourses.find({$text:{$search:searchKey},
->>>>>>> 70d503f08be6499253661fbe14079ed448a3db76
     companyId:ObjectId(companyId),
     draftFlag:1, 
     activeFlag:1},
@@ -118,12 +99,8 @@ if (searchKey!=''){
     companyId:ObjectId(companyId),
     draftFlag:1, 
     activeFlag:1},
-<<<<<<< HEAD
       {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true); 
   }    
-=======
-      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true);      
->>>>>>> 70d503f08be6499253661fbe14079ed448a3db76
  }else{
        courses= db.clnCourses.find({
     companyId:ObjectId(companyId),
@@ -135,13 +112,8 @@ if (searchKey!=''){
     companyId:ObjectId(companyId),
     draftFlag:1, 
     activeFlag:1},
-<<<<<<< HEAD
       {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true); 
     }
              
-=======
-      {Name:1,courseImg:1,courseDetails:1}).skip(searchRange).limit(13). count(true);      
- }   
->>>>>>> 70d503f08be6499253661fbe14079ed448a3db76
     return {courses:courses,courseCount:courseCount}
 }});

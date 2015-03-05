@@ -1,10 +1,3 @@
-
-/*
-Created by : Lijin
-Created On : 17/02/2015
-Purpose : For submitting answer of a course
-*/
-
 db.system.js.save({_id: "fnSaveUserAnswer",
         value: function(courseId,userLoginId,keyName,tlPointInmins,outerIndex,innerIndex,answerObj) {
     

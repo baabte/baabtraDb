@@ -1,0 +1,1 @@
+db.system.js.save({_id:"fnLoadMenus",value:function(e){return db.clnUserMenuMapping.findOne({fkUserRoleMappingId:e},{menuStructure:1})}});

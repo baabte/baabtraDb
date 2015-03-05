@@ -3,9 +3,16 @@ db.clnCourses.ensureIndex(//for adding text index
                              Name: "text",
                              Technologies:"text",
                              Domains:"text",
-                             Tags:"text"
+                             Tags:"text" ,
+                             Branches:"text"  
                            }
                          )
+db.clnCourses.ensureIndex( { companyId: 1 } )
+db.clnCourses.ensureIndex( { Name: 1 } )
+db.clnCourses.ensureIndex( { Technologies: 1 } )
+db.clnCourses.ensureIndex( { Domains: 1 } )
+db.clnCourses.ensureIndex( { Tags: 1 } )
+db.clnCourses.ensureIndex( { Branches: 1 } )
 
 db.system.js.save({_id: "fun_load_publishedCourses",
 		value: function (companyId,searchKey,searchRange) 
