@@ -1,0 +1,1 @@
+db.system.js.save({_id:"fnSaveAppSettings",value:function(e,t,s){return db.clnCompany.update({_id:e},{$set:{appSettings:t}},{upsert:!0}),db.clnActiveUserData.update({roleMappingId:s},{$set:{appSettings:t}},{upsert:!0}),"Success"}});
