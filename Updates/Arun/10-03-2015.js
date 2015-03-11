@@ -1,3 +1,18 @@
+//to update current user course mapping 
+
+var courses=db.clnUserCourseMapping.find({activeFlag:1}).toArray();
+for(var index in courses){
+    UserRoleMappingCheck=db.clnUserRoleMapping.findOne({fkUserLoginId:courses[index].fkUserLoginId,fkRoleId:3,activeFlag:1},{_id:1});
+    courses[index].fkUserRoleMappingId=UserRoleMappingCheck._id;
+    db.clnUserCourseMapping.save(courses[index]);
+}
+
+
+
+
+
+
+
 // to register a user 
 db.system.js.save({_id: "fnRegisterUser",
                   value:function (data){
