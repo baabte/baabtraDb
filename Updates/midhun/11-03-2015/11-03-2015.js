@@ -95,6 +95,10 @@ db.system.js.save({_id: "GetAuthUserData",
     user._id = ActiveUserDataId;
     ActiveUserDataId = ActiveUserDataId.valueOf();
     user.userLoginId = login_data[0]._id.valueOf();
+    var language=db.clnUserDetails.findOne({fkUserLoginId:ObjectId(user.userLoginId)}, {profile:1, activeFlag:1});
+    if(language){
+        user.Preferedlanguage=language.profile.Preferedlanguage;
+    }
     user.roleMappingId = login_data[0].lastLoggedRoleMapping;
     if (role_id[0].profile) {
         delete role_id[0].profile;
@@ -107,7 +111,7 @@ db.system.js.save({_id: "GetAuthUserData",
         var userinfo = db.clnCompany.findOne({_id:role_id[0].fkCompanyId}, {companyName:1, eMail:1, appSettings:1});
         user.appSettings = userinfo.appSettings;
         user.username = userinfo.companyName;
-        user.eMail = userinfo.eMail;
+        user.eMail = data.userName;
     } else if (role_id[0].fkRoleId == 3) {
         var userdata = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(user.userLoginId)}, {profile:1, activeFlag:1});
         var username = userdata.profile.firstName.concat(" " + userdata.profile.lastName);
