@@ -2,7 +2,7 @@
 /*
 Created by : Jihin
 Created On : 11/03/2015
-Update On  : 12/03/2015
+Update On  : 12/03, 15/03 
 Purpose : for Save User Feedback
 */
 
@@ -26,7 +26,9 @@ db.system.js.save({_id: "fnSaveUserFeedback",
         }
     feedbackObj.responseCount = feedbackObj.responseCount + 1;
     feedbackObj.updatedDate = ISODate();
+    
+     
     db.clnFeedbacks.save(feedbackObj);
-        
-    return "Success";
+    //fn for archive user notification
+    return fnArchiveUserNotification(rmId, feedbackId, rmId);
 }});

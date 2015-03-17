@@ -2,6 +2,7 @@
 /*
 Created by : Jihin
 Created On : 11/03/2015
+Updated On : 15/03, 16/03
 Purpose : For Save Feedback Form
 */
 
@@ -40,9 +41,19 @@ db.system.js.save({_id: "fnSaveFeedbackForm",
         }
         
         if(FeedbackForm.targetList.length){
+            FeedbackForm._id = new ObjectId();
+            FeedbackForm.type = feedbackAbout.type;
+            var temp = FeedbackForm.targetList.sort();;
+            for(var i=0;(FeedbackForm.targetList.length - 1) > i; i++){  
+                if(FeedbackForm.targetList[i].valueOf() == FeedbackForm.targetList[i+1].valueOf()){
+                    temp.splice(i,1);
+               }
+            }
+            FeedbackForm.targetList = temp;
             db.clnFeedbacks.insert(FeedbackForm);
+            return fnInsertNotificationDetails(FeedbackForm.targetList, FeedbackForm._id, "feedback", FeedbackForm.title, FeedbackForm.crmId);
         }
     }
     
-    return FeedbackForm;
+    return {temp:temp.length,list:FeedbackForm.targetList.length};
 }});
