@@ -42,6 +42,27 @@ db.system.js.save({_id: "fnremoveExistingEvaluator",
 }});
 
 
+
+db.system.js.save({_id: "fnChangePassword",
+		value:function(changePwdObj) {
+    var response={};
+    pwdExists=db.clnUserLogin.findOne
+    ({_id:ObjectId(changePwdObj.userLoginId),password:changePwdObj.currentPassword,activeFlag:1});
+    if(pwdExists){
+            db.clnUserLogin.update({_id:ObjectId(changePwdObj.userLoginId)},{$set:{password:changePwdObj.newPassword}});
+            var changedate=ISODate();
+             db.clnUserDetails.update({fkUserLoginId:ObjectId(changePwdObj.userLoginId)},{$set:{"passwordChanges":changedate}});
+            response.changedate=changedate;
+            response.response="success";
+            return response;
+        }
+        else{
+            response.response="fail";
+            return response;
+            }
+    
+}});
+
 // db.system.js.save({_id: "fnremoveItemFormAgroup",
 // 		value:function(data) {
 // 			return db.clnGlobalSettings.find({companyId:"54978cc57525614f6e3e710b"});
