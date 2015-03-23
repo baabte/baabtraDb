@@ -6,8 +6,8 @@ Purpose : Load Feedback Request Details
 */
 
 db.system.js.save({_id: "fnLoadFeedbackRequestDetails",
-        value: ffunction(companyId, feedbackId, rmId) {
-    var feedbackDetails = db.clnFeedbacks.findOne({_id:ObjectId(feedbackId), companyId:ObjectId(companyId), userResponse:{$elemMatch:{rmId:ObjectId(rmId)}}},{questions:1,userResponse:1});
+        value: function(companyId, feedbackId, rmId) {
+    var feedbackDetails = db.clnFeedbacks.findOne({_id:ObjectId(feedbackId), companyId:ObjectId(companyId), userResponse:{$elemMatch:{rmId:ObjectId(rmId)}}},{title:1,description:1,type:1,feedbackTypeId:1,questions:1,userResponse:1});
     if(feedbackDetails == null){
             feedbackDetails = db.clnFeedbacks.findOne({_id:ObjectId(feedbackId), companyId:ObjectId(companyId)},{userResponse:0});
         }
