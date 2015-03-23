@@ -47,8 +47,15 @@ db.system.js.save({_id: "GetAuthUserData",
     //}
     
     if(role_id[0].profile){
-        fkCompanyId=role_id[0].profile[0].fkCompanyId;
-        delete role_id[0].profile;
+        var arraylen=role_id[0].profile.length;
+        if(arraylen!=undefined){
+            fkCompanyId=role_id[0].profile[0].fkCompanyId;
+            delete role_id[0].profile;
+         }
+         else{
+             fkCompanyId=null;
+             }
+        
      }
      else{
          fkCompanyId=null;
