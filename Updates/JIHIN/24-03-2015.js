@@ -1,0 +1,1 @@
+db.system.js.save({_id:"fnGetCurrentMenusById",value:function(e,n){return"string"==typeof e&&(e=ObjectId(e)),data="role"==n?db.clnRoleMenuMapping.findOne({fkRoleId:e,activeFlag:1}):"all"==n?db.clnMenuMaster.find({activeFlag:1}).toArray():db.clnUserMenuMapping.find({fkUserRoleMappingId:e,activeFlag:1}).toArray()}});
