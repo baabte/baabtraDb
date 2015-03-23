@@ -1,0 +1,13 @@
+db.clnUserLogin.createIndex({roleMappings: 1})
+db.clnCourses.ensureIndex( { Designation: 1 } )
+db.clnCourses.dropIndex("Name_text_Technologies_text_Domains_text_Tags_text_Branches_text")
+db.clnCourses.ensureIndex(//for adding text index
+                           {
+                             Name: "text",
+                             Technologies:"text",
+                             Domains:"text",
+                             Tags:"text" ,
+                             Branches:"text" ,
+                             Designation:"text"  
+                           }
+                         )
