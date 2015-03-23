@@ -63,9 +63,6 @@ db.system.js.save({_id: "fnChangePassword",
     
 }});
 
-// db.system.js.save({_id: "fnremoveItemFormAgroup",
-// 		value:function(data) {
-// 			return db.clnGlobalSettings.find({companyId:"54978cc57525614f6e3e710b"});
-// }});
+
 
 
