@@ -10,10 +10,12 @@ db.system.js.save({_id: "fnSubmitTest",
           var timeObj=SubmitTestObj.timeObj;
           var userAnswers=SubmitTestObj.userAnswers;
           var totalMarkScored=SubmitTestObj.totalMarkScored;
+          var uniquekey;
           var resultmsg;
+          var targetList=[];
 
 var course=db.clnUserCourseMapping.findOne({_id:courseMappingId,activeFlag:1});  
-
+uniquekey=course._id.valueOf()+'.'+tlPointInmins+'.'+keyName+'.'+outerIndex;
 //checks if he have already scored marks
     if(!course.courseTimeline[tlPointInmins][keyName][outerIndex].markScored){
     course.courseTimeline[tlPointInmins][keyName][outerIndex].markScored=0;  
@@ -44,7 +46,19 @@ var course=db.clnUserCourseMapping.findOne({_id:courseMappingId,activeFlag:1});
     }
 
 db.clnUserCourseMapping.save(course);
+ //for insert notifiction
+for(var index in course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.testModel){
+  if((course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.testModel[index].type=='descriptive')&&(course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.testModel[index].evaluated==1)){
+    var evaluationPending=true;
+  }
+}
 
+ if(evaluationPending&&course.batchId==undefined){
+  for(var evalindex in course.courseTimeline[tlPointInmins][keyName][outerIndex].evaluator){
+    targetList.push(course.courseTimeline[tlPointInmins][keyName][outerIndex].evaluator[evalindex].roleMappingId)
+  }
+ fnInsertNotificationDetails(targetList, uniquekey, "evaluation", course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex-1].value, course.fkUserRoleMappingId);
+}
 
 return course;
 }});

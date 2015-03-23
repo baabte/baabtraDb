@@ -1,8 +1,8 @@
 // to register a user 
 db.system.js.save({_id: "fnRegisterUser",
                   value:function (data){
-	if(isNaN(data.role.roleId)){
-		 roleId=ObjectId(data.role.roleId);
+  if(isNaN(data.role.roleId)){
+     roleId=ObjectId(data.role.roleId);
                 delete data.role;
             }
         else{
@@ -12,12 +12,19 @@ db.system.js.save({_id: "fnRegisterUser",
 var mandatoryData=data.mandatoryData;            
 delete data.mandatoryData;
       if(roleId==3){
-      	if(data.course!=undefined){
-	var courseId=ObjectId(data.course._id);
+        if(data.course!=undefined){
+  var courseId=ObjectId(data.course._id);
     delete data.course;
-	var course=db.clnCourses.findOne({_id:courseId},{_id:0,Name:1,courseTimeline:1,Duration:1,Description:1,courseImg:1,totalMark:1,selectedDuration:1,elementOrder:1});
-	var UserCourseMappingDataId= new ObjectId();
-	}
+  var course=db.clnCourses.findOne({_id:courseId},{_id:0,Name:1,courseTimeline:1,Duration:1,Description:1,courseImg:1,totalMark:1,selectedDuration:1,elementOrder:1});
+  var UserCourseMappingDataId= new ObjectId();
+  //added by vineeth for converting date to iso format--
+            if(data.batch != undefined){
+                
+               data.batch.enrollmentBefore=ISODate(data.batch.enrollmentBefore);
+               data.batch.enrollmentAfter=ISODate(data.batch.enrollmentAfter);
+             }
+          //------------------------------------------------  
+  }
 }
 if(data.loggedusercrmid!=undefined){
 var loggedusercrmid= ObjectId(data.loggedusercrmid);
@@ -32,7 +39,7 @@ var companyId=ObjectId(data.companyId);
 delete data.companyId;
 }
 else{
-	var companyId='';
+  var companyId='';
 }
 var resultmsg;
 
@@ -44,8 +51,8 @@ var UserRoleMappingDataId= new ObjectId();
 var userLoginDataId= new ObjectId();
 var menu =db.clnRoleMenuMapping.findOne({fkRoleId:roleId},{_id:0,menuStructure:1});
 if(menu==null){
-	menu={};
-	menu.menuStructure=[];
+  menu={};
+  menu.menuStructure=[];
 }
 
  
@@ -67,20 +74,25 @@ usermenuData={fkUserRoleMappingId :UserRoleMappingDataId,menuStructure :menu.men
 db.clnUserMenuMapping.insert(usermenuData);
 
 
-
 //data to clnUserRoleMapping
-UserRoleMappingData={_id:UserRoleMappingDataId,fkRoleId:roleId,fkUserLoginId:userLoginDataId,fkCompanyId:companyId,fkEmployeeId:"",fkConsumerId:"",groups:[],profile:data,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1}
+data.fkCompanyId=companyId;
+UserRoleMappingData={_id:UserRoleMappingDataId,fkRoleId:roleId,fkUserLoginId:userLoginDataId,fkEmployeeId:"",fkConsumerId:"",groups:[],profile:[data],createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1}
 // insertion to clnUserRoleMapping
 db.clnUserRoleMapping.insert(UserRoleMappingData);
 
 if(roleId==3){
-	if(course!=undefined){
+  if(course!=undefined){
 //data to clnUserCourseMapping
 var UserCourseMappingData={_id:UserCourseMappingDataId,fkUserLoginId:userLoginDataId,fkUserRoleMappingId:UserRoleMappingDataId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,courseTimeline:course.courseTimeline,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,totalMark:course.totalMark,selectedDuration:course.selectedDuration,elementOrder:course.elementOrder,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0};
 
 // insertion to clnUserCourseMapping
 db.clnUserCourseMapping.insert(UserCourseMappingData);
-	}
+if(data.batch!=undefined){//added by vineeth for inserting batch details
+                    var batchCourseMappingId = new ObjectId();
+                  var Batchdata={_id:batchCourseMappingId,fkUserLoginId:userLoginDataId, fkUserRoleMappingId:UserRoleMappingDataId, fkCompanyId:companyId, fkCourseId:courseId,createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1,batchId:ObjectId(data.batchId),batch:data.batch,fkUserCourseMappingId:UserCourseMappingDataId}
+                 db.clnCourseBatchMapping.insert(Batchdata); 
+                } 
+  }
  }
  
 resultmsg='new user registered';
@@ -104,7 +116,7 @@ db.clnUserDetails.update({_id:userDetalisId},{'$set':setUserDetalis});
 var UserRoleMappingCheck=db.clnUserRoleMapping.findOne({fkUserLoginId:userId.fkUserLoginId,fkRoleId:roleId,activeFlag:1},{_id:1});
 if(UserRoleMappingCheck!=null){
 var roleMappingsId=UserRoleMappingCheck._id;
-	var set={};
+  var set={};
  set.updatedDate=Date();
  set.urmId=loggedusercrmid;
  data.fkCompanyId=companyId;
@@ -117,20 +129,20 @@ resultmsg='exsisting user exsisting role update';
 }
 else{
 
-var UserRoleMappingDataId= new ObjectId();
+var roleMappingsId= new ObjectId();
 var menu =db.clnRoleMenuMapping.findOne({fkRoleId:roleId},{_id:0,menuStructure:1});
 if(menu==null){
-	menu={};
-	menu.menuStructure=[];
+  menu={};
+  menu.menuStructure=[];
 }
 //setting menu for user
-usermenuData={fkUserRoleMappingId :UserRoleMappingDataId,menuStructure :menu.menuStructure ,createdDate : Date(),updatedDate : Date(),crmId :loggedusercrmid,urmId :loggedusercrmid,activeFlag : 1};
+usermenuData={fkUserRoleMappingId :roleMappingsId,menuStructure :menu.menuStructure ,createdDate : Date(),updatedDate : Date(),crmId :loggedusercrmid,urmId :loggedusercrmid,activeFlag : 1};
             
 db.clnUserMenuMapping.insert(usermenuData);
 
 data.fkCompanyId=companyId;
 //data to clnUserRoleMapping
-UserRoleMappingData={_id:UserRoleMappingDataId,fkRoleId:roleId,fkUserLoginId:userId.fkUserLoginId,fkEmployeeId:"",fkConsumerId:"",groups:[],profile:[data],createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1}
+UserRoleMappingData={_id:roleMappingsId,fkRoleId:roleId,fkUserLoginId:userId.fkUserLoginId,fkEmployeeId:"",fkConsumerId:"",groups:[],profile:[data],createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1}
 // insertion to clnUserRoleMapping
 db.clnUserRoleMapping.insert(UserRoleMappingData);
 resultmsg='exsisting user new role';
@@ -146,7 +158,17 @@ db.clnUserCourseMapping.update({fkUserLoginId:userId.fkUserLoginId,fkCourseId:co
 
 // insertion to clnUserCourseMapping
 db.clnUserCourseMapping.insert(UserCourseMappingData);
+//added by vineeth for updating the batch details
+          if(data.batch!=undefined){//added by vineeth for inserting batch details
+               db.clnCourseBatchMapping.update({fkUserLoginId:userId.fkUserLoginId, activeFlag:1}, {$set:{activeFlag:0}});
+                    var batchCourseMappingId = new ObjectId();
+                  var Batchdata={_id:batchCourseMappingId,fkUserLoginId:userLoginDataId, fkUserRoleMappingId:roleMappingsId, fkCompanyId:companyId, fkCourseId:courseId,createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1,batchId:ObjectId(data.batchId),batch:data.batch,fkUserCourseMappingId:UserCourseMappingDataId}
+                 db.clnCourseBatchMapping.insert(Batchdata); 
+                } 
+            
+        //-----------------------------------------------    
 resultmsg='exsisting mentee new course';
+
 }
 
 
@@ -156,4 +178,3 @@ var result={result:resultmsg};
 return result;
 
 }  });
-
