@@ -432,7 +432,7 @@ if(roleId==3){
 
 if(data.batch!=undefined || data.batch!=null){//added by vineeth for inserting batch details
      var batchCourseId = new ObjectId();
-    var UserCourseMappingData={_id:UserCourseMappingDataId,fkUserLoginId:userLoginDataId,fkUserRoleMappingId:UserRoleMappingDataId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,totalMark:course.totalMark,selectedDuration:course.selectedDuration,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0,batchCourseMappingId:batchCourseId};
+    var UserCourseMappingData={_id:UserCourseMappingDataId,fkUserLoginId:userLoginDataId,fkUserRoleMappingId:UserRoleMappingDataId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,courseTimeline:course.courseTimeline,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,totalMark:course.totalMark,selectedDuration:course.selectedDuration,elementOrder:course.elementOrder,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0,batchCourseMappingId:batchCourseId};
 // insertion to clnUserCourseMapping
 db.clnUserCourseMapping.insert(UserCourseMappingData);
     
@@ -535,7 +535,7 @@ if(roleId==3){
 //added by vineeth for updating the batch details of already existing user
           if(data.batch!=undefined || data.batch!=null){//added by vineeth for inserting batch details
                var batchCourseId = new ObjectId();
-             var UserCourseMappingData={fkUserLoginId:userId.fkUserLoginId,fkUserRoleMappingId:roleMappingsId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,selectedDuration:course.selectedDuration,totalMark:course.totalMark,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0,batchCourseMappingId:batchCourseId};
+             var UserCourseMappingData={fkUserLoginId:userId.fkUserLoginId,fkUserRoleMappingId:roleMappingsId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,courseTimeline:course.courseTimeline,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,selectedDuration:course.selectedDuration,totalMark:course.totalMark,elementOrder:course.elementOrder,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0,batchCourseMappingId:batchCourseId};
 // setting all active same course as inactive
 db.clnUserCourseMapping.update({fkUserLoginId:userId.fkUserLoginId,fkCourseId:courseId,activeFlag:1},{$set:{activeFlag:0}});
 
@@ -589,8 +589,7 @@ resultmsg='exsisting mentee new course';
 }
 
 var result={result:resultmsg,evaluatorEmailLIst:evaluatorEmails};
-return result;
-	
+return result;	
 }});
 
 //---------------------------------------------------------------------------------------------------------------------
