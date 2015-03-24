@@ -1,0 +1,571 @@
+db.system.js.save({
+    "_id" : "fnLoadMenteesAttReport",
+    "value" : function(courseId,urmId) {
+    
+  currentCourseTimeLine = db.clnUserCourseMapping.findOne({_id:ObjectId(courseId),fkUserRoleMappingId:ObjectId(urmId),activeFlag:1},{courseImg:0});
+        data=[ 
+                [ 
+                    "Attendance", 
+                    "User Track"
+                ]
+            ];
+  
+          var present=0,absent=0;
+  
+        for(var order in currentCourseTimeLine.elementOrder){
+            tempArr=currentCourseTimeLine.elementOrder[order].split('.');
+            
+            var tlpoint=tempArr[0];
+            var type=tempArr[1];
+            var innerIndex=tempArr[2];
+            var courseElm=currentCourseTimeLine.courseTimeline[tlpoint][type][innerIndex];
+         
+            if(courseElm!=undefined){
+            if(courseElm.attendenceTrack!=undefined ){
+                if(courseElm.attendenceTrack==true){
+                      if(courseElm.attendence==true){
+                            present++;
+                      }
+                    else{
+                        absent++;
+                     }  
+               }
+            
+            }
+           }
+            
+        }
+        data.push(["Present",present]);
+        data.push(["Absent",absent]);
+  return {data:data};
+
+   
+}
+});
+
+
+/* 0 */
+db.system.js.save({
+    "_id" : "fnLoadCourseMaterialsById",
+    "value" : function(courseId,urmId) {
+    courseId=ObjectId(courseId);
+    urmId=ObjectId(urmId);
+    var courseDetails = db.clnCourses.findOne({_id:courseId,activeFlag:1},{courseImg:0});
+    currentCourseTimeLine=db.clnCourses.findOne({_id:courseId,activeFlag:1},{courseTimeline:1,_id:0});
+    existingTimeLine=db.clnUserCourseMapping.findOne({fkCourseId:courseId,fkUserRoleMappingId:urmId,activeFlag:1},{courseTimeline:1,_id:0});
+   
+    userCourseElementlist=[];
+    if(existingTimeLine.courseTimeline==undefined){
+        if(existingTimeLine.fkCourseBatchMappingId!=undefined){
+            batchList=db.clnCourseBatchMapping.findOne({fkCourseId:courseId,users:{$elemMatch:{fkUserRoleMappingId:urmId}},activeFlag:1});
+            if(batchList.courseTimeline==undefined){
+                
+                return "notfound";
+            }else{
+                
+                for(var Etlpoint in batchList.courseTimeline){
+                    for(var EuserCourseElementType in batchList.courseTimeline[Etlpoint]){
+                        if(typeof batchList.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+                            for(var EinnerIndex in batchList.courseTimeline[Etlpoint][EuserCourseElementType]){
+                                if(batchList.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
+                                    userCourseElementlist.push({tlpoint:Etlpoint, userCourseElementType:EuserCourseElementType,Name:batchList.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].elements[0].value, innerIndex:EinnerIndex, courseElement:batchList.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex],elementOrder:batchList.elementOrder});
+                                   
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else{
+                for(var Etlpoint in courseDetails.courseTimeline){
+                    for(var EuserCourseElementType in courseDetails.courseTimeline[Etlpoint]){
+                        if(typeof courseDetails.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+                            for(var EinnerIndex in courseDetails.courseTimeline[Etlpoint][EuserCourseElementType]){
+                                if(courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
+                                    userCourseElementlist.push({tlpoint:Etlpoint, userCourseElementType:EuserCourseElementType,Name:courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].elements[0].value, innerIndex:EinnerIndex, courseElement:courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex],elementOrder:courseDetails.elementOrder});
+                                    
+                                }
+                            }
+                        }
+                    }
+                }
+        }
+    }
+    else{ //condition for timeline object existance
+        if(existingTimeLine.fkCourseBatchMappingId!=undefined){
+            batchList=db.clnCourseBatchMapping.findOne({fkCourseId:courseId,users:{$elemMatch:{fkUserRoleMappingId:urmId}},activeFlag:1});
+            temp=[];
+            //looping through the coursetimeline of a user
+            for(var Etlpoint in existingTimeLine.courseTimeline){
+               for(var EuserCourseElementType in existingTimeLine.courseTimeline[Etlpoint]){
+                    if(typeof existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+                        for(var EinnerIndex in existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]){
+                            if(existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
+                                temp.push(existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code)
+                                
+                                
+                            }
+                        }
+                    }
+                 }
+            }
+            
+            //looping through the current course time line
+            for(var tlpoint in batchList.courseTimeline){
+               for(var userCourseElementType in batchList.courseTimeline[tlpoint]){
+                    if(typeof batchList.courseTimeline[tlpoint][userCourseElementType]=='object'){
+                        for(var innerIndex in batchList.courseTimeline[tlpoint][userCourseElementType]){
+                            if(batchList.courseTimeline[tlpoint][userCourseElementType][innerIndex].code!=null){
+                               
+                                if(temp.indexOf(batchList.courseTimeline[tlpoint][userCourseElementType][innerIndex].code) == -1){
+                                  
+                                        userCourseElementlist.push({tlpoint:tlpoint, userCourseElementType:userCourseElementType,Name:batchList.courseTimeline[tlpoint][userCourseElementType][innerIndex].elements[0].value, innerIndex:innerIndex, courseElement:batchList.courseTimeline[tlpoint][userCourseElementType][innerIndex],elementOrder:batchList.elementOrder});
+                                       
+                                  
+                                }
+                            }
+                        }
+                    }
+                 }
+            }
+
+        }else{
+                
+            temp=[];
+            //looping through the coursetimeline of a user
+            for(var Etlpoint in existingTimeLine.courseTimeline){
+               for(var EuserCourseElementType in existingTimeLine.courseTimeline[Etlpoint]){
+                    if(typeof existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+                        for(var EinnerIndex in existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]){
+                            if(existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
+                                temp.push(existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code)
+                                
+                                
+                            }
+                        }
+                    }
+                 }
+            }
+            //ss=[];
+            //looping through the current course time line
+            for(var tlpoint in courseDetails.courseTimeline){
+               for(var userCourseElementType in courseDetails.courseTimeline[tlpoint]){
+                    if(typeof courseDetails.courseTimeline[tlpoint][userCourseElementType]=='object'){
+                        for(var innerIndex in courseDetails.courseTimeline[tlpoint][userCourseElementType]){
+                            if(courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex].code!=undefined){
+                               //ss.push(courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex].code);
+                                //return {temp:temp,course:ss};
+                                if(temp.indexOf(courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex].code) == -1){
+                                  
+                                        userCourseElementlist.push({tlpoint:tlpoint, userCourseElementType:userCourseElementType,Name:courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex].elements[0].value, innerIndex:innerIndex, courseElement:courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex],elementOrder:courseDetails.elementOrder});
+                                        
+                                        
+                                }
+                            }
+                        }
+                    }
+                 }
+            }
+        }
+
+    }
+    return userCourseElementlist; //.courseTimeline[tlpoint]
+}
+});
+
+
+
+/* 0 */
+db.system.js.save({
+    "_id" : "funAssignCourseMaterial",
+    "value" : function(courseId,urmId,dataObj){
+    var userCourseObj=db.clnUserCourseMapping.findOne({fkUserRoleMappingId:ObjectId(urmId),fkCourseId:ObjectId(courseId),activeFlag:1},{courseImg:0});
+  
+    for(var key in dataObj){
+        if(userCourseObj.courseTimeline==undefined){
+            userCourseObj.courseTimeline={};
+        }
+
+        if(userCourseObj.courseTimeline[dataObj[key].tlpoint]==undefined){
+            userCourseObj.courseTimeline[dataObj[key].tlpoint]={};
+        }
+        if(userCourseObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType]==undefined){
+            userCourseObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType]=[];
+        }
+        if(userCourseObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex]==undefined){
+            userCourseObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex]={};
+        }
+         userCourseObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex]=dataObj[key].courseElement;
+
+         tlPoint = dataObj[key].tlpoint;
+        elemOrder =  dataObj[key].tlpoint+'.'+dataObj[key].userCourseElementType+'.'+dataObj[key].innerIndex;
+        var totalMark = 0;
+        var looper = 0;
+        var currentMark = 0;
+        var tlPointMark = 0;
+       
+      if(userCourseObj.courseTimeline[tlPoint].totalMark==undefined){
+           userCourseObj.courseTimeline[tlPoint].totalMark=0;
+       }
+        
+         if (userCourseObj.courseTimeline[tlPoint].totalMark) {
+            tlPointMark = userCourseObj.courseTimeline[tlPoint].totalMark;
+        }
+        
+        if (userCourseObj.totalMark==undefined) {
+            userCourseObj.totalMark = 0;
+        }
+        
+        if (userCourseObj.totalMark) {
+            currentMark = userCourseObj.totalMark;
+        }
+        
+         if (!userCourseObj.elementOrder) {
+           userCourseObj.elementOrder = {};
+        }
+        
+        elemLength=Object.keys(userCourseObj.elementOrder).length;
+        //for (var i in userCourseObj.elementOrder){
+            userCourseObj.elementOrder[elemLength]=elemOrder;
+        //}
+        userCourseObj.totalMark = currentMark + totalMark;
+        userCourseObj.courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;
+        db.clnUserCourseMapping.update({fkUserRoleMappingId:ObjectId(urmId),fkCourseId:ObjectId(courseId),activeFlag:1},{$set:{'courseTimeline':userCourseObj.courseTimeline,'elementOrder':userCourseObj.elementOrder}});
+        
+    }
+        
+    return  'success';
+    
+}
+});
+
+
+/* 0 */
+db.system.js.save({
+    "_id" : "fnLoadBatchesForView",
+    "value" : function(companyId,firstId,type,lastId,searchKey) {
+    var batches,resultObj;
+    var count=0;
+    var first,last;
+    resultObj={};
+    if(searchKey==""){
+    if(type=='initial'){
+        batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1}).limit(9).sort({_id:-1}).toArray();
+}else if(type=='next'){
+	batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1,_id:{$lt:ObjectId(lastId)}}).limit(9).sort({_id:-1}).toArray();
+
+}else if(type=='prev'){
+	batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1,_id:{$gt:ObjectId(firstId)}}).limit(9).sort({_id:1}).toArray();
+}
+
+}else{
+	batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1,$text:{$search:searchKey}}).limit(9).sort({_id:-1}).toArray();
+
+}
+
+         if(batches.length!=0){       
+          if(type=='prev'){
+
+               first=batches[batches.length-1]._id;
+             last=batches[0]._id;
+             batches.reverse();
+           }else{
+
+             first=batches[0]._id;
+             last=batches[batches.length-1]._id;
+          } 
+    }else{   
+         if(type=='prev'){
+          first=ObjectId(firstId);  
+          last =ObjectId(lastId);
+         }else if(type=='next'){
+           first=ObjectId(lastId);  
+          last=ObjectId(firstId);   
+         }else{
+             first=[];
+             last=[];
+         }   
+    }
+    while(batches.length>count){
+        var batch=db.clnBatches.findOne({_id:batches[count].batchId});
+        batches[count].totalJoining=batches[count].users.length;
+       
+        count++;
+   }
+    //resultObj.batchList=[];
+    resultObj.batchList=batches;
+    resultObj.firstId=first;
+    resultObj.lastId=last;     
+    return resultObj;
+}
+});
+
+/* 0 */
+db.system.js.save({
+    "_id" : "fnAssignCourseMaterials4Batch",
+    "value" : function(batchMappingId,dataObj) {
+  //var urmIds=db.clnCourseBatchMapping.distinct("users.fkUserRoleMappingId",{batchId:ObjectId(batchId),fkCompanyId:ObjectId(companyId),activeFlag:1}); 
+
+    var batchObj=db.clnCourseBatchMapping.findOne({_id:ObjectId(batchMappingId),activeFlag:1});
+    var urmIds=db.clnCourseBatchMapping.distinct("users.fkUserRoleMappingId",{_id:ObjectId(batchMappingId),activeFlag:1}); //to get the userRolemappingids list to track the batch mentees 
+     for(var key in dataObj){
+        if(batchObj.courseTimeline==undefined){
+            batchObj.courseTimeline={};
+        }
+
+        if(batchObj.courseTimeline[dataObj[key].tlpoint]==undefined){
+            batchObj.courseTimeline[dataObj[key].tlpoint]={};
+        }
+        if(batchObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType]==undefined){
+            batchObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType]=[];
+        }
+        if(batchObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex]==undefined){
+            batchObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex]={};
+        }
+         batchObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex]=dataObj[key].courseElement;
+
+         tlPoint = dataObj[key].tlpoint;
+        elemOrder =  dataObj[key].tlpoint+'.'+dataObj[key].userCourseElementType+'.'+dataObj[key].innerIndex;
+        var totalMark = 0;
+        var looper = 0;
+        var currentMark = 0;
+        var tlPointMark = 0;
+       
+      if(batchObj.courseTimeline[tlPoint].totalMark==undefined){
+           batchObj.courseTimeline[tlPoint].totalMark=0;
+       }
+        
+         if (batchObj.courseTimeline[tlPoint].totalMark) {
+            tlPointMark = batchObj.courseTimeline[tlPoint].totalMark;
+        }
+        
+        if (batchObj.totalMark==undefined) {
+            batchObj.totalMark = 0;
+        }
+        
+        if (batchObj.totalMark) {
+            currentMark = userCourseObj.totalMark;
+        }
+        
+         if (!batchObj.elementOrder) {
+          batchObj.elementOrder = {};
+        }
+        
+        elemLength=Object.keys(batchObj.elementOrder).length;
+        //for (var i in userCourseObj.elementOrder){
+            batchObj.elementOrder[elemLength]=elemOrder;
+        //}
+        batchObj.totalMark = currentMark + totalMark;
+        batchObj.courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;
+        db.clnCourseBatchMapping.update({_id:ObjectId(batchMappingId),activeFlag:1},{$set:{'courseTimeline':batchObj.courseTimeline,'elementOrder':batchObj.elementOrder}});
+        //for each user under this batch
+        if(batchObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex].excludeList!=undefined){
+          for(var keyNew in urmIds){ //looping through batch users to update timeline obj
+              var users= db.clnUserCourseMapping.findOne({fkUserRoleMappingId:urmIds[keyNew],fkCourseId:batchObj.fkCourseId,activeFlag:1});
+              var elementInner=batchObj.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex];
+                if(elementInner.excludeList.indexOf(urmIds[keyNew].valueOf())==-1){
+                    
+                    if(users.courseTimeline==undefined){
+                        users.courseTimeline={};
+                    }
+
+                    if(users.courseTimeline[dataObj[key].tlpoint]==undefined){
+                        users.courseTimeline[dataObj[key].tlpoint]={};
+                    }
+                    if(users.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType]==undefined){
+                        users.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType]=[];
+                    }
+                    if(users.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex]==undefined){
+                        users.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex]={};
+                    }
+                    users.courseTimeline[dataObj[key].tlpoint][dataObj[key].userCourseElementType][dataObj[key].innerIndex]=dataObj[key].courseElement;
+        
+                      if(users.courseTimeline[tlPoint].totalMark==undefined){
+                           users.courseTimeline[tlPoint].totalMark=0;
+                       }
+                        
+                         if (users.courseTimeline[tlPoint].totalMark) {
+                            users = batchObj.courseTimeline[tlPoint].totalMark;
+                        }
+                        
+                        if (users.totalMark==undefined) {
+                            users.totalMark = 0;
+                        }
+                        
+                        if (users.totalMark) {
+                            currentMark = users.totalMark;
+                        }
+                        
+                         if (!users.elementOrder) {
+                          users.elementOrder = {};
+                        }
+                        
+                        elemLength=Object.keys(users.elementOrder).length;
+                        //for (var i in userCourseObj.elementOrder){
+                            users.elementOrder[elemLength]=elemOrder;
+                        //}
+                        users.totalMark = currentMark + totalMark;
+                        users.courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;
+
+                        db.clnUserCourseMapping.update({fkUserRoleMappingId:urmIds[keyNew],fkCourseId:batchObj.fkCourseId,activeFlag:1},{$set:{'courseTimeline':users.courseTimeline,'elementOrder':users.elementOrder}});
+                
+                }
+            }  
+        } //if ends here
+        
+    }
+    
+    
+  
+    return 'success';
+}
+});
+
+
+
+/* 0 */
+db.system.js.save({
+    "_id" : "fnLoadCourseMaterials4Batch",
+    "value" : function(batchMappingId) {
+    var batchList=db.clnCourseBatchMapping.findOne({_id:batchMappingId,activeFlag:1});
+    var courseDetails = db.clnCourses.findOne({_id:batchList.fkCourseId,activeFlag:1},{courseImg:0});
+    currentCourseTimeLine=db.clnCourses.findOne({_id:batchList.fkCourseId,activeFlag:1},{courseTimeline:1,_id:0});
+    //existingTimeLine=db.clnUserCourseMapping.findOne({fkCourseId:batchList.fkCourseId,fkUserRoleMappingId:urmId,activeFlag:1});
+    userCourseElementlist=[];
+    if(batchList.courseTimeline==undefined){
+        batchList.courseTimeline={};
+
+               for(var Etlpoint in courseDetails.courseTimeline){
+                    for(var EuserCourseElementType in courseDetails.courseTimeline[Etlpoint]){
+                        if(typeof courseDetails.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+                            for(var EinnerIndex in courseDetails.courseTimeline[Etlpoint][EuserCourseElementType]){
+                                if(courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
+                                    userCourseElementlist.push({tlpoint:Etlpoint, userCourseElementType:EuserCourseElementType,Name:courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].elements[0].value, innerIndex:EinnerIndex, courseElement:courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex],elementOrder:courseDetails.elementOrder});
+                                    
+                                }
+                            }
+                        }
+                    }
+                }
+                    
+            
+        
+    }
+    else{
+        temp=[];
+            //looping through the coursetimeline of a user
+            for(var Etlpoint in batchList.courseTimeline){
+               for(var EuserCourseElementType in batchList.courseTimeline[Etlpoint]){
+                    if(typeof batchList.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+                        for(var EinnerIndex in batchList.courseTimeline[Etlpoint][EuserCourseElementType]){
+                            if(batchList.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
+                                temp.push(batchList.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code)
+                                
+                                
+                            }
+                        }
+                    }
+                 }
+            }
+            
+            //looping through the current course time line
+            for(var tlpoint in courseDetails.courseTimeline){
+               for(var userCourseElementType in courseDetails.courseTimeline[tlpoint]){
+                    if(typeof courseDetails.courseTimeline[tlpoint][userCourseElementType]=='object'){
+                        for(var innerIndex in courseDetails.courseTimeline[tlpoint][userCourseElementType]){
+                            if(courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex].code!=null){
+                               
+                                if(temp.indexOf(courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex].code) == -1){
+                                  
+                                        userCourseElementlist.push({tlpoint:tlpoint, userCourseElementType:userCourseElementType,Name:courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex].elements[0].value, innerIndex:innerIndex, courseElement:courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex],elementOrder:courseDetails.elementOrder});
+                                        
+                                  
+                                }
+                            }
+                        }
+                    }
+                 }
+            }
+    }
+//copying the current object which contain tlpoint along with course material which is not exist in user timeline
+        return userCourseElementlist;
+}
+});
+
+
+/* 0 */
+db.system.js.save({
+    "_id" : "fnLoadMenteesForView",
+    "value" : function(companyId,firstId,type,lastId,searchKey) {
+   var result;
+    var resultObj={};
+    var count=0;
+    var UserData;
+    var first,last;
+    
+    if(searchKey==''){
+                if(type=='initial'){
+                    result=db.clnUserCourseMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1},{courseImg:0}).limit(12).sort({_id:-1}).toArray();
+                }
+                else if(type=='next'){
+                    result=db.clnUserCourseMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1,_id:{$lt:ObjectId(lastId)}},{courseImg:0}).limit(12).sort({_id:-1}).toArray();
+                    }
+               else if(type=='prev'){
+                    result=db.clnUserCourseMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1,_id:{$gt:ObjectId(firstId)}},{courseImg:0}).limit(12).sort({_id:1}).toArray();
+                    }
+                   
+                    while(result.length>count){
+                        var rowRes=result[count];
+                        result[count].profile={};
+                        result[count].profile=db.clnUserDetails.findOne({fkUserLoginId:rowRes.fkUserLoginId},{profile:1,_id:0});
+                        var userName=db.clnUserLogin.findOne({_id:rowRes.fkUserLoginId},{_id:0,userName:1});
+                        result[count].username=userName;
+                       count++;
+                        }
+         }
+         else{
+				result=[];
+				users=db.clnUserDetails.find({$text:{$search:searchKey},activeFlag:1}).toArray();
+				while(users.length>count){
+					var userName=db.clnUserLogin.findOne({_id:users[count].fkUserLoginId},{_id:0,userName:1});
+					detail=db.clnUserCourseMapping.findOne({fkUserLoginId:users[count].fkUserLoginId,activeFlag:1},{courseImg:0});
+					detail.profile={};
+                                        detail.profile.profile=users[count].profile;
+                                        detail.username=userName;
+                                        result.push(detail);
+					count++;
+				}
+
+		}
+                                                                     if(result.length!=0){       
+                      if(type=='prev'){
+
+                           first=result[result.length-1]._id;
+                         last=result[0]._id;
+                         result.reverse();
+                       }else{
+
+                         first=result[0]._id;
+                         last=result[result.length-1]._id;
+                      } 
+                }else{   
+                     if(type=='prev'){
+                        first=ObjectId(firstId);  
+                        last =ObjectId(lastId);
+                     }else if(type=='next'){
+                        first=ObjectId(lastId);  
+                        last=ObjectId(firstId);   
+                     }else{
+                         first=[];
+                         last=[];
+                     }   
+                }
+                
+    resultObj.userList=result;
+    resultObj.firstId=first;
+    resultObj.lastId=last;     
+    return resultObj;
+}
+
+});
