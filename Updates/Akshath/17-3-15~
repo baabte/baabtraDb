@@ -1,0 +1,48 @@
+fnLoadBatchesForView
+fnLoadMenteesForView
+fnloadCourses4AssigningCourseMaterial
+fnLoadCourseMaterialsById
+funAssignCourseMaterials
+fnLoadBatchMenteeList
+fnLoadCourseMaterials4Batch
+fnAssignCourseMaterials4Batch
+fnloadCoursesMaterials4menteeAtt
+fnloadCourseMaterials4batchAtt
+//fnloadMentees4batchAtt
+db.clnUserDetails.createIndex( { 'profile.firstName': "text" ,'profile.lastName':"text"} )
+db.clnCourseBatchMapping.createIndex( { 'batchName': "text"} )
+
+-5508165cd4f9075d40a10a4c -userId
+-54fc31f443fa1fe885d3ad61 -courseId
+
+
+
+db.clnCourseBatchMapping.find({_id:ObjectId("550bf527d4f9075d40a10e7a")})
+db.clnCourses.find({_id:ObjectId('54fc31f443fa1fe885d3ad62')})
+db.eval("fnloadCoursesMaterials4menteeAtt('54fc31f443fa1fe885d3ad62','550bf527d4f9075d40a10e75')")
+
+
+
+
+db.eval("fnLoadCourseMaterials4Batch(ObjectId('550c0c93d4f9075d40a10ea6'))")
+db.clnCourseBatchMapping.findOne({_id:ObjectId('550c0c93d4f9075d40a10ea6')})
+db.clnCourses.findOne({_id:ObjectId("54fc31f443fa1fe885d3ad60")})
+db.clnCourses.find({Name:'Compilers'})
+db.clnCourseBatchMapping.find()
+db.clnMenuMaster.find()
+ObjectId("550d1caed4f9075d40a10ec0")
+ObjectId("550d1cf3d4f9075d40a10ec1")
+
+ObjectId("54fc31f443fa1fe885d3ad62")
+db.clnUserRoleMapping.findOne({fkUserLoginId:ObjectId("54978cc57525614f6e3e710a")})
+
+db.clnUserCourseMapping.find().sort({_id:-1}){fkUserRoleMappingId:ObjectId("54978cc57525614f6e3e7109")})
+db.clnUserCourseMapping.find({_id:ObjectId("550bf527d4f9075d40a10e74")})
+db.clnCourseBatchMapping.findOne({fkCourseId:courseId,users:{$elemMatch:{_id:courseId}}})
+db.clnUserCourseMapping.update({_id:ObjectId("550bf527d4f9075d40a10e74"),activeFlag:1},{$set:{'courseTimeline':{}}});
+---------------------------------------------------------------------------------------------------------
+db.eval("fnloadCoursesMaterials4menteeAtt('550bf527d4f9075d40a10e74','550bf527d4f9075d40a10e75')")
+db.clnUserCourseMapping.find({_id:ObjectId("550bf527d4f9075d40a10e74")})
+db.clnCourseBatchMapping.find({fkCourseId:ObjectId("54fc31f443fa1fe885d3ad62"),users:{$elemMatch:{fkUserRoleMappingId:ObjectId("550bf527d4f9075d40a10e75")}}})
+db.eval("fnloadCourseMaterials4batchAtt('550bf527d4f9075d40a10e7a')")
+db.eval("fnloadMentees4batchAtt('550bf527d4f9075d40a10e7a')")
