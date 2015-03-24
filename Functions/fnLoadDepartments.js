@@ -1,3 +1,12 @@
-function(companyId, branchId) {
-    return "Success";
-}
+/*
+Created by : Jihin
+Date : 18-3-2015
+purpose : Load Departments
+*/
+
+db.system.js.save({_id:'fnLoadDepartments',
+value:function(companyId, branchId) {
+    var department = db.clnDepartments.findOne({companyId: ObjectId(companyId)});
+    
+    return department.departments[branchId];
+}});

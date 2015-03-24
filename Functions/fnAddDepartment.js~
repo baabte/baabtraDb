@@ -6,11 +6,36 @@ purpose : For add departments to department collection
 
 db.system.js.save({_id:'fnAddDepartment',
 value:function(departmentObject, companyId, rmId) {
-    var department = {};
+    var departmentsDetails = db.clnDepartments.findOne({companyId:ObjectId(companyId)});
+    var departments = "";
+    if( departmentsDetails != null ){
+        departmentsDetails.departments[Object.keys(departmentObject)[0]] = departmentObject[Object.keys(departmentObject)[0]];
+        departmentsDetails.updatedDate = ISODate();
+        departmentsDetails.urmId = ObjectId(rmId);
+        departments = departmentsDetails.departments[Object.keys(departmentObject)[0]];
+        for(var deptCount=0; departments.length > deptCount; deptCount++){
+            if(departments[deptCount].deptHeadrmId != null){
+                if(departments[deptCount].departmentId == undefined){
+                    departments[deptCount].departmentId = new ObjectId();
+                }
+                else{
+                    departments[deptCount].departmentId = ObjectId(departments[deptCount].departmentId);
+                }
+               departments[deptCount].deptHeadrmId[0].roleMappingId = ObjectId(departments[deptCount].deptHeadrmId[0].roleMappingId);
+            
+        }
+        }
+        departmentsDetails.departments[Object.keys(departmentObject)[0]] = departments;
+        db.clnDepartments.save(departmentsDetails);
+        
+    }
+    else{
+        var department = {};
     var departments = departmentObject[Object.keys(departmentObject)[0]];
     for(var deptCount=0; departments.length > deptCount; deptCount++){
+            departments[deptCount].departmentId = new ObjectId();
             if(departments[deptCount].deptHeadrmId != null){
-                departments[deptCount].deptHeadrmId = ObjectId(departments[deptCount].deptHeadrmId);
+                departments[deptCount].deptHeadrmId[0].roleMappingId = ObjectId(departments[deptCount].deptHeadrmId[0].roleMappingId);
             }
         }
     departmentObject[Object.keys(departmentObject)[0]] = departments;
@@ -21,6 +46,8 @@ value:function(departmentObject, companyId, rmId) {
     department.urmId = ObjectId(rmId);
     department.crmId = ObjectId(rmId);
     department.activeFlag = 1;
-    db.clnDepartments.insert(department);
-    return departmentObject[Object.keys(departmentObject)[0]].length;
+    }
+    var department = db.clnDepartments.findOne({companyId: ObjectId(companyId)});
+    
+    return department.departments[Object.keys(departmentObject)[0]];
 }});
