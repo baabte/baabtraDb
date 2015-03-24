@@ -2,13 +2,17 @@ fnLoadBatchesForView
 fnLoadMenteesForView
 fnloadCourses4AssigningCourseMaterial
 fnLoadCourseMaterialsById
-funAssignCourseMaterials
+funAssignCourseMaterial
 fnLoadBatchMenteeList
 fnLoadCourseMaterials4Batch
 fnAssignCourseMaterials4Batch
 fnloadCoursesMaterials4menteeAtt
 fnloadCourseMaterials4batchAtt
 //fnloadMentees4batchAtt
+
+fnLoadMenteesAttReport
+
+
 db.clnUserDetails.createIndex( { 'profile.firstName': "text" ,'profile.lastName':"text"} )
 db.clnCourseBatchMapping.createIndex( { 'batchName': "text"} )
 
@@ -44,5 +48,5 @@ db.clnUserCourseMapping.update({_id:ObjectId("550bf527d4f9075d40a10e74"),activeF
 db.eval("fnloadCoursesMaterials4menteeAtt('550bf527d4f9075d40a10e74','550bf527d4f9075d40a10e75')")
 db.clnUserCourseMapping.find({_id:ObjectId("550bf527d4f9075d40a10e74")})
 db.clnCourseBatchMapping.find({fkCourseId:ObjectId("54fc31f443fa1fe885d3ad62"),users:{$elemMatch:{fkUserRoleMappingId:ObjectId("550bf527d4f9075d40a10e75")}}})
-db.eval("fnloadCourseMaterials4batchAtt('550bf527d4f9075d40a10e7a')")
+db.eval("fnloadCourseMaterials4batchAtt('55081201d4f9075d40a10a39')")
 db.eval("fnloadMentees4batchAtt('550bf527d4f9075d40a10e7a')")
