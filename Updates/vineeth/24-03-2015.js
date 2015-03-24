@@ -1,8 +1,16 @@
-// to register a user 
-db.system.js.save({_id: "fnRegisterUser",
-                  value:function (data){
+db.system.js.save({_id: "fnLoadExistingCoursesUnderBatch",
+		value: function (id) 
+{
+  courses=db.clnBatches.find({_id:ObjectId(id)}
+    ).sort({_id:-1}).toArray();
+    return courses;
 
-	 if(isNaN(data.role.roleId)){
+}});
+//------------------------------------------------------------
+db.system.js.save({_id: "fnRegisterUser",
+		value: function (data) 
+{
+ if(isNaN(data.role.roleId)){
 		 roleId=ObjectId(data.role.roleId);
                 delete data.role;
             }else if(!isNaN(data.role.roleId)){
@@ -73,7 +81,7 @@ delete mandatoryData.eMail;
 delete mandatoryData.password;
 
 //inserting into user details
-UserDetails={fkUserLoginId:userLoginDataId,profile:mandatoryData,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,status:"requested",approvedFlag:0,activeFlag:1};
+UserDetails={fkUserLoginId:userLoginDataId,profile:mandatoryData,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,approvedFlag:0,activeFlag:1};
 
 db.clnUserDetails.insert(UserDetails);
 
@@ -94,7 +102,9 @@ if(roleId==3){
 
 if(data.batch!=undefined || data.batch!=null){//added by vineeth for inserting batch details
      var batchCourseId = new ObjectId();
-    var UserCourseMappingData={_id:UserCourseMappingDataId,fkUserLoginId:userLoginDataId,fkUserRoleMappingId:UserRoleMappingDataId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,courseTimeline:course.courseTimeline,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,totalMark:course.totalMark,selectedDuration:course.selectedDuration,elementOrder:course.elementOrder,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0,batchCourseMappingId:batchCourseId};
+    //courseTimeline:course.courseTimeline,
+     //elementOrder:course.elementOrder,
+    var UserCourseMappingData={_id:UserCourseMappingDataId,fkUserLoginId:userLoginDataId,fkUserRoleMappingId:UserRoleMappingDataId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,totalMark:course.totalMark,selectedDuration:course.selectedDuration,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0,batchCourseMappingId:batchCourseId};
 // insertion to clnUserCourseMapping
 db.clnUserCourseMapping.insert(UserCourseMappingData);
     
@@ -129,7 +139,7 @@ db.clnUserCourseMapping.insert(UserCourseMappingData);
    }               
                 }else{
                   //data to clnUserCourseMapping
-var UserCourseMappingData={_id:UserCourseMappingDataId,fkUserLoginId:userLoginDataId,fkUserRoleMappingId:UserRoleMappingDataId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,courseTimeline:course.courseTimeline,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,totalMark:course.totalMark,selectedDuration:course.selectedDuration,elementOrder:course.elementOrder,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0};
+var UserCourseMappingData={_id:UserCourseMappingDataId,fkUserLoginId:userLoginDataId,fkUserRoleMappingId:UserRoleMappingDataId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,totalMark:course.totalMark,selectedDuration:course.selectedDuration,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0};
 
 // insertion to clnUserCourseMapping
 db.clnUserCourseMapping.insert(UserCourseMappingData);  
@@ -197,7 +207,7 @@ if(roleId==3){
 //added by vineeth for updating the batch details of already existing user
           if(data.batch!=undefined || data.batch!=null){//added by vineeth for inserting batch details
                var batchCourseId = new ObjectId();
-             var UserCourseMappingData={fkUserLoginId:userId.fkUserLoginId,fkUserRoleMappingId:roleMappingsId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,courseTimeline:course.courseTimeline,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,selectedDuration:course.selectedDuration,totalMark:course.totalMark,elementOrder:course.elementOrder,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0,batchCourseMappingId:batchCourseId};
+             var UserCourseMappingData={fkUserLoginId:userId.fkUserLoginId,fkUserRoleMappingId:roleMappingsId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,selectedDuration:course.selectedDuration,totalMark:course.totalMark,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0,batchCourseMappingId:batchCourseId};
 // setting all active same course as inactive
 db.clnUserCourseMapping.update({fkUserLoginId:userId.fkUserLoginId,fkCourseId:courseId,activeFlag:1},{$set:{activeFlag:0}});
 
@@ -225,15 +235,17 @@ db.clnUserCourseMapping.insert(UserCourseMappingData);
                 db.clnCourseBatchMapping.insert(Batchdata); 
    }else{
         var arr_users= db.clnCourseBatchMapping.find( 
-                 {fkCourseId:courseId,batchId:ObjectId(data.batchId), users: { $elemMatch: { fkUserRoleMappingId:UserRoleMappingDataId } } },
+                 {fkCourseId:courseId,batchId:ObjectId(data.batchId), users: { $elemMatch: { fkUserRoleMappingId:roleMappingsId } } },
                  {batchId:1} ).toArray();
      if(arr_users.length==0){                     
        db.clnCourseBatchMapping.update({batchId:ObjectId(data.batchId),fkCourseId:courseId,"enrollmentAfter":{$lt:lowerBound},"enrollmentBefore":{$gt:upperBound}},{$push:{users:userList[0]}})
    } 
    }    
           }else{//if batch is not added then insert element order and timeline into clnUserCourseMapping
+                //courseTimeline:course.courseTimeline,
+              //elementOrder:course.elementOrder,
             //data to clnUserCourseMapping
-var UserCourseMappingData={fkUserLoginId:userId.fkUserLoginId,fkUserRoleMappingId:roleMappingsId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,courseTimeline:course.courseTimeline,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,selectedDuration:course.selectedDuration,totalMark:course.totalMark,elementOrder:course.elementOrder,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0};
+var UserCourseMappingData={fkUserLoginId:userId.fkUserLoginId,fkUserRoleMappingId:roleMappingsId,fkCompanyId:companyId,fkCourseId:courseId,Name:course.Name,Duration:course.Duration,Description:course.Description,courseImg:course.courseImg,selectedDuration:course.selectedDuration,totalMark:course.totalMark,createdDate:Date(),updatedDate:Date(),crmId:loggedusercrmid,urmId:loggedusercrmid,activeFlag:1,markScored:0};
 // setting all active same course as inactive
 db.clnUserCourseMapping.update({fkUserLoginId:userId.fkUserLoginId,fkCourseId:courseId,activeFlag:1},{$set:{activeFlag:0}});
 
@@ -251,6 +263,135 @@ resultmsg='exsisting mentee new course';
 }
 
 var result={result:resultmsg,evaluatorEmailLIst:evaluatorEmails};
-return result;
+return result;      
+
+
+}});
+//------------------------------------------------------------
+db.system.js.save({_id: "fun_load_publishedCourses",
+		value: function (companyId,searchKey,lastId,type,firstId) 
+{
+if (searchKey !=''){
+     if(type!=''){
+          switch(type){
+              case 'Domains':  
+                 courses= db.clnCourses.find({Domains:searchKey,
+                          companyId:ObjectId(companyId),
+                          draftFlag:1, 
+                          activeFlag:1
+                           },
+                           {Name:1,courseImg:1,courseDetails:1}).                           limit(12).sort({_id:-1}).toArray();
+              break;
+              case 'Technologies':  
+                 courses= db.clnCourses.find({'Technologies':searchKey,
+                          companyId:ObjectId(companyId),
+                          draftFlag:1, 
+                          activeFlag:1},    
+                           {Name:1,courseImg:1,courseDetails:1}).                           limit(12).sort({_id:-1}).toArray();
+             break;
+             case 'Branches':  
+                courses= db.clnCourses.find({'Branches':searchKey,
+                         companyId:ObjectId(companyId),
+                         draftFlag:1, 
+                         activeFlag:1
+                         },
+                         {Name:1,courseImg:1,courseDetails:1}).                         limit(12).sort({_id:-1}).toArray();
+             break;   
+             case 'Designation':  
+                courses= db.clnCourses.find({'Designation.text':searchKey,
+                         companyId:ObjectId(companyId),
+                         draftFlag:1, 
+                         activeFlag:1
+                         },
+                         {Name:1,courseImg:1,courseDetails:1}).                         limit(12).sort({_id:-1}).toArray();
+             break;               
+            case 'Tags' :
+               courses= db.clnCourses.find({'Tags':searchKey,
+                        companyId:ObjectId(companyId),
+                        draftFlag:1, 
+                        activeFlag:1
+                        },
+                        {Name:1,courseImg:1,courseDetails:1}).limit                        (12).sort({_id:-1}).toArray();
+            break; 
+           case 'Delivery':
+             if( searchKey=='online'){
+                  courses= db.clnCourses.find({'Delivery.online':                           true,
+                           companyId:ObjectId(companyId),
+                           draftFlag:1, 
+                           activeFlag:1
+                           },
+                           {Name:1,courseImg:1,courseDetails:1}).                           limit(12).sort({_id:-1}).toArray();
+             }else{
+                 courses= db.clnCourses.find({'Delivery.offline':                          true,
+                          companyId:ObjectId(companyId),
+                          draftFlag:1, 
+                          activeFlag:1},
+                          {Name:1,courseImg:1,courseDetails:1}).                          limit(12).sort({_id:-1}).toArray();
+            } 
+            break; 
   
- }});
+        }//switch ends  
+     
+     }else{ 
+             courses= db.clnCourses.find({$text:{$search:searchKey},
+                      companyId:ObjectId(companyId),
+                      draftFlag:1, 
+                      activeFlag:1},
+                      {Name:1,courseImg:1,courseDetails:1}).limit(12                      ).sort({_id:-1}).toArray(); 
+         }    
+ }else{
+         if(type=='next'){
+              courses= db.clnCourses.find({
+                       companyId:ObjectId(companyId),
+                       draftFlag:1, 
+                       activeFlag:1,   
+                      _id:{$lt:ObjectId(lastId)}},
+                       {Name:1,courseImg:1,courseDetails:1}).limit(                       12).sort({_id:-1}).toArray(); 
+         }else if(type=='prev'){
+              courses= db.clnCourses.find({
+                       companyId:ObjectId(companyId),
+                       draftFlag:1, 
+                       activeFlag:1,   
+                       _id:{$gt:ObjectId(firstId)},
+                      },
+                       {Name:1,courseImg:1,courseDetails:1}).limit(                       12).sort({_id:1}).toArray();  
+                 
+        }else{
+               courses= db.clnCourses.find({
+                        companyId:ObjectId(companyId),
+                       draftFlag:1, 
+                       activeFlag:1   
+                       },
+                       {Name:1,courseImg:1,courseDetails:1}).limit(                        12).sort({_id:-1}).toArray();
+       
+      
+        } 
+  }  
+   
+   
+   if(courses.length!=0){       
+          if(type=='prev'){
+             lastItem=courses[0]._id;
+             firstItem=courses[courses.length-1]._id;  
+             courses.reverse();
+           }else{
+             lastItem=courses[courses.length-1]._id;      
+            firstItem=courses[0]._id;
+          } 
+    }else{   
+         if(type=='prev'){
+          firstItem=ObjectId(firstId);  
+          lastItem =ObjectId(lastId);
+         }else if(type=='next'){
+           firstItem=ObjectId(lastId);  
+          lastItem =ObjectId(firstId);   
+         }else{
+             firstItem=[];
+             lastItem=[];
+         }   
+    }
+    return {courses:courses,lastId:lastItem,firstId:firstItem,courseLength:courses.length}
+
+}});
+
+

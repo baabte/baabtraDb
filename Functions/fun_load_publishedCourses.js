@@ -14,7 +14,7 @@ db.system.js.save({_id: "fun_load_publishedCourses",
 		value: function (companyId,searchKey,lastId,type,firstId) 
 {
 
-if (searchKey !=''){
+ if (searchKey !=''){
      if(type!=''){
           switch(type){
               case 'Domains':  
@@ -23,14 +23,14 @@ if (searchKey !=''){
                           draftFlag:1, 
                           activeFlag:1
                            },
-                           {Name:1,courseImg:1,courseDetails:1}).limit(12).sort({_id:-1}).toArray();
+                           {Name:1,courseImg:1,courseDetails:1}).                           limit(12).sort({_id:-1}).toArray();
               break;
               case 'Technologies':  
                  courses= db.clnCourses.find({'Technologies':searchKey,
                           companyId:ObjectId(companyId),
                           draftFlag:1, 
                           activeFlag:1},    
-                           {Name:1,courseImg:1,courseDetails:1}).limit(12).sort({_id:-1}).toArray();
+                           {Name:1,courseImg:1,courseDetails:1}).                           limit(12).sort({_id:-1}).toArray();
              break;
              case 'Branches':  
                 courses= db.clnCourses.find({'Branches':searchKey,
@@ -38,30 +38,38 @@ if (searchKey !=''){
                          draftFlag:1, 
                          activeFlag:1
                          },
-                         {Name:1,courseImg:1,courseDetails:1}).limit(12).sort({_id:-1}).toArray();
+                         {Name:1,courseImg:1,courseDetails:1}).                         limit(12).sort({_id:-1}).toArray();
              break;   
+             case 'Designation':  
+                courses= db.clnCourses.find({'Designation':searchKey,
+                         companyId:ObjectId(companyId),
+                         draftFlag:1, 
+                         activeFlag:1
+                         },
+                         {Name:1,courseImg:1,courseDetails:1}).                         limit(12).sort({_id:-1}).toArray();
+             break;               
             case 'Tags' :
                courses= db.clnCourses.find({'Tags':searchKey,
                         companyId:ObjectId(companyId),
                         draftFlag:1, 
                         activeFlag:1
                         },
-                        {Name:1,courseImg:1,courseDetails:1}).limit(12).sort({_id:-1}).toArray();
+                        {Name:1,courseImg:1,courseDetails:1}).limit                        (12).sort({_id:-1}).toArray();
             break; 
            case 'Delivery':
              if( searchKey=='online'){
-                  courses= db.clnCourses.find({'Delivery.online':true,
+                  courses= db.clnCourses.find({'Delivery.online':                           true,
                            companyId:ObjectId(companyId),
                            draftFlag:1, 
                            activeFlag:1
                            },
-                           {Name:1,courseImg:1,courseDetails:1}).limit(12).sort({_id:-1}).toArray();
+                           {Name:1,courseImg:1,courseDetails:1}).                           limit(12).sort({_id:-1}).toArray();
              }else{
-                 courses= db.clnCourses.find({'Delivery.offline':true,
+                 courses= db.clnCourses.find({'Delivery.offline':                          true,
                           companyId:ObjectId(companyId),
                           draftFlag:1, 
                           activeFlag:1},
-                          {Name:1,courseImg:1,courseDetails:1}).limit(12).sort({_id:-1}).toArray();
+                          {Name:1,courseImg:1,courseDetails:1}).                          limit(12).sort({_id:-1}).toArray();
             } 
             break; 
   
@@ -72,7 +80,7 @@ if (searchKey !=''){
                       companyId:ObjectId(companyId),
                       draftFlag:1, 
                       activeFlag:1},
-                      {Name:1,courseImg:1,courseDetails:1}).limit(12).sort({_id:-1}).toArray(); 
+                      {Name:1,courseImg:1,courseDetails:1}).limit(12                      ).sort({_id:-1}).toArray(); 
          }    
  }else{
          if(type=='next'){
@@ -81,7 +89,7 @@ if (searchKey !=''){
                        draftFlag:1, 
                        activeFlag:1,   
                       _id:{$lt:ObjectId(lastId)}},
-                       {Name:1,courseImg:1,courseDetails:1}).limit(12).sort({_id:-1}).toArray(); 
+                       {Name:1,courseImg:1,courseDetails:1}).limit(                       12).sort({_id:-1}).toArray(); 
          }else if(type=='prev'){
               courses= db.clnCourses.find({
                        companyId:ObjectId(companyId),
@@ -89,7 +97,7 @@ if (searchKey !=''){
                        activeFlag:1,   
                        _id:{$gt:ObjectId(firstId)},
                       },
-                       {Name:1,courseImg:1,courseDetails:1}).limit(12).sort({_id:1}).toArray();  
+                       {Name:1,courseImg:1,courseDetails:1}).limit(                       12).sort({_id:1}).toArray();  
                  
         }else{
                courses= db.clnCourses.find({
@@ -97,7 +105,7 @@ if (searchKey !=''){
                        draftFlag:1, 
                        activeFlag:1   
                        },
-                       {Name:1,courseImg:1,courseDetails:1}).limit(12).sort({_id:-1}).toArray();
+                       {Name:1,courseImg:1,courseDetails:1}).limit(                        12).sort({_id:-1}).toArray();
        
       
         } 
@@ -114,9 +122,17 @@ if (searchKey !=''){
             firstItem=courses[0]._id;
           } 
     }else{   
-         
+         if(type=='prev'){
           firstItem=ObjectId(firstId);  
           lastItem =ObjectId(lastId);
+         }else if(type=='next'){
+           firstItem=ObjectId(lastId);  
+          lastItem =ObjectId(firstId);   
+         }else{
+             firstItem=[];
+             lastItem=[];
+         }   
     }
     return {courses:courses,lastId:lastItem,firstId:firstItem,courseLength:courses.length}
+
 }});

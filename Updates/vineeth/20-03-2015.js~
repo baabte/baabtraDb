@@ -458,7 +458,12 @@ db.clnUserCourseMapping.insert(UserCourseMappingData);
                   var Batchdata={_id:batchCourseId,batchId:ObjectId(data.batchId),batchName:data.batch.batchName,batchCode:data.batch.batchCode,batchMode:data.batch.batchMode,courseType:data.batch.courseType,startDate:data.batch.startDate,endDate:data.batch.endDate,startTime:data.batch.startTime,endTime:data.batch.endTime,seats:data.batch.seats,enrollmentBefore:data.batch.enrollmentAfter,enrollmentAfter:data.batch.enrollmentBefore,repeats:data.batch.repeats,courseType:data.batch.courseType,createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1,fkCompanyId:companyId,fkCourseId:courseId,users:userList,evaluator:data.evaluator}
                  db.clnCourseBatchMapping.insert(Batchdata); 
    }else{
+      var arr_users= db.clnCourseBatchMapping.find( 
+                 {fkCourseId:courseId,batchId:ObjectId(data.batchId), users: { $elemMatch: { fkUserRoleMappingId:UserRoleMappingDataId } } },
+                 {batchId:1} ).toArray();
+        if(arr_users.length==0){        
        db.clnCourseBatchMapping.update({batchId:ObjectId(data.batchId),fkCourseId:courseId,"enrollmentAfter":{$lt:lowerBound},"enrollmentBefore":{$gt:upperBound}},{$push:{users:userList[0]}})
+     }   
    }               
                 }else{
                   //data to clnUserCourseMapping
@@ -540,7 +545,7 @@ db.clnUserCourseMapping.insert(UserCourseMappingData);
     }); 
     var user={};
                    var userList=[]
-                   user.fkUserLoginId=userLoginDataId;
+                   user.fkUserLoginId=userId.fkUserLoginId;
                    user.fkUserRoleMappingId =roleMappingsId;
                    userList.push(user);
     if(count==0){  
@@ -557,7 +562,12 @@ db.clnUserCourseMapping.insert(UserCourseMappingData);
                   var Batchdata={_id:batchCourseId,batchId:ObjectId(data.batchId),batchName:data.batch.batchName,batchCode:data.batch.batchCode,batchMode:data.batch.batchMode,courseType:data.batch.courseType,startDate:data.batch.startDate,endDate:data.batch.endDate,startTime:data.batch.startTime,endTime:data.batch.endTime,seats:data.batch.seats,enrollmentBefore:data.batch.enrollmentAfter,enrollmentAfter:data.batch.enrollmentBefore,repeats:data.batch.repeats,courseType:data.batch.courseType,createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1,fkCompanyId:companyId,fkCourseId:courseId,users:userList,evaluator:data.evaluator}
                 db.clnCourseBatchMapping.insert(Batchdata); 
    }else{
+        var arr_users= db.clnCourseBatchMapping.find( 
+                 {fkCourseId:courseId,batchId:ObjectId(data.batchId), users: { $elemMatch: { fkUserRoleMappingId:UserRoleMappingDataId } } },
+                 {batchId:1} ).toArray();
+     if(arr_users.length==0){                     
        db.clnCourseBatchMapping.update({batchId:ObjectId(data.batchId),fkCourseId:courseId,"enrollmentAfter":{$lt:lowerBound},"enrollmentBefore":{$gt:upperBound}},{$push:{users:userList[0]}})
+   } 
    }    
           }else{//if batch is not added then insert element order and timeline into clnUserCourseMapping
             //data to clnUserCourseMapping
@@ -580,6 +590,7 @@ resultmsg='exsisting mentee new course';
 
 var result={result:resultmsg,evaluatorEmailLIst:evaluatorEmails};
 return result;
+	
 }});
 
 //---------------------------------------------------------------------------------------------------------------------
