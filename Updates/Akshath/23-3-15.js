@@ -345,6 +345,7 @@ db.system.js.save({
         for(var tlpoint in batchList.courseTimeline){
      	   for(var userCourseElementType in batchList.courseTimeline[tlpoint]){
                 if(typeof batchList.courseTimeline[tlpoint][userCourseElementType]=='object'){
+if(userCourseElementType!='Payment_checkpoint'){
                     for(var innerIndex in batchList.courseTimeline[tlpoint][userCourseElementType]){
                         if(batchList.courseTimeline[tlpoint][userCourseElementType][innerIndex].excludeList!=undefined){ //condition to check exclude list undefined
 
@@ -372,7 +373,7 @@ db.system.js.save({
                                                 }
                                           }
                                       }
-                                
+                                }
                             }
                         }
                     } //innerindex loop ends 
@@ -394,6 +395,7 @@ db.system.js.save({
         for(var Etlpoint in existingTimeLine.courseTimeline){
      	   for(var EuserCourseElementType in existingTimeLine.courseTimeline[Etlpoint]){
                 if(typeof existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+if(EuserCourseElementType!='Payment_checkpoint'){
                     for(var EinnerIndex in existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]){
                         if(existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].attendenceTrack==true){
                             
@@ -401,6 +403,7 @@ db.system.js.save({
                             
                         }
                     }
+}
                 }
              }
      	}

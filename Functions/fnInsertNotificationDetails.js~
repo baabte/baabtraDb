@@ -20,14 +20,16 @@ db.system.js.save({_id: "fnInsertNotificationDetails",
     if(userId.length != null){
         for(var userCount = 0;userCount < userId.length; userCount++){
         notificationInfo.userRoleMappingId = userId[userCount];
-        alreadyExists = db.clnNotification.findOne({userRoleMappingId:notificationInfo.userRoleMappingId});
-        if(alreadyExists == null){
-            db.clnNotification.insert(notificationInfo);
-        }
-        else{
-            db.clnNotification.update({userRoleMappingId:notificationInfo.userRoleMappingId},{$push:{notification:notificationInfo.notification[0]}});
+        if(rmId.str != userId[userCount].valueOf()){
+            alreadyExists = db.clnNotification.findOne({userRoleMappingId:notificationInfo.userRoleMappingId});
+            if(alreadyExists == null){
+                db.clnNotification.insert(notificationInfo);
+            }
+            else{
+                db.clnNotification.update({userRoleMappingId:notificationInfo.userRoleMappingId},{$push:{notification:notificationInfo.notification[0]}});
+            }
         }
       }
     }
-    return notificationInfo;
+    return "Success";
 }});
