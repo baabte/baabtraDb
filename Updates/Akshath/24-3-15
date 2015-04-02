@@ -66,12 +66,14 @@ db.system.js.save({
                 for(var Etlpoint in batchList.courseTimeline){
                     for(var EuserCourseElementType in batchList.courseTimeline[Etlpoint]){
                         if(typeof batchList.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+if(EuserCourseElementType!='Payment_checkpoint'){
                             for(var EinnerIndex in batchList.courseTimeline[Etlpoint][EuserCourseElementType]){
                                 if(batchList.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
                                     userCourseElementlist.push({tlpoint:Etlpoint, userCourseElementType:EuserCourseElementType,Name:batchList.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].elements[0].value, innerIndex:EinnerIndex, courseElement:batchList.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex],elementOrder:batchList.elementOrder});
                                    
                                 }
                             }
+}
                         }
                     }
                 }
@@ -81,12 +83,14 @@ db.system.js.save({
                 for(var Etlpoint in courseDetails.courseTimeline){
                     for(var EuserCourseElementType in courseDetails.courseTimeline[Etlpoint]){
                         if(typeof courseDetails.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+if(EuserCourseElementType!='Payment_checkpoint'){
                             for(var EinnerIndex in courseDetails.courseTimeline[Etlpoint][EuserCourseElementType]){
                                 if(courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
                                     userCourseElementlist.push({tlpoint:Etlpoint, userCourseElementType:EuserCourseElementType,Name:courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].elements[0].value, innerIndex:EinnerIndex, courseElement:courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex],elementOrder:courseDetails.elementOrder});
                                     
                                 }
                             }
+}
                         }
                     }
                 }
@@ -100,6 +104,7 @@ db.system.js.save({
             for(var Etlpoint in existingTimeLine.courseTimeline){
                for(var EuserCourseElementType in existingTimeLine.courseTimeline[Etlpoint]){
                     if(typeof existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+if(EuserCourseElementType!='Payment_checkpoint'){
                         for(var EinnerIndex in existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]){
                             if(existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
                                 temp.push(existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code)
@@ -107,6 +112,7 @@ db.system.js.save({
                                 
                             }
                         }
+}
                     }
                  }
             }
@@ -115,6 +121,7 @@ db.system.js.save({
             for(var tlpoint in batchList.courseTimeline){
                for(var userCourseElementType in batchList.courseTimeline[tlpoint]){
                     if(typeof batchList.courseTimeline[tlpoint][userCourseElementType]=='object'){
+if(userCourseElementType!='Payment_checkpoint'){
                         for(var innerIndex in batchList.courseTimeline[tlpoint][userCourseElementType]){
                             if(batchList.courseTimeline[tlpoint][userCourseElementType][innerIndex].code!=null){
                                
@@ -125,6 +132,7 @@ db.system.js.save({
                                   
                                 }
                             }
+}
                         }
                     }
                  }
@@ -137,6 +145,7 @@ db.system.js.save({
             for(var Etlpoint in existingTimeLine.courseTimeline){
                for(var EuserCourseElementType in existingTimeLine.courseTimeline[Etlpoint]){
                     if(typeof existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+if(EuserCourseElementType!='Payment_checkpoint'){
                         for(var EinnerIndex in existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]){
                             if(existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
                                 temp.push(existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code)
@@ -144,6 +153,7 @@ db.system.js.save({
                                 
                             }
                         }
+}
                     }
                  }
             }
@@ -152,6 +162,7 @@ db.system.js.save({
             for(var tlpoint in courseDetails.courseTimeline){
                for(var userCourseElementType in courseDetails.courseTimeline[tlpoint]){
                     if(typeof courseDetails.courseTimeline[tlpoint][userCourseElementType]=='object'){
+if(userCourseElementType!='Payment_checkpoint'){
                         for(var innerIndex in courseDetails.courseTimeline[tlpoint][userCourseElementType]){
                             if(courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex].code!=undefined){
                                //ss.push(courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex].code);
@@ -163,6 +174,7 @@ db.system.js.save({
                                         
                                 }
                             }
+}
                         }
                     }
                  }
@@ -439,12 +451,14 @@ db.system.js.save({
                for(var Etlpoint in courseDetails.courseTimeline){
                     for(var EuserCourseElementType in courseDetails.courseTimeline[Etlpoint]){
                         if(typeof courseDetails.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+if(EuserCourseElementType!='Payment_checkpoint'){
                             for(var EinnerIndex in courseDetails.courseTimeline[Etlpoint][EuserCourseElementType]){
                                 if(courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
                                     userCourseElementlist.push({tlpoint:Etlpoint, userCourseElementType:EuserCourseElementType,Name:courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].elements[0].value, innerIndex:EinnerIndex, courseElement:courseDetails.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex],elementOrder:courseDetails.elementOrder});
                                     
                                 }
                             }
+}
                         }
                     }
                 }
@@ -458,12 +472,14 @@ db.system.js.save({
             for(var Etlpoint in batchList.courseTimeline){
                for(var EuserCourseElementType in batchList.courseTimeline[Etlpoint]){
                     if(typeof batchList.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+if(EuserCourseElementType!='Payment_checkpoint'){
                         for(var EinnerIndex in batchList.courseTimeline[Etlpoint][EuserCourseElementType]){
                             if(batchList.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code!=undefined){
                                 temp.push(batchList.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].code)
                                 
                                 
                             }
+}
                         }
                     }
                  }
@@ -473,6 +489,7 @@ db.system.js.save({
             for(var tlpoint in courseDetails.courseTimeline){
                for(var userCourseElementType in courseDetails.courseTimeline[tlpoint]){
                     if(typeof courseDetails.courseTimeline[tlpoint][userCourseElementType]=='object'){
+			if(userCourseElementType!='Payment_checkpoint'){
                         for(var innerIndex in courseDetails.courseTimeline[tlpoint][userCourseElementType]){
                             if(courseDetails.courseTimeline[tlpoint][userCourseElementType][innerIndex].code!=null){
                                
@@ -483,6 +500,7 @@ db.system.js.save({
                                   
                                 }
                             }
+				}
                         }
                     }
                  }
@@ -568,4 +586,141 @@ db.system.js.save({
     return resultObj;
 }
 
+});
+
+
+db.system.js.save({
+    "_id" : "fnloadCoursesMaterials4menteeAtt",
+    "value" : function(userCourseId,urmId) {
+    var courseId=db.clnUserCourseMapping.findOne({_id:ObjectId(userCourseId),activeFlag:1}).fkCourseId;
+
+    urmId=ObjectId(urmId);
+    var courseDetails = db.clnCourses.findOne({_id:courseId,activeFlag:1},{courseImg:0});
+
+    currentCourseTimeLine=db.clnCourses.findOne({_id:courseId,activeFlag:1},{courseTimeline:1,_id:0});
+    existingTimeLine=db.clnUserCourseMapping.findOne({_id:ObjectId(userCourseId),activeFlag:1});
+    if(existingTimeLine.courseTimeline==undefined || existingTimeLine.courseTimeline==null){ //checking for timeline object exist or not. ie if the mentee under batch and he had not login still then his course timeline object will be undefined.
+        batchList=db.clnCourseBatchMapping.findOne({fkCourseId:courseId,users:{$elemMatch:{fkUserRoleMappingId:urmId}},activeFlag:1});
+        if(batchList.courseTimeline==undefined || batchList.courseTimeline==null){ //chceking for batch coursetimlenie object undefined or not
+                return 'notfound'; 
+            }
+         /*for loop to check the user is black listed which is done through exclude list under each material*/
+        for(var tlpoint in batchList.courseTimeline){
+     	   for(var userCourseElementType in batchList.courseTimeline[tlpoint]){
+                if(typeof batchList.courseTimeline[tlpoint][userCourseElementType]=='object'){
+if(userCourseElementType!='Payment_checkpoint'){
+                    for(var innerIndex in batchList.courseTimeline[tlpoint][userCourseElementType]){
+                        if(batchList.courseTimeline[tlpoint][userCourseElementType][innerIndex].excludeList!=undefined){ //condition to check exclude list undefined
+
+                            if(batchList.courseTimeline[tlpoint][userCourseElementType][innerIndex].excludeList.indexOf(urmId.valueOf())>-1){
+                                removedOrder=batchList.courseTimeline[tlpoint][userCourseElementType][innerIndex].order * 1; //takes the element order which to delete
+                                batchList.courseTimeline[tlpoint][userCourseElementType].splice(innerIndex,1);
+                                if(batchList.courseTimeline[tlpoint][userCourseElementType].length==0){
+                                    delete batchList.courseTimeline[tlpoint][userCourseElementType];
+                                }
+                                
+                                        //loop to delete the element order from the object.
+                                        for (order in batchList.elementOrder) {
+                                        order = order * 1;
+                                        if (order >= removedOrder) {
+                                                if (batchList.elementOrder[order]) {
+                                                    var keyArr = batchList.elementOrder[order].split(".");
+                                                    var tmpTlPoint = keyArr[0];
+                                                    var elementName = keyArr[1];
+                                                    var innerIndex = keyArr[2];
+                                                    if (removedOrder != order) {
+                                                        batchList.courseTimeline[tmpTlPoint][elementName][innerIndex].order = order - 1;
+                                                        batchList.elementOrder[order - 1] = batchList.elementOrder[order];
+                                                    }
+                                                    delete batchList.elementOrder[order];
+                                                }
+                                          }
+                                      }
+                                }
+                            }
+                        }
+                    } //innerindex loop ends 
+                } //condition to check type ends.
+             }//element order ends.
+     	} //tlpoint end.
+
+            
+            
+       db.clnUserCourseMapping.update({_id:ObjectId(userCourseId),activeFlag:1},{$set:{'courseTimeline':batchList.courseTimeline,'elementOrder':batchList.elementOrder}}); //updating the user course mapping by including courseTimeline object and element order
+        existingTimeLine=db.clnUserCourseMapping.findOne({_id:ObjectId(userCourseId),activeFlag:1});
+        
+    }
+ 
+    
+   userCourseElementlist=[];
+    temp={};
+        //looping through the coursetimeline of a user
+        for(var Etlpoint in existingTimeLine.courseTimeline){
+     	   for(var EuserCourseElementType in existingTimeLine.courseTimeline[Etlpoint]){
+                if(typeof existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+if(EuserCourseElementType!='Payment_checkpoint'){
+                    for(var EinnerIndex in existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType]){
+                        if(existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].attendenceTrack==true){
+                            
+                        userCourseElementlist.push({tlpoint:Etlpoint, userCourseElementType:EuserCourseElementType,Name:existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].elements[0].value, innerIndex:EinnerIndex, courseElement:existingTimeLine.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex]});
+                            
+                        }
+                    }
+}
+                }
+             }
+     	}
+        
+
+       
+    return {userCourseObj:existingTimeLine,userCourseElementlist:userCourseElementlist};
+    
+}
+});
+
+
+db.system.js.save({
+    "_id" : "fnloadCourseMaterials4batchAtt",
+    "value" : function(batchMappingId) {
+    batchMappingId=ObjectId(batchMappingId);
+   
+    batchCourseObj=db.clnCourseBatchMapping.findOne({_id:batchMappingId,activeFlag:1});
+    if(batchCourseObj.courseTimeline==undefined){ //checking for the timeline object exist or not
+        course=db.clnCourses.findOne({_id:batchCourseObj.fkCourseId,activeFlag:1},{courseTimeline:1,_id:0});
+        //db.clnCourseBatchMapping.update({_id:batchMappingId,activeFlag:1},{$set:{'courseTimeline':course.courseTimeline,'elementOrder':course.elementOrder}});
+        return {result:'notfound',courseBatchObj:batchCourseObj};
+    }
+    //getting the batch mentees
+     var urmIds=db.clnCourseBatchMapping.distinct("users.fkUserRoleMappingId",{_id:batchMappingId,activeFlag:1}); 
+     var userCourseList=db.clnUserCourseMapping.find({fkCourseId:batchCourseObj.fkCourseId,fkUserRoleMappingId:{$in:urmIds},activeFlag:1},{courseImg:0}).toArray(); //
+    var count=0;
+    while(userCourseList.length>count){
+        userCourseList[count].profile={};
+        userCourseList[count].profile=db.clnUserDetails.findOne({fkUserLoginId:userCourseList[count].fkUserLoginId,activeFlag:1},{profile:1,_id:0});
+        //userCourseList[count].userName={};
+        userCourseList[count].userName=db.clnUserLogin.findOne({_id:userCourseList[count].fkUserLoginId,activeFlag:1},{userName:1,_id:0})
+        count++;
+    }
+        userCourseElementlist=[];
+        //looping through the coursetimeline of a user
+        for(var Etlpoint in batchCourseObj.courseTimeline){
+     	   for(var EuserCourseElementType in batchCourseObj.courseTimeline[Etlpoint]){
+                if(typeof batchCourseObj.courseTimeline[Etlpoint][EuserCourseElementType]=='object'){
+if(EuserCourseElementType!='Payment_checkpoint'){
+                    for(var EinnerIndex in batchCourseObj.courseTimeline[Etlpoint][EuserCourseElementType]){
+                        if(batchCourseObj.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].attendenceTrack==true){
+                            
+                        userCourseElementlist.push({tlpoint:Etlpoint, userCourseElementType:EuserCourseElementType,Name:batchCourseObj.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex].elements[0].value, innerIndex:EinnerIndex, courseElement:batchCourseObj.courseTimeline[Etlpoint][EuserCourseElementType][EinnerIndex],userList:userCourseList});
+                            
+                        }
+                    }
+}
+                }
+             }
+     	}
+
+    //var courseObj=db.clnBatchCourseMapping.findOne({batchId:ObjectId(batchId),activeFlag:1});
+
+    return {result:'found',courseBatchObj:batchCourseObj,userCourseElementlist:userCourseElementlist};
+}
 });
