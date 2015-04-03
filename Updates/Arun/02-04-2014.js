@@ -1,14 +1,4 @@
-/*
-Modified by :Vineeth C
-Created On : 21/02/2015
-Purpose: For adding an extra argument for course filtering while course search
-*/
-
-/*
-Modified by :Vineeth C
-Created On : 28/02/2015
-Purpose:To use fulltextSearch while searching courses
-*/
+//update with reseller provider course fetch
 
 db.system.js.save({_id: "fun_load_publishedCourses",
 		value: function (companyId,searchKey,lastId,type,firstId) 
@@ -168,4 +158,37 @@ if(providerCourses!=null){
     }
     return {courses:courses,lastId:lastItem,firstId:firstItem,courseLength:courses.length};
 
+}});
+
+
+
+
+// with the reseller coursese added
+//fnfetchCourseList
+db.system.js.save({_id: "fnfetchCourseList",
+      value: function (courseFetchData) {
+    var companyId=ObjectId(courseFetchData.fkcompanyId);
+
+    var providerArray=db.clnReseller.distinct('providers.companyId',{fkCompanyId:companyId});
+  if(providerArray==null) {
+  providerArray=[];
+  }
+  providerArray.push(companyId);
+
+  var providerCourses=db.clnReseller.findOne({fkCompanyId:companyId},{_id:0,'providers.courses':1});
+
+  var coursesArray=db.clnCourses.distinct('_id',{companyId:companyId});
+  
+  if(providerCourses!=null){
+      for(var index in providerCourses.providers){            
+        providerCourses.providers[index].courses
+                coursesArray= providerCourses.providers[index].courses.concat(coursesArray);
+              
+      }
+    }
+
+
+    var courselist = db.clnCourses.find({_id:{$in:coursesArray},
+                          companyId:{$in:providerArray},draftFlag:1, activeFlag:1}, {_id:1, Name:1}).toArray();
+    return courselist;
 }});
