@@ -1,4 +1,6 @@
 // to register a user 
+//modified with assignment mode of course material
+
 db.system.js.save({_id: "fnRegisterUser",
                   value:function (data){
   if(isNaN(data.role.roleId)){
