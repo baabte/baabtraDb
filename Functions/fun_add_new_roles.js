@@ -29,14 +29,30 @@ db.system.js.save({_id: "fun_add_new_roles",
 					'activeFlag': 1,
 					'canView': true,
 					'menuIcon': "fa-user",
-					'createdDate': "Tue Apr 07 2015 10:23:33 GMT+0530 (IST)",
-					'updatedDate': "Tue Apr 07 2015 10:23:33 GMT+0530 (IST)",
+					'createdDate': Date(),
+					'updatedDate': Date(),
 					'crmId': "",
 					'urmId': ""
 					}
 				fnInsertMenu(menu);	
 
+				menu.fkMenuId=menu._id;
+				menu.childMenuStructure=[];
+				delete menu._id;
+				delete menu.crmId;
+				delete menu.urmId;
+				delete createdDate;
+				delete updatedDate;
+
+			adminRoleMappingId=	db.clnUserRoleMapping.findOne({fkCompanyId :data.companyId,fkRoleId:2},{_id:1});
+
+			userMenu=db.clnUserMenuMapping.findOne({"fkUserRoleMappingId" : adminRoleMappingId._id});
+
+			userMenu.menuStructure[0].regionMenuStructure.push(menu);
+
+			db.clnUserMenuMapping.save(userMenu);
+
 			}
 
 			
-}});
+}})
