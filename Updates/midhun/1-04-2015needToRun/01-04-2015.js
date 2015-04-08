@@ -11,54 +11,47 @@ db.system.js.save({_id: "fnchangelanguage",
 
 //fnGetCode funtion used for create unigue codes
 db.system.js.save({_id: "fnGetCode",
-      value: function (data) { 
+      value:function (data) {
+   
+    var codeData = {};
+    var itemList = db.clnGlobalSettings.findOne({companyId:data.companyId}, {itemCodes:1, _id:0});   
+    if (itemList) {
+        itemList = itemList.itemCodes;
+        for (var i = 0; i < itemList.length; i++) {
+            for (j = 0; j < itemList[i].items.length; j++) {
+                if (itemList[i].items[j] == data.item) {
+                    if (itemList[i].currentRange) {
+                        codeData.prefix = itemList[i].prefix;
+                        codeData.IncPattern = itemList[i].IncPattern;
+                        codeData.range = ++itemList[i].currentRange;
+                        db.clnGlobalSettings.update({companyId:data.companyId}, {$set:{itemCodes:itemList}});
+                    } else {
+                        if (itemList[i].startRange) {
+                            codeData.prefix = itemList[i].prefix;
+                            codeData.IncPattern = itemList[i].IncPattern;
+                            codeData.range = itemList[i].startRange;
+                            itemList[i].currentRange = itemList[i].startRange;
+                            db.clnGlobalSettings.update({companyId:data.companyId}, {$set:{itemCodes:itemList}});
+                        } else {
+                            codeData.prefix = itemList[i].prefix;
+                            codeData.IncPattern = itemList[i].IncPattern;
+                            codeData.range = 1;
+                            itemList[i].startRange = 1;
+                            itemList[i].currentRange = 1;
+                            db.clnGlobalSettings.update({companyId:data.companyId}, {$set:{itemCodes:itemList}});
+                        }
+                    }
+                }
+            }
+        }
+        return codeData.prefix.concat(fngetIncrementalCode(codeData.range, codeData.IncPattern));
+    } else {
+        return "no Patterns found";
+    }
+}
 		
-		var codeData={};
-		var itemList=db.clnGlobalSettings.findOne({"companyId" : data.comapanyId},{itemCodes:1,_id:0})
-		if(itemList){
-                    itemList=itemList.itemCodes;
-                    for(var i=0;i<itemList.length;i++)
-		{
-		    for(j=0;j<itemList[i].items.length;j++)
-		        {
-		            if(itemList[i].items[j]==data.item)
-		                {
-
-		                        if(itemList[i].currentRange)
-		                            {
-		                                      codeData.prefix=itemList[i].prefix;
-		                                      codeData.IncPattern=itemList[i].IncPattern;
-		                                      codeData.range=++itemList[i].currentRange;
-		                                      db.clnGlobalSettings.update({"companyId" : data.comapanyId},{$set:{itemCodes:itemList}});
-		                                }
-		                            else{
-		                                    if(itemList[i].startRange)
-		                                        {
-		                                            codeData.prefix=itemList[i].prefix;
-		                                            codeData.IncPattern=itemList[i].IncPattern;
-		                                            codeData.range=itemList[i].startRange;
-		                                            itemList[i].currentRange=itemList[i].startRange;
-		                                            db.clnGlobalSettings.update({"companyId" : data.comapanyId},{$set:{itemCodes:itemList}});
-		                                            }
-		                                            else{
-		                                                codeData.prefix=itemList[i].prefix;
-		                                                codeData.IncPattern=itemList[i].IncPattern;
-		                                                codeData.range=1;
-		                                                itemList[i].startRange=1;
-		                                                itemList[i].currentRange=1;
-		                                                db.clnGlobalSettings.update({"companyId" : data.comapanyId},{$set:{itemCodes:itemList}});
-		                                             }
-		                                }
-		                    }
-		            }
-		}
-		return codeData.prefix.concat(fngetIncrementalCode(codeData.range,codeData.IncPattern));
-         }
-        else{
-                    return "no Patterns found";
-         }
 		
-}}); 		
+}); 		
 
 
 
