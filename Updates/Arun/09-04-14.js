@@ -57,4 +57,4 @@ db.system.js.save({_id: "fun_add_new_roles",
 			}
 
 			
-}})
+}});
