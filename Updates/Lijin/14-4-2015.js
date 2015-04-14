@@ -256,3 +256,12 @@ db.system.js.save(
     return result;
 }
 });
+
+
+// script for updating all course batch mapping
+var mappings=db.clnCourseBatchMapping.find().toArray();
+for(key in mappings){
+    var course=db.clnCourses.findOne({_id:mappings[key].fkCourseId});
+    mappings[key].selectedDuration=course.selectedDuration
+    db.clnCourseBatchMapping.save(mappings[key]);
+}

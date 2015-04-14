@@ -19,7 +19,6 @@ value:function(userLoginId,courseMappingId,direction) {
     	if(course.lastViewedOrder){
     		lastViewedOrder=course.lastViewedOrder;
     	}
-
     	switch(direction){
     		case '': lastViewedOrder=lastViewedOrder;
     				break;
@@ -36,8 +35,7 @@ value:function(userLoginId,courseMappingId,direction) {
             var elemType=elemArray[1];
             var innerIndex=elemArray[2];
             
-            element=course.courseTimeline[tlPoint][elemType][innerIndex];
-            
+            element=course.courseTimeline[tlPoint][elemType][innerIndex];  
         }
         else{
           lastElement=true;

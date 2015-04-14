@@ -56,7 +56,7 @@ db.system.js.save({
    
     userCourseElementlist=[];
     if(existingTimeLine.courseTimeline==undefined){
-        if(existingTimeLine.fkCourseBatchMappingId!=undefined){
+        if(existingTimeLine.batchCourseMappingId!=undefined){
             batchList=db.clnCourseBatchMapping.findOne({fkCourseId:courseId,users:{$elemMatch:{fkUserRoleMappingId:urmId}},activeFlag:1});
             if(batchList.courseTimeline==undefined){
                 
@@ -97,7 +97,7 @@ if(EuserCourseElementType!='Payment_checkpoint'){
         }
     }
     else{ //condition for timeline object existance
-        if(existingTimeLine.fkCourseBatchMappingId!=undefined){
+        if(existingTimeLine.batchCourseMappingId!=undefined){
             batchList=db.clnCourseBatchMapping.findOne({fkCourseId:courseId,users:{$elemMatch:{fkUserRoleMappingId:urmId}},activeFlag:1});
             temp=[];
             //looping through the coursetimeline of a user
