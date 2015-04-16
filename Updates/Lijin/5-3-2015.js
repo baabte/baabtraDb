@@ -14,8 +14,6 @@ value:function (courseId, courseElement) {
     var elements = courseElement[courseElement.key].elements;
     var innerIndex = course[0].courseTimeline[tlPoint][elemType].length - 1;
     var order = -1;
-	
-
 	for(tmpOrder in course[0].elementOrder){
 		var orderKeys=course[0].elementOrder[tmpOrder].split('.');
 		if(orderKeys[0]==tlPoint){
@@ -29,8 +27,6 @@ value:function (courseId, courseElement) {
      if(curOrder>=order){
      				 var elemToCopy=previousElem;
      				 previousElem=course[0].elementOrder[curOrder+1];
-                     
-                     
                       if(typeof elemToCopy != 'undefined'){
                       	 var keyArr=elemToCopy.split('.');
 	                     var tmpTlPoint=keyArr[0];
@@ -44,7 +40,6 @@ value:function (courseId, courseElement) {
     if (!course[0].elementOrder) {
         course[0].elementOrder = {};
     }
-
     var totalMark = 0;
     var looper = 0;
     var currentMark = 0;
@@ -121,15 +116,11 @@ value:function(courseId, courseElemName, tlPoint, index, rmId) {
                          course.courseTimeline[tmpTlPoint][elementName][innerIndex].order=order-1;
                          course.elementOrder[order-1]=course.elementOrder[order];    
                       }
-                      
                       delete course.elementOrder[order];
                   }
               }
      }    
     }
-    
-    
-    
         db.clnCourses.save(course);
     return "courseTimeline."+tlPoint;}});
 //
@@ -162,8 +153,6 @@ value:function(courseId, courseElemName, tlPoint,elemObjToSave, rmId) {
         }
      }    
     }
-
-
     for(looper=0;looper<courseObj.elements.length;looper++){
         if(courseObj.elements[looper].type=='question-viewer' || courseObj.elements[looper].type == "question-group-viewer"){
             newTotalMark=newTotalMark+courseObj.elements[looper].value.mark.totalMark;
@@ -180,7 +169,6 @@ value:function(courseId, courseElemName, tlPoint,elemObjToSave, rmId) {
      course[0].totalMark=totalMark+(newTotalMark-oldTotalMark);
      course[0].courseTimeline[tlPoint].totalMark=tlPointMark+(newTotalMark-oldTotalMark);
      db.clnCourses.save(course[0]);
-        
 return course}});
 
 //
