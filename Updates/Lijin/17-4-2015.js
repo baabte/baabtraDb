@@ -1,17 +1,3 @@
-/*
-Modified by:Lijin
-Date:19-2-2015
-purpose: Added feature for calculating total mark of the course
-
-Modified By: Lijin
-Date: 05-03-2015
-purpose: For retaining order of element on updation
-
-Modified By: Lijin
-Date: 17-04-2015
-purpose: bug fix in element order
-*/
-
 db.system.js.save({
     "_id" : "fnAddCourseTimelineElement",
     "value" : function (courseId, courseElement) {
