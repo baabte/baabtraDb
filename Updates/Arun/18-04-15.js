@@ -1,17 +1,3 @@
-// to register a user 
-/*
-Edited by: Lijin
-Date:14-4-2015
-Change:Added selected duration into course branch mapping
-*/
-
-/*
-Edited by: Arun
-Date:18-4-2015
-Change:Added material assignment it batch and cascade mode activated 
-*/
-
-
 db.system.js.save(
 {
     "_id" : "fnRegisterUser",
@@ -325,3 +311,14 @@ db.system.js.save(
 });
 
 
+
+
+db.system.js.save({_id:'fnExistingMaterialsFetch',
+value:function(data) {
+  var companyId=ObjectId(data.companyId);
+
+  var ExistingMaterials=db.clnCourses.find({companyId:companyId,activeFlag:1,courseTimeline:{$exists:1}},{courseTimeline:1,Name:1,Duration:1}).toArray();
+
+    return ExistingMaterials;
+
+}});
