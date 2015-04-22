@@ -88,3 +88,97 @@ db.system.js.save({
     return order;
 }
 })
+
+
+
+// script for updating current courses for course element order
+
+//===============================
+
+var course=db.clnCourses.find().toArray()
+var totalCourse=course.length;
+var looper=0;
+var fn=function(a,b){print(a+':'+b)};
+for(looper;looper<totalCourse;looper++){
+    delete course[looper].elementOrder;
+//var tlPointList=Object.keys(course[looper].courseTimeline).;
+    //print(tlPointList);
+            for(tlPoint in course[looper].courseTimeline){
+        
+        for(elemType in course[looper].courseTimeline[tlPoint]){
+            
+            if(typeof course[looper].courseTimeline[tlPoint][elemType] == 'object'){
+
+                for(index in course[looper].courseTimeline[tlPoint][elemType]){
+                
+    var order = 0;
+    var gotOrderFlag = false;
+    var lastTraversedOrder = 0;
+
+    if (!course[looper].elementOrder) {
+        course[looper].elementOrder = {};
+    }
+    else{
+        for(tmpOrder in course[looper].elementOrder){
+          var orderKeys = course[looper].elementOrder[tmpOrder].split(".");
+              orderKeys[0] = parseInt(orderKeys[0]);
+              tlPoint = parseInt(tlPoint);
+              tmpOrder=parseInt(tmpOrder);
+            if(orderKeys[0]==tlPoint){
+                gotOrderFlag=true;
+                order=tmpOrder+1>order?tmpOrder+1:order;
+            }
+
+            if((!gotOrderFlag)&&orderKeys[0]<tlPoint){
+                order=tmpOrder+1>order?tmpOrder+1:order;
+            }
+        }   
+    }
+    var previousElem='';
+    var traversed=false;
+    if(course[looper].elementOrder[order]){
+        previousElem=course[looper].elementOrder[order];
+    
+    
+        for (curOrder in course[looper].elementOrder) {
+            traversed=true;
+            curOrder = parseInt(curOrder);
+            if(curOrder>=order){
+                var elemToCopy = previousElem;
+                var traversingOrder=parseInt(curOrder + 1);
+                    previousElem=course[looper].elementOrder[traversingOrder];
+                if (typeof elemToCopy != "undefined") {
+                    var keyArr = elemToCopy.split(".");
+                    var tmpTlPoint = keyArr[0];
+                    var elementName = keyArr[1];
+                    var elemIndex = keyArr[2];
+                    course[looper].courseTimeline[tmpTlPoint][elementName][elemIndex].order = traversingOrder;
+                    course[looper].elementOrder[traversingOrder] = elemToCopy;
+                }
+            }
+        }
+    }
+
+        course[looper].courseTimeline[tlPoint][elemType][index].order = order;
+        course[looper].elementOrder[order] = tlPoint + "." + elemType + "." + index;
+                }
+                
+                
+                 
+            }
+        }
+    }
+    db.clnCourses.save(course[looper]);
+   print(course[looper]) 
+}
+
+
+
+//===============================
+
+
+//===============================
+
+
+//===============================
+
