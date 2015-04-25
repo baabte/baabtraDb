@@ -11,6 +11,10 @@ Modified By: Lijin
 Date: 05-03-2015
 purpose: For retaining order of element on updation
 
+Modified By: Arun
+Date: 21-04-2015
+purpose: bug fix in evaluator
+
 */
 
 db.system.js.save({_id:'fnEditCourseElement',
@@ -19,7 +23,10 @@ value:function (courseId, courseElemName, tlPoint, elemObjToSave, rmId) {
     var innerIndex = elemObjToSave.index;
     var courseObj = elemObjToSave.element;
     
+<<<<<<< HEAD
     
+=======
+>>>>>>> 0ecd69a1ce6b8f90af579098aefdf3b60824ea85
     var key = "courseTimeline." + tlPoint + "." + courseElemName;
     var obj = {};
     obj[key] = courseObj;
@@ -35,20 +42,32 @@ value:function (courseId, courseElemName, tlPoint, elemObjToSave, rmId) {
     }
     for (index in oldElements) {
         for (looper = 0; looper < oldElements[index].elements.length; looper++) {
+<<<<<<< HEAD
             if(oldElements[index].elements[looper] != null){
                 if (oldElements[index].elements[looper].type == "question-viewer" ||
                     oldElements[index].elements[looper].type == "question-group-viewer") {
                     oldTotalMark = oldTotalMark + oldElements[index].elements[looper].value.mark.totalMark;
                 }
+=======
+            if (oldElements[index].elements[looper].type == "question-viewer" ||
+                oldElements[index].elements[looper].type == "question-group-viewer") {
+                oldTotalMark = oldTotalMark + oldElements[index].elements[looper].value.mark.totalMark;
+>>>>>>> 0ecd69a1ce6b8f90af579098aefdf3b60824ea85
             }
         }
     }
     for (looper = 0; looper < courseObj.elements.length; looper++) {
+<<<<<<< HEAD
         if(oldElements[index].elements[looper] != null){
             if (courseObj.elements[looper].type == "question-viewer" ||
                 courseObj.elements[looper].type == "question-group-viewer") {
                 newTotalMark = newTotalMark + courseObj.elements[looper].value.mark.totalMark;
             }
+=======
+        if (courseObj.elements[looper].type == "question-viewer" ||
+            courseObj.elements[looper].type == "question-group-viewer") {
+            newTotalMark = newTotalMark + courseObj.elements[looper].value.mark.totalMark;
+>>>>>>> 0ecd69a1ce6b8f90af579098aefdf3b60824ea85
         }
     }
     var tlPointMark = 0;
@@ -61,4 +80,8 @@ value:function (courseId, courseElemName, tlPoint, elemObjToSave, rmId) {
     course[0].courseTimeline[tlPoint].totalMark = tlPointMark + (newTotalMark - oldTotalMark);
     db.clnCourses.save(course[0]);
     return course;
+<<<<<<< HEAD
 }});
+=======
+}});
+>>>>>>> 0ecd69a1ce6b8f90af579098aefdf3b60824ea85

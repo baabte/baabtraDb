@@ -1,22 +1,3 @@
-// to register a user 
-/*
-Edited by: Lijin
-Date:14-4-2015
-Change:Added selected duration into course branch mapping
-*/
-
-/*
-Edited by: Arun
-Date:18-4-2015
-Change:Added material assignment it batch and cascade mode activated 
-*/
-
-/*
-Edited by: Arun
-Date:24-4-2015
-Change:username added to userdetails
-*/
-
 db.system.js.save(
 {
     "_id" : "fnRegisterUser",
@@ -92,7 +73,7 @@ db.system.js.save(
         db.clnUserLogin.insert(UserLoginData);
         delete mandatoryData.eMail;
         delete mandatoryData.password;
-        UserDetails = {fkUserLoginId:userLoginDataId,userName:UserLoginData.userName,profile:mandatoryData, createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, approvedFlag:0, activeFlag:1};
+        UserDetails = {fkUserLoginId:userLoginDataId, profile:mandatoryData, createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, approvedFlag:0, activeFlag:1};
         db.clnUserDetails.insert(UserDetails);
         usermenuData = {fkUserRoleMappingId:UserRoleMappingDataId, menuStructure:menu.menuStructure, createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1};
         db.clnUserMenuMapping.insert(usermenuData);
@@ -149,36 +130,7 @@ db.system.js.save(
                                 evaluatorEmails.push(evaluatorList);
                             }
                         }
-                        if (materialAssignment) {
-                        if (materialAssignment == "automatic") {
-                             var Batchdata = {_id:batchCourseId, batchId:ObjectId(data.batchId), batchName:data.batch.batchName, batchCode:data.batch.batchCode, batchMode:data.batch.batchMode, courseType:data.batch.courseType, startDate:data.batch.startDate, endDate:data.batch.endDate, startTime:data.batch.startTime, endTime:data.batch.endTime, seats:data.batch.seats, enrollmentBefore:data.batch.enrollmentAfter, enrollmentAfter:data.batch.enrollmentBefore, repeats:data.batch.repeats, courseType:data.batch.courseType,materialAssignment:data.batch.materialAssignment ,createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, fkCompanyId:companyId, fkCourseId:courseId,selectedDuration:course.selectedDuration,courseTimeline:course.courseTimeline, elementOrder:course.elementOrder, users:userList, evaluator:data.evaluator};
-                        } else if (materialAssignment == "cascade") {
-                            var elementOrder = course.elementOrder[0];
-                            var keyArray = elementOrder.split(".");
-                            var tlpoint = keyArray[0];
-                            var courseTimeline={};
-                            courseTimeline[tlpoint]=course.courseTimeline[tlpoint]
-                            if(courseTimeline[tlpoint].totalMark){
-                                var totalMark=courseTimeline[tlpoint].totalMark;
-                            }else{
-                                 var totalMark=0;
-                            }
-                            var newElementOrder={};
-                            
-                            for(var key in course.elementOrder){
-                                 var orderArray = course.elementOrder[key].split(".");
-                                if(orderArray[0]==tlpoint){
-                                    newElementOrder[key]=course.elementOrder[key];                                
-                                }                                
-                            }
-                             var Batchdata = {_id:batchCourseId, batchId:ObjectId(data.batchId), batchName:data.batch.batchName, batchCode:data.batch.batchCode, batchMode:data.batch.batchMode, courseType:data.batch.courseType, startDate:data.batch.startDate, endDate:data.batch.endDate, startTime:data.batch.startTime, endTime:data.batch.endTime, seats:data.batch.seats, enrollmentBefore:data.batch.enrollmentAfter, enrollmentAfter:data.batch.enrollmentBefore, repeats:data.batch.repeats, courseType:data.batch.courseType,materialAssignment:data.batch.materialAssignment ,createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, fkCompanyId:companyId, fkCourseId:courseId,selectedDuration:course.selectedDuration,courseTimeline:courseTimeline, elementOrder:newElementOrder, users:userList, evaluator:data.evaluator};
-                        } else if (materialAssignment == "manual") {
-                            var Batchdata = {_id:batchCourseId, batchId:ObjectId(data.batchId), batchName:data.batch.batchName, batchCode:data.batch.batchCode, batchMode:data.batch.batchMode, courseType:data.batch.courseType, startDate:data.batch.startDate, endDate:data.batch.endDate, startTime:data.batch.startTime, endTime:data.batch.endTime, seats:data.batch.seats, enrollmentBefore:data.batch.enrollmentAfter, enrollmentAfter:data.batch.enrollmentBefore, repeats:data.batch.repeats, courseType:data.batch.courseType,materialAssignment:data.batch.materialAssignment ,createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, fkCompanyId:companyId, fkCourseId:courseId,selectedDuration:course.selectedDuration, users:userList, evaluator:data.evaluator};
-                        }
-                    } else {
-                         var Batchdata = {_id:batchCourseId, batchId:ObjectId(data.batchId), batchName:data.batch.batchName, batchCode:data.batch.batchCode, batchMode:data.batch.batchMode, courseType:data.batch.courseType, startDate:data.batch.startDate, endDate:data.batch.endDate, startTime:data.batch.startTime, endTime:data.batch.endTime, seats:data.batch.seats, enrollmentBefore:data.batch.enrollmentAfter, enrollmentAfter:data.batch.enrollmentBefore, repeats:data.batch.repeats, courseType:data.batch.courseType,materialAssignment:data.batch.materialAssignment ,createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, fkCompanyId:companyId, fkCourseId:courseId,selectedDuration:course.selectedDuration, users:userList, evaluator:data.evaluator};                                            
-                    }
-                       
+                        var Batchdata = {_id:batchCourseId, batchId:ObjectId(data.batchId), batchName:data.batch.batchName, batchCode:data.batch.batchCode, batchMode:data.batch.batchMode, courseType:data.batch.courseType, startDate:data.batch.startDate, endDate:data.batch.endDate, startTime:data.batch.startTime, endTime:data.batch.endTime, seats:data.batch.seats, enrollmentBefore:data.batch.enrollmentAfter, enrollmentAfter:data.batch.enrollmentBefore, repeats:data.batch.repeats, courseType:data.batch.courseType,materialAssignment:data.batch.materialAssignment ,createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, fkCompanyId:companyId, fkCourseId:courseId,selectedDuration:course.selectedDuration, users:userList, evaluator:data.evaluator};
                         db.clnCourseBatchMapping.insert(Batchdata);
                     } else {
                         var arr_users = db.clnCourseBatchMapping.find({fkCourseId:courseId, batchId:ObjectId(data.batchId), users:{$elemMatch:{fkUserRoleMappingId:UserRoleMappingDataId}}}, {batchId:1}).toArray();
@@ -308,38 +260,7 @@ db.system.js.save(
                             evaluatorEmails.push(evaluatorList);
                         }
                     }
-                    if (materialAssignment) {  //material assignment method
-                    if (materialAssignment == "automatic") {
-                        var Batchdata = {_id:batchCourseId, batchId:ObjectId(data.batchId), batchName:data.batch.batchName, batchCode:data.batch.batchCode, batchMode:data.batch.batchMode, courseType:data.batch.courseType, startDate:data.batch.startDate, endDate:data.batch.endDate, startTime:data.batch.startTime, endTime:data.batch.endTime, seats:data.batch.seats, enrollmentBefore:data.batch.enrollmentAfter, enrollmentAfter:data.batch.enrollmentBefore, repeats:data.batch.repeats, courseType:data.batch.courseType, materialAssignment:data.batch.materialAssignment, createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, fkCompanyId:companyId, fkCourseId:courseId,selectedDuration:course.selectedDuration, courseTimeline:course.courseTimeline, elementOrder:course.elementOrder, users:userList, evaluator:data.evaluator};
-                    } else if (materialAssignment == "cascade") {
-                        var elementOrder = course.elementOrder[0];
-                            var keyArray = elementOrder.split(".");
-                            var tlpoint = keyArray[0];
-                            var courseTimeline={};
-                            courseTimeline[tlpoint]=course.courseTimeline[tlpoint]
-                            if(courseTimeline[tlpoint].totalMark){
-                                var totalMark=courseTimeline[tlpoint].totalMark;
-                            }else{
-                                 var totalMark=0;
-                            }
-                            var newElementOrder={};
-                            
-                            for(var key in course.elementOrder){
-                                 var orderArray = course.elementOrder[key].split(".");
-                                if(orderArray[0]==tlpoint){
-                                    newElementOrder[key]=course.elementOrder[key];                                
-                                }                                
-                            }
-                        var Batchdata = {_id:batchCourseId, batchId:ObjectId(data.batchId), batchName:data.batch.batchName, batchCode:data.batch.batchCode, batchMode:data.batch.batchMode, courseType:data.batch.courseType, startDate:data.batch.startDate, endDate:data.batch.endDate, startTime:data.batch.startTime, endTime:data.batch.endTime, seats:data.batch.seats, enrollmentBefore:data.batch.enrollmentAfter, enrollmentAfter:data.batch.enrollmentBefore, repeats:data.batch.repeats, courseType:data.batch.courseType, materialAssignment:data.batch.materialAssignment, createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, fkCompanyId:companyId, fkCourseId:courseId,selectedDuration:course.selectedDuration,courseTimeline:courseTimeline, elementOrder:newElementOrder,users:userList, evaluator:data.evaluator};
-                        
-                    } else if (materialAssignment == "manual") {
-                       var Batchdata = {_id:batchCourseId, batchId:ObjectId(data.batchId), batchName:data.batch.batchName, batchCode:data.batch.batchCode, batchMode:data.batch.batchMode, courseType:data.batch.courseType, startDate:data.batch.startDate, endDate:data.batch.endDate, startTime:data.batch.startTime, endTime:data.batch.endTime, seats:data.batch.seats, enrollmentBefore:data.batch.enrollmentAfter, enrollmentAfter:data.batch.enrollmentBefore, repeats:data.batch.repeats, courseType:data.batch.courseType, materialAssignment:data.batch.materialAssignment, createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, fkCompanyId:companyId, fkCourseId:courseId,selectedDuration:course.selectedDuration, users:userList, evaluator:data.evaluator};
-                    }
-                } else {
                     var Batchdata = {_id:batchCourseId, batchId:ObjectId(data.batchId), batchName:data.batch.batchName, batchCode:data.batch.batchCode, batchMode:data.batch.batchMode, courseType:data.batch.courseType, startDate:data.batch.startDate, endDate:data.batch.endDate, startTime:data.batch.startTime, endTime:data.batch.endTime, seats:data.batch.seats, enrollmentBefore:data.batch.enrollmentAfter, enrollmentAfter:data.batch.enrollmentBefore, repeats:data.batch.repeats, courseType:data.batch.courseType, materialAssignment:data.batch.materialAssignment, createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, fkCompanyId:companyId, fkCourseId:courseId,selectedDuration:course.selectedDuration, users:userList, evaluator:data.evaluator};
-                        
-                }
-                    
                     db.clnCourseBatchMapping.insert(Batchdata);
                 } else {
                     var arr_users = db.clnCourseBatchMapping.find({fkCourseId:courseId, batchId:ObjectId(data.batchId), users:{$elemMatch:{fkUserRoleMappingId:roleMappingsId}}}, {batchId:1}).toArray();
@@ -390,3 +311,14 @@ db.system.js.save(
 });
 
 
+
+
+db.system.js.save({_id:'fnExistingMaterialsFetch',
+value:function(data) {
+  var companyId=ObjectId(data.companyId);
+
+  var ExistingMaterials=db.clnCourses.find({companyId:companyId,activeFlag:1,courseTimeline:{$exists:1}},{courseTimeline:1,Name:1,Duration:1}).toArray();
+
+    return ExistingMaterials;
+
+}});

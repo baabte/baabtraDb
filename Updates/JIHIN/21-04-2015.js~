@@ -5,3 +5,7 @@ db.system.js.save({_id:"fnEditCourseElement",value:function(e,n,t,r){var l=r.ind
 db.system.js.save({_id:"fnSaveBatchTimelineChanges",value:function(e,s){return db.clnCourseBatchMapping.update({_id:ObjectId(e)},{$set:{courseTimeline:s}}),{result:"Success"}}});
 
 db.system.js.save({_id:"fnLoadCoureBatchByBatchId",value:function(d,e){return db.clnCourseBatchMapping.findOne({_id:ObjectId(d),fkCompanyId:ObjectId(e)})}});
+
+db.system.js.save({_id:"fnLoadInterviewQuestionBank",value:function(){return db.clnInterviewQuestionBank.find().limit(10).toArray()}});
+
+db.system.js.save({_id:"fnLoadUserCourseDetails",value:function(e,r){for(var a=0;a<e.length;a++)e[a]=ObjectId(e[a]);var s=db.clnUserCourseMapping.find({fkUserRoleMappingId:{$in:e},fkCourseId:ObjectId(r),activeFlag:1}).toArray();return s}});
