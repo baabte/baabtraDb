@@ -12,11 +12,9 @@ db.system.js.save({_id: "fnEvaluateAnswer",
 		var newtlpointMark=0; //to keep new tlpint mark;
 		var newelementMark=evaluationobj.markScored; //new course element mark;
 
-		evaluationobj.evaluatedBy=ObjectId(evaluationobj.evaluatedBy);
+		// evaluationobj.evaluatedBy=ObjectId(evaluationobj.evaluatedBy);
 
-		for(var index in evaluationobj.evaluator){
-		    		evaluationobj.evaluator[index].roleMappingId=ObjectId(evaluationobj.evaluator[index].roleMappingId)
-		    	}
+		
 
 		var course=db.clnUserCourseMapping.findOne({_id:userCourseMappingId});//taking that course element back to update
 		oldCourseMark=course.markScored; //keeping prevoius score @ course level

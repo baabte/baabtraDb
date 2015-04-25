@@ -1,21 +1,134 @@
-// to register a user 
-/*
-Edited by: Lijin
-Date:14-4-2015
-Change:Added selected duration into course branch mapping
-*/
 
-/*
-Edited by: Arun
-Date:18-4-2015
-Change:Added material assignment it batch and cascade mode activated 
-*/
 
-/*
-Edited by: Arun
-Date:24-4-2015
-Change:username added to userdetails
-*/
+db.system.js.save({
+    "_id" : "fnAddCourseTimelineElement",
+    "value" : function (courseId, courseElement) {
+    
+    var keyArray = courseElement.key.split(".");
+    var tlPoint = keyArray[0];
+    var elemType = keyArray[1];
+    var key = "courseTimeline." + courseElement.key;
+    var obj = {};
+    obj[key] = courseElement[courseElement.key];
+    db.clnCourses.update({_id:courseId}, {$push:obj});
+    var course = db.clnCourses.find({_id:courseId}).toArray();
+    var elements = courseElement[courseElement.key].elements;
+    var innerIndex = course[0].courseTimeline[tlPoint][elemType].length - 1;
+    var order = 0;
+    var gotOrderFlag = false;
+    var lastTraversedOrder = 0;
+    if (!course[0].elementOrder) {
+        course[0].elementOrder = {};
+    } else {
+        for (tmpOrder in course[0].elementOrder) {
+            var orderKeys = course[0].elementOrder[tmpOrder].split(".");
+            orderKeys[0] = parseInt(orderKeys[0]);
+            tlPoint = parseInt(tlPoint);
+            tmpOrder = parseInt(tmpOrder);
+            if (orderKeys[0] == tlPoint) {
+                gotOrderFlag = true;
+                order = tmpOrder + 1 > order ? tmpOrder + 1 : order;
+            }
+            if (!gotOrderFlag && orderKeys[0] < tlPoint) {
+                order = tmpOrder + 1 > order ? tmpOrder + 1 : order;
+            }
+        }
+    }
+    var previousElem = "";
+    var traversed = false;
+    if (course[0].elementOrder[order]) {
+        previousElem = course[0].elementOrder[order];
+        for (curOrder in course[0].elementOrder) {
+            traversed = true;
+            curOrder = parseInt(curOrder);
+            if (curOrder >= order) {
+                var elemToCopy = previousElem;
+                var traversingOrder = parseInt(curOrder + 1);
+                previousElem = course[0].elementOrder[traversingOrder];
+                if (typeof elemToCopy != "undefined") {
+                    var keyArr = elemToCopy.split(".");
+                    var tmpTlPoint = keyArr[0];
+                    var elementName = keyArr[1];
+                    var elemIndex = keyArr[2];
+                    course[0].courseTimeline[tmpTlPoint][elementName][elemIndex].order = traversingOrder;
+                    course[0].elementOrder[traversingOrder] = elemToCopy;
+                }
+            }
+        }
+    }
+    course[0].courseTimeline[tlPoint][elemType][innerIndex].order = order;
+    course[0].elementOrder[order] = tlPoint + "." + elemType + "." + innerIndex;
+    var totalMark = 0;
+    var looper = 0;
+    var currentMark = 0;
+    var tlPointMark = 0;
+    if (course[0].courseTimeline[tlPoint].totalMark) {
+        tlPointMark = course[0].courseTimeline[tlPoint].totalMark;
+    }
+    if (course[0].totalMark) {
+        currentMark = course[0].totalMark;
+    }
+    for (looper; looper < elements.length; looper++) {
+        if (elements[looper].type == "question-viewer" ||
+            elements[looper].type == "question-group-viewer") {
+            totalMark = totalMark + elements[looper].value.mark.totalMark;
+        }
+    }
+    course[0].totalMark = currentMark + totalMark;
+    course[0].courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;
+    db.clnCourses.save(course[0]);
+    return order;
+}
+});
+
+
+
+
+db.system.js.save({_id:'fnEditCourseElement',
+value:function (courseId, courseElemName, tlPoint, elemObjToSave, rmId) {
+    
+    var innerIndex = elemObjToSave.index;
+    var courseObj = elemObjToSave.element;
+    
+    var key = "courseTimeline." + tlPoint + "." + courseElemName;
+    var obj = {};
+    obj[key] = courseObj;
+    var course = db.clnCourses.find({_id:courseId}).toArray();
+    var order = course[0].courseTimeline[tlPoint][courseElemName][innerIndex].order;
+    var totalMark = 0;
+    var oldTotalMark = 0;
+    var newTotalMark = 0;
+    var oldElements = course[0].courseTimeline[tlPoint][courseElemName];
+    var looper = 0;
+    if (course[0].totalMark) {
+        totalMark = course[0].totalMark;
+    }
+    for (index in oldElements) {
+        for (looper = 0; looper < oldElements[index].elements.length; looper++) {
+            if (oldElements[index].elements[looper].type == "question-viewer" ||
+                oldElements[index].elements[looper].type == "question-group-viewer") {
+                oldTotalMark = oldTotalMark + oldElements[index].elements[looper].value.mark.totalMark;
+            }
+        }
+    }
+    for (looper = 0; looper < courseObj.elements.length; looper++) {
+        if (courseObj.elements[looper].type == "question-viewer" ||
+            courseObj.elements[looper].type == "question-group-viewer") {
+            newTotalMark = newTotalMark + courseObj.elements[looper].value.mark.totalMark;
+        }
+    }
+    var tlPointMark = 0;
+    if (course[0].courseTimeline[tlPoint].totalMark) {
+        tlPointMark = course[0].courseTimeline[tlPoint].totalMark;
+    }
+    course[0].courseTimeline[tlPoint][courseElemName][innerIndex] = courseObj;
+    course[0].courseTimeline[tlPoint][courseElemName][innerIndex].order = order;
+    course[0].totalMark = totalMark + (newTotalMark - oldTotalMark);
+    course[0].courseTimeline[tlPoint].totalMark = tlPointMark + (newTotalMark - oldTotalMark);
+    db.clnCourses.save(course[0]);
+    return course;
+}});
+
 
 db.system.js.save(
 {
@@ -92,7 +205,7 @@ db.system.js.save(
         db.clnUserLogin.insert(UserLoginData);
         delete mandatoryData.eMail;
         delete mandatoryData.password;
-        UserDetails = {fkUserLoginId:userLoginDataId,userName:UserLoginData.userName,profile:mandatoryData, createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, approvedFlag:0, activeFlag:1};
+        UserDetails = {fkUserLoginId:userLoginDataId, profile:mandatoryData, createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, approvedFlag:0, activeFlag:1};
         db.clnUserDetails.insert(UserDetails);
         usermenuData = {fkUserRoleMappingId:UserRoleMappingDataId, menuStructure:menu.menuStructure, createdDate:Date(), updatedDate:Date(), crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1};
         db.clnUserMenuMapping.insert(usermenuData);
@@ -388,5 +501,4 @@ db.system.js.save(
     return result;
 }
 });
-
 
