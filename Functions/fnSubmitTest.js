@@ -1,6 +1,7 @@
 //fnSubmitTest
-db.system.js.save({_id: "fnSubmitTest",
-                  value: function (SubmitTestObj) {
+db.system.js.save({
+    "_id" : "fnSubmitTest",
+    "value" : function (SubmitTestObj) {
           var courseMappingId=ObjectId(SubmitTestObj.courseMappingId);
           var userLoginId=ObjectId(SubmitTestObj.userLoginId);
           var keyName=SubmitTestObj.keyName;
@@ -16,6 +17,7 @@ db.system.js.save({_id: "fnSubmitTest",
 
 var course=db.clnUserCourseMapping.findOne({_id:courseMappingId,activeFlag:1});  
 uniquekey=course._id.valueOf()+'.'+tlPointInmins+'.'+keyName+'.'+outerIndex;
+
 //checks if he have already scored marks
     if(!course.courseTimeline[tlPointInmins][keyName][outerIndex].markScored){
     course.courseTimeline[tlPointInmins][keyName][outerIndex].markScored=0;  
@@ -40,25 +42,15 @@ uniquekey=course._id.valueOf()+'.'+tlPointInmins+'.'+keyName+'.'+outerIndex;
    
 
     for(var index in userAnswers){
-    	for(var key in userAnswers[index]){
+      for(var key in userAnswers[index]){
     course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.testModel[index][key]=userAnswers[index][key];
         }
     }
 
 db.clnUserCourseMapping.save(course);
- //for insert notifiction
-for(var index in course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.testModel){
-  if((course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.testModel[index].type=='descriptive')&&(course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.testModel[index].evaluated==1)){
-    var evaluationPending=true;
-  }
-}
-
- if(evaluationPending&&course.batchId==undefined){
-  for(var evalindex in course.courseTimeline[tlPointInmins][keyName][outerIndex].evaluator){
-    targetList.push(course.courseTimeline[tlPointInmins][keyName][outerIndex].evaluator[evalindex].roleMappingId)
-  }
- fnInsertNotificationDetails(targetList, uniquekey, "evaluation", course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex-1].value, course.fkUserRoleMappingId);
-}
 
 return course;
-}});
+}
+});
+
+
