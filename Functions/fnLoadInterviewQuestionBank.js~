@@ -1,0 +1,6 @@
+
+db.system.js.save({_id: "fnLoadInterviewQuestionBank",
+    value: function(companyId, noQuestion) {
+    	return db.clnInterviewQuestionBank.find({companyId:""}).limit(10).toArray();
+	}
+});
