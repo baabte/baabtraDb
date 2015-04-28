@@ -22,9 +22,9 @@ db.system.js.save({_id: "fnLoadUserCardDetail",
         break;
         default:
             var userInfoDetails = db.clnUserDetails.findOne({fkUserLoginId:userInfo.loginId},{profile:1});
-            userInfo.Name = userInfoDetails.profile.firstName + ' ' + userInfoDetails.profile.lastName;
+            userInfo.Name = userInfoDetails.profile.firstName + ' ' + (userInfoDetails.profile.lastName?userInfoDetails.profile.lastName:"");
         }
 
-    return userInfo;
+    return userInfo
 
 }});

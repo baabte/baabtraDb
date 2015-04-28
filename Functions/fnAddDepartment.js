@@ -46,7 +46,8 @@ value:function(departmentObject, companyId, rmId) {
     department.urmId = ObjectId(rmId);
     department.crmId = ObjectId(rmId);
     department.activeFlag = 1;
-    }
+    db.clnDepartments.insert(department);
+        }
     var department = db.clnDepartments.findOne({companyId: ObjectId(companyId)});
     
     return department.departments[Object.keys(departmentObject)[0]];

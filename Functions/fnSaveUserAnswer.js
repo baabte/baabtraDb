@@ -4,6 +4,12 @@ Created by : Lijin
 Created On : 17/02/2015
 Purpose : For submitting answer of a course
 */
+/*
+Created by : Arun
+Created On : 17/02/2015
+Purpose : evalStatus add to course element
+*/
+
 
 db.system.js.save({_id: "fnSaveUserAnswer",
         value: function (courseId, userLoginId, keyName, tlPointInmins, outerIndex, innerIndex, answerObj) {
@@ -43,3 +49,4 @@ db.system.js.save({_id: "fnSaveUserAnswer",
     db.clnUserCourseMapping.save(course);
     return {success:true};
 }});
+

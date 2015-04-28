@@ -15,9 +15,21 @@ db.system.js.save({
           var resultmsg;
           var targetList=[];
 
+          var evalStatus='';
+          for(var index in userAnswers){
+
+            if(userAnswers[index].evaluated==0){
+            evalStatus='Pending Evaluation';
+            }
+          }
+
+          if(evalStatus==''){
+            evalStatus='Evaluated';
+            }
+
 var course=db.clnUserCourseMapping.findOne({_id:courseMappingId,activeFlag:1});  
 uniquekey=course._id.valueOf()+'.'+tlPointInmins+'.'+keyName+'.'+outerIndex;
-
+course.courseTimeline[tlPointInmins][keyName][outerIndex].evalStatus=evalStatus;
 //checks if he have already scored marks
     if(!course.courseTimeline[tlPointInmins][keyName][outerIndex].markScored){
     course.courseTimeline[tlPointInmins][keyName][outerIndex].markScored=0;  
