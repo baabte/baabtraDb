@@ -1,4 +1,4 @@
-db.system.js.save({_id: "fnAddCoursesToBatch",
+db.system.js.save({_id: "fnSubmitAssignment",
 		value:function(objToBeSaved) {
     // write your code here
     

@@ -98,7 +98,7 @@ db.system.js.save({
     }
     for (looper; looper < elements.length; looper++) {
 
-        if(elements[looper].type){
+        if(elements[looper]!=null){
             if (elements[looper].type == "question-viewer" ||
                 elements[looper].type == "question-group-viewer") {
                 totalMark = totalMark + elements[looper].value.mark.totalMark;
@@ -111,4 +111,4 @@ db.system.js.save({
     db.clnCourses.save(course[0]);
     return order;
 }
-});
+}); 
