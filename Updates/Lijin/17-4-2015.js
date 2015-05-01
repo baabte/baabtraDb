@@ -1,9 +1,7 @@
 db.system.js.save({
     "_id" : "fnAddCourseTimelineElement",
     "value" : function (courseId, courseElement) {
-    for (var index in courseElement[courseElement.key].evaluator) {
-        courseElement[courseElement.key].evaluator[index].roleMappingId = ObjectId(courseElement[courseElement.key].evaluator[index].roleMappingId);
-    }
+  
     var keyArray = courseElement.key.split(".");
     var tlPoint = keyArray[0];
     var elemType = keyArray[1];
@@ -77,10 +75,14 @@ db.system.js.save({
         currentMark = course[0].totalMark;
     }
     for (looper; looper < elements.length; looper++) {
-        if (elements[looper].type == "question-viewer" ||
-            elements[looper].type == "question-group-viewer") {
-            totalMark = totalMark + elements[looper].value.mark.totalMark;
+
+        if(elements[looper].type){
+            if (elements[looper].type == "question-viewer" ||
+                elements[looper].type == "question-group-viewer") {
+                totalMark = totalMark + elements[looper].value.mark.totalMark;
+            }    
         }
+        
     }
     course[0].totalMark = currentMark + totalMark;
     course[0].courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;
