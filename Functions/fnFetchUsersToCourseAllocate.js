@@ -15,18 +15,18 @@ db.system.js.save({
     if(type=='initial'){
 
         result=db.clnUserRoleMapping.find({fkRoleId:3,"profile.fkCompanyId":ObjectId(companyId),activeFlag:1},{createdDate:0,updatedDate:0,activeFlag:0,crmId:0,urmId:0}).limit(9).sort({_id:-1}).toArray();
-        msg='initial'+'non Search'
+        msg='initial non Search'
     }
     else if(type=='next'){
        
         result=db.clnUserRoleMapping.find({fkRoleId:3,"profile.fkCompanyId":ObjectId(companyId),activeFlag:1,_id:{$lt:ObjectId(lastId)}},{createdDate:0,updatedDate:0,activeFlag:0,crmId:0,urmId:0}).limit(9).sort({_id:-1}).toArray();
-        msg='next'+'non Search'
+        msg='next non Search'
         
         }
    else if(type=='prev'){
        
         result=db.clnUserRoleMapping.find({fkRoleId:3,"profile.fkCompanyId":ObjectId(companyId),activeFlag:1,_id:{$gt:ObjectId(lastId)}},{createdDate:0,updatedDate:0,activeFlag:0,crmId:0,urmId:0}).limit(9).sort({_id:-1}).toArray();
-        msg='prev'+'non Search'
+        msg='prev non Search'
         
         }
 
@@ -96,17 +96,17 @@ db.system.js.save({
      
      if(type=='initial'){
         var result=db.clnUserDetails.find({ $or:[{"profile.firstName" :{$regex:new RegExp(searchKey,'i')}},{"profile.lastName" :{$regex:new RegExp(searchKey,'i')}},{"userName" :{$regex:new RegExp(searchKey,'i')}}],fkUserLoginId:{$in:userloginIds},userName:{$ne:null},activeFlag:1},{fkUserLoginId:1,_id:1,userName:1,profile:1}).limit(9).toArray();        
-        msg='initial'+'Search'
+        msg='initial Search'
 
     }
     else if(type=='next'){
          var result=db.clnUserDetails.find({ $or:[{"profile.firstName" :{$regex:new RegExp(searchKey,'i')}},{"profile.lastName" :{$regex:new RegExp(searchKey,'i')}},{"userName" :{$regex:new RegExp(searchKey,'i')}}],fkUserLoginId:{$in:userloginIds},userName:{$ne:null},activeFlag:1,_id:{$gt:ObjectId(lastId)}},{fkUserLoginId:1,_id:1,userName:1,profile:1}).limit(9).toArray();                    
-        msg='next'+' Search'
+        msg='next Search'
         
         }
    else if(type=='prev'){
           var result=db.clnUserDetails.find({ $or:[{"profile.firstName" :{$regex:new RegExp(searchKey,'i')}},{"profile.lastName" :{$regex:new RegExp(searchKey,'i')}},{"userName" :{$regex:new RegExp(searchKey,'i')}}],fkUserLoginId:{$in:userloginIds},userName:{$ne:null},activeFlag:1,_id:{$lt:ObjectId(firstId)}},{fkUserLoginId:1,_id:1,userName:1,profile:1}).limit(9).toArray();       
-        msg='prev'+'Search'
+        msg='prev Search'
 
         }     
 

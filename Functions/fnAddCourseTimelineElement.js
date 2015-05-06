@@ -14,6 +14,10 @@ purpose: bug fix in element order
 Modified By: Arun
 Date: 21-04-2015
 purpose: bug fix in evaluator
+
+Modified By: Arun
+Date: 2-04-2015
+purpose: returning element order back on element add
 */
 
 db.system.js.save({
@@ -93,6 +97,6 @@ db.system.js.save({
     course[0].totalMark = currentMark + totalMark;
     course[0].courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;
     db.clnCourses.save(course[0]);
-    return order;
+    return course[0].elementOrder;
 }
 });

@@ -11,6 +11,10 @@ Modified By: Lijin
 Date: 05-03-2015
 purpose: For retaining order of element on updation
 
+Modified By: Arun
+Date: 04-05-2015
+purpose: for returning the element order back to front end 
+
 */
 
 db.system.js.save({_id:'fnRemoveCourseElement',
@@ -53,7 +57,7 @@ value:function(courseId, courseElemName, tlPoint, index, rmId) {
     
     for(order in course.elementOrder){
         order=(order*1);
-     if(order>=removedOrder){
+     if(order>removedOrder){
             
             {
             if(course.elementOrder[order]){
@@ -75,4 +79,5 @@ value:function(courseId, courseElemName, tlPoint, index, rmId) {
     
     
         db.clnCourses.save(course);
-    return "courseTimeline."+tlPoint;}});
+    return course.elementOrder;
+  }});
