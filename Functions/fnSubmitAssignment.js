@@ -1,16 +1,11 @@
-db.system.js.save({_id: "fnAddCoursesToBatch",
+db.system.js.save({_id: "fnSubmitAssignment",
 		value:function(objToBeSaved) {
     // write your code here
     
     //getting the details of the course element into an object
-    var objDetails = objToBeSaved.objDetails;
+    var objDetails = objToBeSaved.objDetails;    
     
     
-    //looping throgh the answer array to update the individual marks inside the assignment
-    for(var i in objToBeSaved.answerArray) {
-        var currentAnswer = objToBeSaved.answerArray[i];
-        fnSaveUserAnswer(currentAnswer.courseId,currentAnswer.userLoginId,currentAnswer.keyName,currentAnswer.tlPointInmins,currentAnswer.outerIndex,currentAnswer.innerIndex,currentAnswer.answerObj); 
-    }
     
     //getting the course mapping object into a variable
     var courseMapping = db.clnUserCourseMapping.findOne({_id:ObjectId(objToBeSaved.courseMappingId)});
@@ -43,18 +38,28 @@ db.system.js.save({_id: "fnAddCoursesToBatch",
     
   
     
-  //updating the other details
+    //updating the other details
     courseElement.status = objToBeSaved.status;
+    
+    if(objToBeSaved.status == 'submitted'){
+        courseElement.evalStatus  = "Pending Evaluation";
+ 	courseElement.submittedOn = new Date();
+    }
+    else{
+        courseElement.evalStatus = "";
+    }
+    
     courseElement.statusHistory = objToBeSaved.statusHistory;
     courseElement.penaltyHistory  = objToBeSaved.penaltyHistory;
     courseElement.lastUpdatedBy = objToBeSaved.lastUpdatedBy;
+   
     
     
     //saving the final object to the collection
     db.clnUserCourseMapping.save(courseMapping);
-
-          return {result:'success'};
-
-
+     
+    
+    return {result:'success'};
+    
 }});
      

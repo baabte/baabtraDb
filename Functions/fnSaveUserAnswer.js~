@@ -4,13 +4,8 @@ Created by : Lijin
 Created On : 17/02/2015
 Purpose : For submitting answer of a course
 */
-/*
-Created by : Arun
-Created On : 17/02/2015
-Purpose : evalStatus add to course element
-*/
 
-
+<<<<<<< HEAD
 db.system.js.save({_id: "fnSaveUserAnswer",
         value: function (courseId, userLoginId, keyName, tlPointInmins, outerIndex, innerIndex, answerObj) {
     var course = db.clnUserCourseMapping.findOne({fkCourseId:courseId, fkUserLoginId:userLoginId, activeFlag:1});
@@ -22,6 +17,30 @@ db.system.js.save({_id: "fnSaveUserAnswer",
         evalStatus = "Evaluated";
     } else if (answerObj.evaluated == 2) {
         evalStatus = "Draft";
+=======
+/*
+Created by : Arun
+Created On : 17/02/2015
+Purpose : evalStatus add to course element
+*/
+
+db.system.js.save({
+    "_id" : "fnSaveUserAnswer",
+    "value" : function(courseId,userLoginId,keyName,tlPointInmins,outerIndex,innerIndex,answerObj) {
+    
+    var course=db.clnUserCourseMapping.findOne({fkCourseId:courseId,fkUserLoginId:userLoginId,activeFlag:1});
+    var currentMark=0;
+    var evalStatus;
+    if(answerObj.evaluated==0){
+        evalStatus='Pending Evaluation'
+    }else if(answerObj.evaluated==1){
+        evalStatus='Evaluated'
+    }
+    course.courseTimeline[tlPointInmins][keyName][outerIndex].evalStatus=evalStatus;
+    //checks if he have already scored marks
+    if(!course.courseTimeline[tlPointInmins][keyName][outerIndex].markScored){
+    course.courseTimeline[tlPointInmins][keyName][outerIndex].markScored=0;  
+>>>>>>> 2959d1f01c9347da57242343f587dd427664782b
     }
     course.courseTimeline[tlPointInmins][keyName][outerIndex].evalStatus = evalStatus;
     if (!course.courseTimeline[tlPointInmins][keyName][outerIndex].markScored) {
@@ -40,6 +59,7 @@ db.system.js.save({_id: "fnSaveUserAnswer",
         course.courseTimeline[tlPointInmins].markScored = course.courseTimeline[tlPointInmins].markScored - course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.markScored;
         course.markScored = course.markScored - course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.markScored;
     }
+<<<<<<< HEAD
     for (key in answerObj) {
         course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value[key] = answerObj[key];
     }
@@ -49,4 +69,16 @@ db.system.js.save({_id: "fnSaveUserAnswer",
     db.clnUserCourseMapping.save(course);
     return {success:true};
 }});
-
+=======
+    //course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.markScored=answerObj.markScored;
+    //course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.userAnswer=answerObj.userAnswer;
+    
+    //adding scored mark to the course element
+    course.courseTimeline[tlPointInmins][keyName][outerIndex].markScored=currentMark+answerObj.markScored;
+    course.courseTimeline[tlPointInmins].markScored=course.courseTimeline[tlPointInmins].markScored+answerObj.markScored;
+    course.markScored=course.markScored+answerObj.markScored;
+    
+db.clnUserCourseMapping.save(course);
+       return {success:true};
+}});
+>>>>>>> 2959d1f01c9347da57242343f587dd427664782b

@@ -1,0 +1,1 @@
+db.system.js.save({_id:"fnLoadMenteesForApprove",value:function(e,r,n,s){var t={};return t.orderFroms=db.clnTrainingRequest.find({companyId:ObjectId(e),"orderDetails.userInfo.status":{$in:r}}).skip(n>0?(n-1)*s:0).limit(s).toArray(),t}});
