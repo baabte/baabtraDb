@@ -9,7 +9,7 @@ value:function(companyId, statusType, pageNumber, nPerPage) {
     var data = {};
     //data.orderFroms = db.clnTrainingRequest.find({companyId:ObjectId(companyId), "orderDetails.userInfo.status":{$in:statusType}}).toArray();
     data.orderFroms = db.clnTrainingRequest.find({companyId:ObjectId(companyId), "orderDetails.userInfo.status":{$in:statusType}}).skip(
-    pageNumber > 0 ? ((pageNumber-1)*nPerPage) : 0).limit(nPerPage).toArray();
+    pageNumber > 0 ? ((pageNumber-1)*nPerPage) : 0).sort({customCompanyCode:-1}).limit(nPerPage).toArray();
     
     /*var company = db.clnCompany.findOne({_id:ObjectId(companyId)});
     var companyDetails ={};
