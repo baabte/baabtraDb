@@ -1,27 +1,64 @@
-// to register a user 
-/*
-Edited by: Lijin
-Date:14-4-2015
-Change:Added selected duration into course branch mapping
-*/
+//fnAllocateUsersToCourse
 
-/*
-Edited by: Arun
-Date:18-4-2015
-Change:Added material assignment it batch and cascade mode activated 
-*/
+db.system.js.save({
+    "_id" : "fnAllocateUsersToCourse",
+    "value" : function(courseAllocate) {
+    	var loggedusercrmid=ObjectId(courseAllocate.loggedusercrmid);
+    	var companyId=ObjectId(courseAllocate.companyId);
+    	var date=courseAllocate.date;
+    	delete courseAllocate.date;
+    	var courseId=ObjectId(courseAllocate.selectedCourse._id)
+    	delete courseAllocate.selectedCourse;
+    	var course = db.clnCourses.findOne({_id:courseId},{_id:0, Name:1, courseTimeline:1, Duration:1, Description:1, courseImg:1, totalMark:1, selectedDuration:1, elementOrder:1,syllabus:1,markSheetElements:1});
+    	var UserCourseMappingData = {fkCompanyId:companyId, fkCourseId:courseId, Name:course.Name, Duration:course.Duration, Description:course.Description, courseImg:course.courseImg, totalMark:course.totalMark, selectedDuration:course.selectedDuration, courseTimeline:course.courseTimeline,syllabus:course.syllabus,markSheetElements:course.markSheetElements, elementOrder:course.elementOrder, createdDate:date, updatedDate:date, crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, markScored:0};
+    	for(var key in courseAllocate.selectedUsers){
+			UserCourseMappingData.fkUserLoginId=ObjectId(key);
+            var UserRoleMappingId=db.clnUserRoleMapping.findOne({fkUserLoginId:UserCourseMappingData.fkUserLoginId,fkRoleId:3,"profile.fkCompanyId":companyId,activeFlag:1},{_id:1});
+			UserCourseMappingData.fkUserRoleMappingId=UserRoleMappingId._id;
 
-/*
-Edited by: Arun
-Date:24-4-2015
-Change:username added to userdetails
-*/
+			db.clnUserCourseMapping.update({fkUserLoginId:UserCourseMappingData.fkUserLoginId,fkUserRoleMappingId:UserCourseMappingData.fkUserRoleMappingId, fkCourseId:courseId, activeFlag:1},{$set:{activeFlag:0}});
+                db.clnUserCourseMapping.insert(UserCourseMappingData);
 
-/*
-Edited by: Arun
-Date:14-5-2015
-Change:added sylabus and markSheetElements to user course mappning and batch mapping 
-*/
+		    }
+    	return UserCourseMappingData;
+}
+});
+
+//fnFetchAllQuestionBundles
+
+db.system.js.save({_id: "fnFetchAllQuestionBundles",
+      value: function (data) {
+        var result =db.clnQuestionBank.find({companyId:ObjectId(data.companyId),activeFlag:1}).toArray();
+        for (var index in result){
+            result[index]._id=result[index]._id.valueOf();
+        }
+        return result;
+
+}});
+
+
+//fnModifyQuestionBundles
+
+db.system.js.save({_id: "fnModifyQuestionBundles",
+      value: function (data) {
+
+        data.companyId=ObjectId(data.companyId);
+        loggedusercrmid=ObjectId(data.loggedusercrmid)
+        delete data.loggedusercrmid;
+        delete data.expandDetails
+        if(data._id){
+            data._id=ObjectId(data._id);
+        }else{
+                  data.activeFlag=1;
+            }
+        data.createdDate=Date();
+        data.updatedDate=Date();
+        data.crmId=loggedusercrmid;
+        data.urmId=loggedusercrmid;
+        db.clnQuestionBank.save(data);
+        return data;
+
+}});
 
 db.system.js.save(
 {
@@ -396,3 +433,60 @@ db.system.js.save(
 });
 
 
+//fnSaveTestStartTimeRandomExam
+db.system.js.save({_id: "fnSaveTestStartTimeRandomExam",
+                  value: function (StartTimeObj) {
+                    
+          var courseMappingId=ObjectId(StartTimeObj.courseMappingId);
+          var userLoginId=ObjectId(StartTimeObj.userLoginId);
+          var keyName=StartTimeObj.keyName;
+          var tlPointInmins=StartTimeObj.tlPointInmins;
+          var outerIndex=StartTimeObj.outerIndex;
+          var innerIndex=StartTimeObj.innerIndex;
+          var timeObj=StartTimeObj.timeObj;
+          var questionBankId=ObjectId(StartTimeObj.questionBankId);
+          var noOfQuestion=StartTimeObj.noOfQuestion;
+
+          var resultmsg;
+
+var course=db.clnUserCourseMapping.findOne({_id:courseMappingId,activeFlag:1});
+    
+    //checks if he have already scored marks
+    if(!course.courseTimeline[tlPointInmins][keyName][outerIndex][timeObj.key]){
+    course.courseTimeline[tlPointInmins][keyName][outerIndex][timeObj.key]=timeObj.value;  
+
+    var tempArray=db.clnQuestionBank.findOne({_id:questionBankId},{questions:1,_id:0});
+    var questionsArray=tempArray.questions;
+    var testModel=[];
+    while(noOfQuestion>0){
+    var index =Math.floor(Math.random()*questionsArray.length);
+    testModel.push(questionsArray[index]);
+    questionsArray.splice(index,1);    
+    noOfQuestion--;
+    }
+
+    course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.testModel=testModel;
+    db.clnUserCourseMapping.save(course);
+    resultmsg='test Started';
+    }
+    else{
+        resultmsg='test already started or finished';
+    }
+return {result:resultmsg,testModel:testModel};
+}});
+
+
+//fnFetchQuestionBankList
+
+db.system.js.save({_id: "fnFetchQuestionBankList",
+      value: function (questionBankFetchData) {
+    var companyId=ObjectId(questionBankFetchData.fkcompanyId);
+
+
+    var questionBanklist = db.clnQuestionBank.find({companyId:companyId,activeFlag:1},{_id:1, Name:1,noOfQuestions:1}).toArray();
+
+    for(var index in questionBanklist){
+        questionBanklist[index]._id=questionBanklist[index]._id.valueOf();
+    }
+    return questionBanklist;
+}});
