@@ -28,6 +28,10 @@ Modified By: Lijin
 Date: 13-05-2015
 purpose: added total marks in element level
 
+Modified By: Arun
+Date: 14-05-2015
+purpose: total mark calculation for random question test
+
 */
 
 db.system.js.save({
@@ -38,7 +42,11 @@ db.system.js.save({
     var elemType = keyArray[1];
     var key = "courseTimeline." + courseElement.key;
     var obj = {};
-    obj[key] = courseElement[courseElement.key];
+    if(elemType=='Interview'||elemType=='Physical test'){
+        courseElement[courseElement.key].evalStatus ='Pending Evaluation';
+    }
+    
+    obj[key] = courseElement[courseElement.key];//Interview
     db.clnCourses.update({_id:courseId}, {$push:obj});
     var course = db.clnCourses.find({_id:courseId}).toArray();
     var elements = courseElement[courseElement.key].elements;
@@ -85,19 +93,15 @@ db.system.js.save({
             }
         }
     }
-    
-    
-    
-    var syllabusKeyArray = course[0].courseTimeline[tlPoint][elemType][innerIndex].syllabus.key.split('.');
-    var syllabusObj=course[0].syllabus;
-    for(var key in syllabusKeyArray){
-            syllabusObj=syllabusObj[syllabusKeyArray[key]];
-        }
-       if(!syllabusObj.element){
-            syllabusObj.element=[];
-       }
-       syllabusObj.element.push(tlPoint + "." + elemType + "." + innerIndex);
-    
+    var syllabusKeyArray = course[0].courseTimeline[tlPoint][elemType][innerIndex].syllabus.key.split(".");
+    var syllabusObj = course[0].syllabus;
+    for (var key in syllabusKeyArray) {
+        syllabusObj = syllabusObj[syllabusKeyArray[key]];
+    }
+    if (!syllabusObj.element) {
+        syllabusObj.element = [];
+    }
+    syllabusObj.element.push(tlPoint + "." + elemType + "." + innerIndex);
     course[0].courseTimeline[tlPoint][elemType][innerIndex].order = order;
     course[0].elementOrder[order] = tlPoint + "." + elemType + "." + innerIndex;
     var totalMark = 0;
@@ -113,14 +117,19 @@ db.system.js.save({
     for (looper; looper < elements.length; looper++) {
         if (elements[looper] != null) {
             if (elements[looper].type == "question-viewer" ||
-                elements[looper].type == "question-group-viewer"||elements[looper].type == "assignment-question-viewer") {
+                elements[looper].type == "question-group-viewer" ||
+                elements[looper].type == "assignment-question-viewer"||
+                 elements[looper].type == "random-question-exam-viewer") {
                 totalMark = totalMark + elements[looper].value.mark.totalMark;
             }
         }
     }
     course[0].totalMark = currentMark + totalMark;
     course[0].courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;
-    course[0].courseTimeline[tlPoint][elemType][innerIndex].totalMark=totalMark;
+    if(totalMark>0){
+    course[0].courseTimeline[tlPoint][elemType][innerIndex].totalMark = totalMark;    
+    }
+    
     db.clnCourses.save(course[0]);
     return course[0].elementOrder;
 }
