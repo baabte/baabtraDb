@@ -19,6 +19,10 @@ Modified By: Lijin
 Date: 13-05-2015
 purpose: Added totalMark in element level
 
+Modified By: Jihin
+Date: 13-05-2015
+purpose: Added syllabus in element level
+
 */
 
 db.system.js.save({
@@ -46,7 +50,7 @@ db.system.js.save({
         for (looper = 0; looper < oldElements[index].elements.length; looper++) {
             if(oldElements[index].elements[looper] != null){
                 if (oldElements[index].elements[looper].type == "question-viewer" ||
-                    oldElements[index].elements[looper].type == "question-group-viewer"||oldElements[index].elements[looper].type == "assignment-question-viewer") {
+                    oldElements[index].elements[looper].type == "question-group-viewer" || oldElements[index].elements[looper].type == "assignment-question-viewer") {
                     oldTotalMark = oldTotalMark + oldElements[index].elements[looper].value.mark.totalMark;
                 }
             }
@@ -55,21 +59,47 @@ db.system.js.save({
     for (looper = 0; looper < courseObj.elements.length; looper++) {
         if(oldElements[index].elements[looper] != null){
             if (courseObj.elements[looper].type == "question-viewer" ||
-                courseObj.elements[looper].type == "question-group-viewer"||courseObj.elements[looper].type == "assignment-question-viewer") {
+                courseObj.elements[looper].type == "question-group-viewer" || courseObj.elements[looper].type == "assignment-question-viewer") {
                 newTotalMark = newTotalMark + courseObj.elements[looper].value.mark.totalMark;
             }
         }
     }
+    
+    //course[0].courseTimeline[tlPoint][courseElemName][innerIndex]
+    var syllabusKeyArray = courseObj.syllabus.key.split('.');
+    var syllabusObj=course[0].syllabus;
+    for(var key in syllabusKeyArray){
+            syllabusObj=syllabusObj[syllabusKeyArray[key]];
+        }
+       if(!syllabusObj.element){
+            syllabusObj.element=[];
+       }
+    syllabusObj.element.push(tlPoint + "." + courseElemName + "." + innerIndex);
+      
+     syllabusKeyArray = course[0].courseTimeline[tlPoint][courseElemName][innerIndex].syllabus.key.split('.');
+      syllabusObj=course[0].syllabus;
+    for(var key in syllabusKeyArray){
+            syllabusObj=syllabusObj[syllabusKeyArray[key]];
+        }
+       if(!syllabusObj.element){
+            syllabusObj.element=[];
+       }
+        
+      for(var index in syllabusObj.element){
+          if(syllabusObj.element[index]==tlPoint+'.'+courseElemName+'.'+innerIndex){
+             syllabusObj.element.splice(index,1);
+          }
+         }
+    
     var tlPointMark = 0;
     if (course[0].courseTimeline[tlPoint].totalMark) {
         tlPointMark = course[0].courseTimeline[tlPoint].totalMark;
     }
     course[0].courseTimeline[tlPoint][courseElemName][innerIndex] = courseObj;
     course[0].courseTimeline[tlPoint][courseElemName][innerIndex].order = order;
+    course[0].courseTimeline[tlPoint][courseElemName][innerIndex].totalMark=newTotalMark;
     course[0].totalMark = totalMark + (newTotalMark - oldTotalMark);
     course[0].courseTimeline[tlPoint].totalMark = tlPointMark + (newTotalMark - oldTotalMark);
-    course[0].courseTimeline[tlPoint][courseElemName][innerIndex].totalMark=newTotalMark;
     db.clnCourses.save(course[0]);
     return course;
-}
-});
+}});

@@ -19,6 +19,10 @@ Modified By: Lijin
 Date: 13-05-2015
 purpose: added assignment-question-viewer
 
+Modified By: Jihin
+Date: 13-05-2015
+purpose:  Added syllabus in element level
+
 */
 
 db.system.js.save({
@@ -29,6 +33,7 @@ db.system.js.save({
     obj[key] = index;
     var objProjection = {};
     objProjection[key] = 1;
+    objProjection['syllabus'] = 1;
     objProjection._id = 0;
     var oldCourse = db.clnCourses.findOne({_id:courseId}, objProjection);
     var removedOrder = oldCourse.courseTimeline[tlPoint][courseElemName][index].order * 1;
@@ -36,10 +41,14 @@ db.system.js.save({
     var markToDeduct = 0;
     for (indexKey in oldElements) {
         if (oldElements[indexKey].type == "question-viewer" ||
-            oldElements[indexKey].type == "question-group-viewer" || oldElements[indexKey].type == "assignment-question-viewer") {
+            oldElements[indexKey].type == "question-group-viewer" ||
+            oldElements[indexKey].type == "assignment-question-viewer") {
             markToDeduct = markToDeduct + oldElements[indexKey].value.mark.totalMark;
         }
     }
+    
+    var syllabusKeyArray = oldCourse.courseTimeline[tlPoint][courseElemName][index].syllabus.key.split('.');
+    
     db.clnCourses.update({_id:courseId}, {$pop:obj});
     var a = db.clnCourses.findOne({_id:courseId});
     if (!a.courseTimeline[tlPoint][courseElemName].length) {
@@ -75,6 +84,22 @@ db.system.js.save({
             }
         }
     }
+    
+      
+      syllabusObj=course.syllabus;
+        for(var key in syllabusKeyArray){
+            syllabusObj=syllabusObj[syllabusKeyArray[key]];
+        }
+       if(!syllabusObj.element){
+            syllabusObj.element=[];
+       }
+        
+      for(var indx in syllabusObj.element){
+          if(syllabusObj.element[indx]==tlPoint+'.'+courseElemName+'.'+index){
+             syllabusObj.element.splice(indx,1);
+          }
+         }
+    
     db.clnCourses.save(course);
     return course.elementOrder;
 }
