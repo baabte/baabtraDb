@@ -1,5 +1,16 @@
-db.system.js.save({_id: "fnEvaluateAnswer",
-    value: function (userCourseMappingId, element, elementOrder) {
+
+/*
+Updated by Lijin
+Date:14-5-2015
+purpose:added markcalculation for marksheet
+
+
+*/
+
+
+db.system.js.save({
+    "_id" : "fnEvaluateAnswer",
+    "value" : function (userCourseMappingId, element, elementOrder) {
     var course = db.clnUserCourseMapping.findOne({_id:ObjectId(userCourseMappingId)});
     var keyArray = elementOrder.split(".");
     var oldElement = course.courseTimeline[keyArray[0]][keyArray[1]][keyArray[2]];
@@ -29,4 +40,5 @@ db.system.js.save({_id: "fnEvaluateAnswer",
     course.courseTimeline[keyArray[0]][keyArray[1]][keyArray[2]] = element;
     db.clnUserCourseMapping.save(course);
     return {result:result};
-}});
+}
+})
