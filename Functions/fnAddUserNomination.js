@@ -13,7 +13,7 @@ Purpose : added customer details to clnCompanyCustomer collection
 
 db.system.js.save({_id: "fnAddUserNomination",
       value:function (orderObject, rmId) {
-
+        var companyId=''
 
     if (orderObject._id == undefined) {
         orderObject._id=new ObjectId();
@@ -22,7 +22,7 @@ db.system.js.save({_id: "fnAddUserNomination",
         var customCompanyCode = fnGetCode(codeData);
         var companyCustomerCode = fnGetCode(companyCustomerCodeData);
         orderObject.requesteeDetails.companyCustomerCode = companyCustomerCode;
-        var companyCustomerId = new ObjectId;
+        var companyCustomerId = new ObjectId();
         var companyCustomerDetails = JSON.parse(JSON.stringify(orderObject.requesteeDetails));
         companyCustomerDetails._id = companyCustomerId;
         companyCustomerDetails.companyId = ObjectId(orderObject.companyId);
@@ -33,6 +33,7 @@ db.system.js.save({_id: "fnAddUserNomination",
         companyCustomerDetails.activeFlag = 1;
         db.clnCompanyCustomer.insert(companyCustomerDetails);
         orderObject.requesteeDetails.companyCustomerId = companyCustomerId.valueOf();
+        companyId=orderObject.companyId;
         orderObject.companyId = ObjectId(orderObject.companyId);
         orderObject.customCompanyCode = customCompanyCode;
         orderObject.status = "Pending approval";
@@ -42,12 +43,18 @@ db.system.js.save({_id: "fnAddUserNomination",
         orderObject.urmId = ObjectId(rmId);
         orderObject.activeFlag = 0;
         db.clnTrainingRequest.insert(orderObject);
-    } else {
+    } 
+    else {
         db.clnTrainingRequest.update({_id:ObjectId(orderObject._id)}, {$set:{draftFlag:orderObject.draftFlag,orderDetails:orderObject.orderDetails, updatedDate:ISODate(), urmId:ObjectId(rmId)}});
     }
 
      if(orderObject.draftFlag==1){
-        var companyId=orderObject.companyId;
+      var orderObject=db.clnTrainingRequest.findOne({orderFormId:orderObject.orderFormId});
+
+
+        var companyId=orderObject.companyId.valueOf();
+
+
         var loggedusercrmid=rmId;
         for (var course in orderObject.orderDetails){
 
@@ -60,7 +67,7 @@ db.system.js.save({_id: "fnAddUserNomination",
                 delete mandatoryData.status;
                 mandatoryData.userCode=uniqueCode;
                 mandatoryData.orderFormId=orderObject._id.valueOf();
-                var role={roleId: 3}
+                var role={roleId: 3};
 
                 var userId=fnRegisterUser({companyId:companyId,loggedusercrmid:loggedusercrmid,mandatoryData:mandatoryData,role:role});
 
@@ -70,7 +77,7 @@ db.system.js.save({_id: "fnAddUserNomination",
 
         }
 
-        db.clnTrainingRequest.update({_id:ObjectId(orderObject._id)},{$set:{draftFlag:orderObject.draftFlag,orderDetails:orderObject.orderDetails, updatedDate:ISODate(), urmId:ObjectId(rmId)}});
+        db.clnTrainingRequest.update({_id:orderObject._id},{$set:{draftFlag:orderObject.draftFlag,orderDetails:orderObject.orderDetails, updatedDate:ISODate(),urmId:orderObject.urmId}});
     
     }
 
