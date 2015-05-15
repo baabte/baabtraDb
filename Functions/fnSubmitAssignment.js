@@ -17,7 +17,10 @@ db.system.js.save({_id: "fnSubmitAssignment",
     if(courseElement.markScored == undefined) {
         courseElement.markScored = 0;
     }
-    
+   
+    if(objToBeSaved.markScored == undefined) {
+        objToBeSaved.markScored = 0;
+    }
     var effectiveMark = parseInt(objToBeSaved.markScored) - parseInt(courseElement.markScored);
    
     courseElement.markScored = parseInt(courseElement.markScored) + effectiveMark;
@@ -43,7 +46,7 @@ db.system.js.save({_id: "fnSubmitAssignment",
     
     if(objToBeSaved.status == 'submitted'){
         courseElement.evalStatus  = "Pending Evaluation";
- 	courseElement.submittedOn = new Date();
+        courseElement.submittedOn = new Date();
     }
     else{
         courseElement.evalStatus = "";
@@ -52,7 +55,8 @@ db.system.js.save({_id: "fnSubmitAssignment",
     courseElement.statusHistory = objToBeSaved.statusHistory;
     courseElement.penaltyHistory  = objToBeSaved.penaltyHistory;
     courseElement.lastUpdatedBy = objToBeSaved.lastUpdatedBy;
-   
+    
+    
     
     
     //saving the final object to the collection

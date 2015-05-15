@@ -1,4 +1,4 @@
-db.system.js.save({_id: "fnAddCoursesToBatch",
+db.system.js.save({_id: "fnSubmitAssignment",
 		value:function(objToBeSaved) {
     // write your code here
     
@@ -43,6 +43,7 @@ db.system.js.save({_id: "fnAddCoursesToBatch",
     
     if(objToBeSaved.status == 'submitted'){
         courseElement.evalStatus  = "Pending Evaluation";
+ 	courseElement.submittedOn = new Date();
     }
     else{
         courseElement.evalStatus = "";
@@ -51,7 +52,7 @@ db.system.js.save({_id: "fnAddCoursesToBatch",
     courseElement.statusHistory = objToBeSaved.statusHistory;
     courseElement.penaltyHistory  = objToBeSaved.penaltyHistory;
     courseElement.lastUpdatedBy = objToBeSaved.lastUpdatedBy;
-    courseElement.submittedOn = new Date();
+   
     
     
     //saving the final object to the collection
