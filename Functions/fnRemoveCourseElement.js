@@ -23,6 +23,10 @@ Modified By: Jihin
 Date: 13-05-2015
 purpose:  Added syllabus in element level
 
+Modified By: Arun
+Date: 14-05-2015
+purpose:  total mark calculation in element delete
+
 */
 
 db.system.js.save({
@@ -42,7 +46,8 @@ db.system.js.save({
     for (indexKey in oldElements) {
         if (oldElements[indexKey].type == "question-viewer" ||
             oldElements[indexKey].type == "question-group-viewer" ||
-            oldElements[indexKey].type == "assignment-question-viewer") {
+            oldElements[indexKey].type == "assignment-question-viewer"||
+            oldElements[indexKey].type == "random-question-exam-viewer") {
             markToDeduct = markToDeduct + oldElements[indexKey].value.mark.totalMark;
         }
     }

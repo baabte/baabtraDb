@@ -23,6 +23,10 @@ Modified By: Jihin
 Date: 13-05-2015
 purpose: Added syllabus in element level
 
+Modified By: Arun
+Date: 14-05-2015
+purpose: Added total mark calculation in for random test 
+
 */
 
 db.system.js.save({
@@ -50,7 +54,7 @@ db.system.js.save({
         for (looper = 0; looper < oldElements[index].elements.length; looper++) {
             if(oldElements[index].elements[looper] != null){
                 if (oldElements[index].elements[looper].type == "question-viewer" ||
-                    oldElements[index].elements[looper].type == "question-group-viewer" || oldElements[index].elements[looper].type == "assignment-question-viewer") {
+                    oldElements[index].elements[looper].type == "question-group-viewer" || oldElements[index].elements[looper].type == "assignment-question-viewer"|| oldElements[index].elements[looper].type == "random-question-exam-viewer") {
                     oldTotalMark = oldTotalMark + oldElements[index].elements[looper].value.mark.totalMark;
                 }
             }
@@ -59,7 +63,7 @@ db.system.js.save({
     for (looper = 0; looper < courseObj.elements.length; looper++) {
         if(oldElements[index].elements[looper] != null){
             if (courseObj.elements[looper].type == "question-viewer" ||
-                courseObj.elements[looper].type == "question-group-viewer" || courseObj.elements[looper].type == "assignment-question-viewer") {
+                courseObj.elements[looper].type == "question-group-viewer" || courseObj.elements[looper].type == "assignment-question-viewer"|| courseObj.elements[looper].type == "random-question-exam-viewer") {
                 newTotalMark = newTotalMark + courseObj.elements[looper].value.mark.totalMark;
             }
         }

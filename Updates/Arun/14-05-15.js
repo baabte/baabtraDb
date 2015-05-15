@@ -1,33 +1,64 @@
-// to register a user 
-/*
-Edited by: Lijin
-Date:14-4-2015
-Change:Added selected duration into course branch mapping
-*/
+//fnAllocateUsersToCourse
 
-/*
-Edited by: Arun
-Date:18-4-2015
-Change:Added material assignment it batch and cascade mode activated 
-*/
+db.system.js.save({
+    "_id" : "fnAllocateUsersToCourse",
+    "value" : function(courseAllocate) {
+    	var loggedusercrmid=ObjectId(courseAllocate.loggedusercrmid);
+    	var companyId=ObjectId(courseAllocate.companyId);
+    	var date=courseAllocate.date;
+    	delete courseAllocate.date;
+    	var courseId=ObjectId(courseAllocate.selectedCourse._id)
+    	delete courseAllocate.selectedCourse;
+    	var course = db.clnCourses.findOne({_id:courseId},{_id:0, Name:1, courseTimeline:1, Duration:1, Description:1, courseImg:1, totalMark:1, selectedDuration:1, elementOrder:1,syllabus:1,markSheetElements:1});
+    	var UserCourseMappingData = {fkCompanyId:companyId, fkCourseId:courseId, Name:course.Name, Duration:course.Duration, Description:course.Description, courseImg:course.courseImg, totalMark:course.totalMark, selectedDuration:course.selectedDuration, courseTimeline:course.courseTimeline,syllabus:course.syllabus,markSheetElements:course.markSheetElements, elementOrder:course.elementOrder, createdDate:date, updatedDate:date, crmId:loggedusercrmid, urmId:loggedusercrmid, activeFlag:1, markScored:0};
+    	for(var key in courseAllocate.selectedUsers){
+			UserCourseMappingData.fkUserLoginId=ObjectId(key);
+            var UserRoleMappingId=db.clnUserRoleMapping.findOne({fkUserLoginId:UserCourseMappingData.fkUserLoginId,fkRoleId:3,"profile.fkCompanyId":companyId,activeFlag:1},{_id:1});
+			UserCourseMappingData.fkUserRoleMappingId=UserRoleMappingId._id;
 
-/*
-Edited by: Arun
-Date:24-4-2015
-Change:username added to userdetails
-*/
+			db.clnUserCourseMapping.update({fkUserLoginId:UserCourseMappingData.fkUserLoginId,fkUserRoleMappingId:UserCourseMappingData.fkUserRoleMappingId, fkCourseId:courseId, activeFlag:1},{$set:{activeFlag:0}});
+                db.clnUserCourseMapping.insert(UserCourseMappingData);
 
-/*
-Edited by: Arun
-Date:14-5-2015
-Change:added sylabus and markSheetElements to user course mappning and batch mapping 
-*/
+		    }
+    	return UserCourseMappingData;
+}
+});
 
-/*
-Edited by: Arun
-Date:15-5-2015
-Change:returning the objectid value of the registered user 
-*/
+//fnFetchAllQuestionBundles
+
+db.system.js.save({_id: "fnFetchAllQuestionBundles",
+      value: function (data) {
+        var result =db.clnQuestionBank.find({companyId:ObjectId(data.companyId),activeFlag:1}).toArray();
+        for (var index in result){
+            result[index]._id=result[index]._id.valueOf();
+        }
+        return result;
+
+}});
+
+
+//fnModifyQuestionBundles
+
+db.system.js.save({_id: "fnModifyQuestionBundles",
+      value: function (data) {
+
+        data.companyId=ObjectId(data.companyId);
+        loggedusercrmid=ObjectId(data.loggedusercrmid)
+        delete data.loggedusercrmid;
+        delete data.expandDetails
+        if(data._id){
+            data._id=ObjectId(data._id);
+        }else{
+                  data.activeFlag=1;
+            }
+        data.createdDate=Date();
+        data.updatedDate=Date();
+        data.crmId=loggedusercrmid;
+        data.urmId=loggedusercrmid;
+        db.clnQuestionBank.save(data);
+        return data;
+
+}});
 
 db.system.js.save(
 {
@@ -396,9 +427,330 @@ db.system.js.save(
             resultmsg = "exsisting mentee new course";
         }
     }
-    var result = {result:resultmsg, evaluatorEmailLIst:evaluatorEmails,userId:userLoginDataId.valueOf()};
+    var result = {result:resultmsg, evaluatorEmailLIst:evaluatorEmails};
     return result;
 }
 });
 
 
+//fnSaveTestStartTimeRandomExam
+db.system.js.save({_id: "fnSaveTestStartTimeRandomExam",
+                  value: function (StartTimeObj) {
+                    
+          var courseMappingId=ObjectId(StartTimeObj.courseMappingId);
+          var userLoginId=ObjectId(StartTimeObj.userLoginId);
+          var keyName=StartTimeObj.keyName;
+          var tlPointInmins=StartTimeObj.tlPointInmins;
+          var outerIndex=StartTimeObj.outerIndex;
+          var innerIndex=StartTimeObj.innerIndex;
+          var timeObj=StartTimeObj.timeObj;
+          var questionBankId=ObjectId(StartTimeObj.questionBankId);
+          var noOfQuestion=StartTimeObj.noOfQuestion;
+
+          var resultmsg;
+
+var course=db.clnUserCourseMapping.findOne({_id:courseMappingId,activeFlag:1});
+    
+    //checks if he have already scored marks
+    if(!course.courseTimeline[tlPointInmins][keyName][outerIndex][timeObj.key]){
+    course.courseTimeline[tlPointInmins][keyName][outerIndex][timeObj.key]=timeObj.value;  
+
+    var tempArray=db.clnQuestionBank.findOne({_id:questionBankId},{questions:1,_id:0});
+    var questionsArray=tempArray.questions;
+    var testModel=[];
+    while(noOfQuestion>0){
+    var index =Math.floor(Math.random()*questionsArray.length);
+    testModel.push(questionsArray[index]);
+    questionsArray.splice(index,1);    
+    noOfQuestion--;
+    }
+
+    course.courseTimeline[tlPointInmins][keyName][outerIndex].elements[innerIndex].value.testModel=testModel;
+    db.clnUserCourseMapping.save(course);
+    resultmsg='test Started';
+    }
+    else{
+        resultmsg='test already started or finished';
+    }
+return {result:resultmsg,testModel:testModel};
+}});
+
+
+//fnFetchQuestionBankList
+
+db.system.js.save({_id: "fnFetchQuestionBankList",
+      value: function (questionBankFetchData) {
+    var companyId=ObjectId(questionBankFetchData.fkcompanyId);
+
+
+    var questionBanklist = db.clnQuestionBank.find({companyId:companyId,activeFlag:1},{_id:1, Name:1,noOfQuestions:1}).toArray();
+
+    for(var index in questionBanklist){
+        questionBanklist[index]._id=questionBanklist[index]._id.valueOf();
+    }
+    return questionBanklist;
+}});
+
+
+db.system.js.save({
+    "_id" : "fnAddCourseTimelineElement",
+    "value" : function (courseId, courseElement) {
+    var keyArray = courseElement.key.split(".");
+    var tlPoint = keyArray[0];
+    var elemType = keyArray[1];
+    var key = "courseTimeline." + courseElement.key;
+    var obj = {};
+    if(elemType=='Interview'||elemType=='Physical test'){
+        courseElement[courseElement.key].evalStatus ='Pending Evaluation';
+    }
+    
+    obj[key] = courseElement[courseElement.key];//Interview
+    db.clnCourses.update({_id:courseId}, {$push:obj});
+    var course = db.clnCourses.find({_id:courseId}).toArray();
+    var elements = courseElement[courseElement.key].elements;
+    var innerIndex = course[0].courseTimeline[tlPoint][elemType].length - 1;
+    var order = 0;
+    var gotOrderFlag = false;
+    var lastTraversedOrder = 0;
+    if (!course[0].elementOrder) {
+        course[0].elementOrder = {};
+    } else {
+        for (tmpOrder in course[0].elementOrder) {
+            var orderKeys = course[0].elementOrder[tmpOrder].split(".");
+            orderKeys[0] = parseInt(orderKeys[0]);
+            tlPoint = parseInt(tlPoint);
+            tmpOrder = parseInt(tmpOrder);
+            if (orderKeys[0] == tlPoint) {
+                gotOrderFlag = true;
+                order = tmpOrder + 1 > order ? tmpOrder + 1 : order;
+            }
+            if (!gotOrderFlag && orderKeys[0] < tlPoint) {
+                order = tmpOrder + 1 > order ? tmpOrder + 1 : order;
+            }
+        }
+    }
+    var previousElem = "";
+    var traversed = false;
+    if (course[0].elementOrder[order]) {
+        previousElem = course[0].elementOrder[order];
+        for (curOrder in course[0].elementOrder) {
+            traversed = true;
+            curOrder = parseInt(curOrder);
+            if (curOrder >= order) {
+                var elemToCopy = previousElem;
+                var traversingOrder = parseInt(curOrder + 1);
+                previousElem = course[0].elementOrder[traversingOrder];
+                if (typeof elemToCopy != "undefined") {
+                    var keyArr = elemToCopy.split(".");
+                    var tmpTlPoint = keyArr[0];
+                    var elementName = keyArr[1];
+                    var elemIndex = keyArr[2];
+                    course[0].courseTimeline[tmpTlPoint][elementName][elemIndex].order = traversingOrder;
+                    course[0].elementOrder[traversingOrder] = elemToCopy;
+                }
+            }
+        }
+    }
+    var syllabusKeyArray = course[0].courseTimeline[tlPoint][elemType][innerIndex].syllabus.key.split(".");
+    var syllabusObj = course[0].syllabus;
+    for (var key in syllabusKeyArray) {
+        syllabusObj = syllabusObj[syllabusKeyArray[key]];
+    }
+    if (!syllabusObj.element) {
+        syllabusObj.element = [];
+    }
+    syllabusObj.element.push(tlPoint + "." + elemType + "." + innerIndex);
+    course[0].courseTimeline[tlPoint][elemType][innerIndex].order = order;
+    course[0].elementOrder[order] = tlPoint + "." + elemType + "." + innerIndex;
+    var totalMark = 0;
+    var looper = 0;
+    var currentMark = 0;
+    var tlPointMark = 0;
+    if (course[0].courseTimeline[tlPoint].totalMark) {
+        tlPointMark = course[0].courseTimeline[tlPoint].totalMark;
+    }
+    if (course[0].totalMark) {
+        currentMark = course[0].totalMark;
+    }
+    for (looper; looper < elements.length; looper++) {
+        if (elements[looper] != null) {
+            if (elements[looper].type == "question-viewer" ||
+                elements[looper].type == "question-group-viewer" ||
+                elements[looper].type == "assignment-question-viewer"||
+                 elements[looper].type == "random-question-exam-viewer") {
+                totalMark = totalMark + elements[looper].value.mark.totalMark;
+            }
+        }
+    }
+    course[0].totalMark = currentMark + totalMark;
+    course[0].courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;
+    if(totalMark>0){
+    course[0].courseTimeline[tlPoint][elemType][innerIndex].totalMark = totalMark;    
+    }
+    
+    db.clnCourses.save(course[0]);
+    return course[0].elementOrder;
+}
+});
+
+
+db.system.js.save({
+    "_id" : "fnEditCourseElement",
+    "value" : function (courseId, courseElemName, tlPoint, elemObjToSave, rmId) {
+    
+    var innerIndex = elemObjToSave.index;
+    var courseObj = elemObjToSave.element;
+    
+    
+    var key = "courseTimeline." + tlPoint + "." + courseElemName;
+    var obj = {};
+    obj[key] = courseObj;
+    var course = db.clnCourses.find({_id:courseId}).toArray();
+    var order = course[0].courseTimeline[tlPoint][courseElemName][innerIndex].order;
+    var totalMark = 0;
+    var oldTotalMark = 0;
+    var newTotalMark = 0;
+    var oldElements = course[0].courseTimeline[tlPoint][courseElemName];
+    var looper = 0;
+    if (course[0].totalMark) {
+        totalMark = course[0].totalMark;
+    }
+    for (index in oldElements) {
+        for (looper = 0; looper < oldElements[index].elements.length; looper++) {
+            if(oldElements[index].elements[looper] != null){
+                if (oldElements[index].elements[looper].type == "question-viewer" ||
+                    oldElements[index].elements[looper].type == "question-group-viewer" || oldElements[index].elements[looper].type == "assignment-question-viewer"|| oldElements[index].elements[looper].type == "random-question-exam-viewer") {
+                    oldTotalMark = oldTotalMark + oldElements[index].elements[looper].value.mark.totalMark;
+                }
+            }
+        }
+    }
+    for (looper = 0; looper < courseObj.elements.length; looper++) {
+        if(oldElements[index].elements[looper] != null){
+            if (courseObj.elements[looper].type == "question-viewer" ||
+                courseObj.elements[looper].type == "question-group-viewer" || courseObj.elements[looper].type == "assignment-question-viewer"|| courseObj.elements[looper].type == "random-question-exam-viewer") {
+                newTotalMark = newTotalMark + courseObj.elements[looper].value.mark.totalMark;
+            }
+        }
+    }
+    
+    //course[0].courseTimeline[tlPoint][courseElemName][innerIndex]
+    var syllabusKeyArray = courseObj.syllabus.key.split('.');
+    var syllabusObj=course[0].syllabus;
+    for(var key in syllabusKeyArray){
+            syllabusObj=syllabusObj[syllabusKeyArray[key]];
+        }
+       if(!syllabusObj.element){
+            syllabusObj.element=[];
+       }
+    syllabusObj.element.push(tlPoint + "." + courseElemName + "." + innerIndex);
+      
+     syllabusKeyArray = course[0].courseTimeline[tlPoint][courseElemName][innerIndex].syllabus.key.split('.');
+      syllabusObj=course[0].syllabus;
+    for(var key in syllabusKeyArray){
+            syllabusObj=syllabusObj[syllabusKeyArray[key]];
+        }
+       if(!syllabusObj.element){
+            syllabusObj.element=[];
+       }
+        
+      for(var index in syllabusObj.element){
+          if(syllabusObj.element[index]==tlPoint+'.'+courseElemName+'.'+innerIndex){
+             syllabusObj.element.splice(index,1);
+          }
+         }
+    
+    var tlPointMark = 0;
+    if (course[0].courseTimeline[tlPoint].totalMark) {
+        tlPointMark = course[0].courseTimeline[tlPoint].totalMark;
+    }
+    course[0].courseTimeline[tlPoint][courseElemName][innerIndex] = courseObj;
+    course[0].courseTimeline[tlPoint][courseElemName][innerIndex].order = order;
+    course[0].courseTimeline[tlPoint][courseElemName][innerIndex].totalMark=newTotalMark;
+    course[0].totalMark = totalMark + (newTotalMark - oldTotalMark);
+    course[0].courseTimeline[tlPoint].totalMark = tlPointMark + (newTotalMark - oldTotalMark);
+    db.clnCourses.save(course[0]);
+    return course;
+}});
+
+
+db.system.js.save({
+    "_id" : "fnRemoveCourseElement",
+    "value" : function (courseId, courseElemName, tlPoint, index, rmId) {
+    var key = "courseTimeline." + tlPoint + "." + courseElemName;
+    var obj = {};
+    obj[key] = index;
+    var objProjection = {};
+    objProjection[key] = 1;
+    objProjection['syllabus'] = 1;
+    objProjection._id = 0;
+    var oldCourse = db.clnCourses.findOne({_id:courseId}, objProjection);
+    var removedOrder = oldCourse.courseTimeline[tlPoint][courseElemName][index].order * 1;
+    var oldElements = oldCourse.courseTimeline[tlPoint][courseElemName][index].elements;
+    var markToDeduct = 0;
+    for (indexKey in oldElements) {
+        if (oldElements[indexKey].type == "question-viewer" ||
+            oldElements[indexKey].type == "question-group-viewer" ||
+            oldElements[indexKey].type == "assignment-question-viewer"||
+            oldElements[indexKey].type == "random-question-exam-viewer") {
+            markToDeduct = markToDeduct + oldElements[indexKey].value.mark.totalMark;
+        }
+    }
+    
+    var syllabusKeyArray = oldCourse.courseTimeline[tlPoint][courseElemName][index].syllabus.key.split('.');
+    
+    db.clnCourses.update({_id:courseId}, {$pop:obj});
+    var a = db.clnCourses.findOne({_id:courseId});
+    if (!a.courseTimeline[tlPoint][courseElemName].length) {
+        b = a.courseTimeline[tlPoint][courseElemName];
+        var unset = {};
+        unset[key] = 1;
+        db.clnCourses.update({_id:courseId}, {$unset:unset});
+        a = db.clnCourses.findOne({_id:courseId});
+        if (Object.keys(a.courseTimeline[tlPoint]).length == 0) {
+            unset = {};
+            unset["courseTimeline." + tlPoint] = 1;
+            db.clnCourses.update({_id:courseId}, {$unset:unset});
+            b = unset;
+        }
+    }
+    var course = db.clnCourses.findOne({_id:courseId});
+    delete course.elementOrder[removedOrder];
+    course.totalMark = course.totalMark - markToDeduct;
+    course.courseTimeline[tlPoint].totalMark = course.courseTimeline[tlPoint].totalMark - markToDeduct;
+    for (order in course.elementOrder) {
+        order = order * 1;
+        if (order > removedOrder) {
+            if (course.elementOrder[order]) {
+                var keyArr = course.elementOrder[order].split(".");
+                var tmpTlPoint = keyArr[0];
+                var elementName = keyArr[1];
+                var innerIndex = keyArr[2];
+                if (removedOrder != order) {
+                    course.courseTimeline[tmpTlPoint][elementName][innerIndex].order = order - 1;
+                    course.elementOrder[order - 1] = course.elementOrder[order];
+                }
+                delete course.elementOrder[order];
+            }
+        }
+    }
+    
+      
+      syllabusObj=course.syllabus;
+        for(var key in syllabusKeyArray){
+            syllabusObj=syllabusObj[syllabusKeyArray[key]];
+        }
+       if(!syllabusObj.element){
+            syllabusObj.element=[];
+       }
+        
+      for(var indx in syllabusObj.element){
+          if(syllabusObj.element[indx]==tlPoint+'.'+courseElemName+'.'+index){
+             syllabusObj.element.splice(indx,1);
+          }
+         }
+    
+    db.clnCourses.save(course);
+    return course.elementOrder;
+}
+});
