@@ -64,7 +64,7 @@ db.system.js.save({_id: "fnAddUserNomination",
 
                 var userId=fnRegisterUser({companyId:companyId,loggedusercrmid:loggedusercrmid,mandatoryData:mandatoryData,role:role});
 
-                orderObject.orderDetails[course].userInfo[user].userLoginId=userId.userId;
+                orderObject.orderDetails[course].userInfo[user].userLoginId=userId.userId.valueOf();
 
             }
 

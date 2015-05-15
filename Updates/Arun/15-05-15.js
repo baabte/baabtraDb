@@ -51,7 +51,7 @@ db.system.js.save({_id: "fnAddUserNomination",
 
                 var userId=fnRegisterUser({companyId:companyId,loggedusercrmid:loggedusercrmid,mandatoryData:mandatoryData,role:role});
 
-                orderObject.orderDetails[course].userInfo[user].userLoginId=userId.userId;
+                orderObject.orderDetails[course].userInfo[user].userLoginId=userId.userId.valueOf();
 
             }
 
@@ -68,6 +68,36 @@ db.system.js.save({_id: "fnAddUserNomination",
 });
 
 
+// to register a user 
+/*
+Edited by: Lijin
+Date:14-4-2015
+Change:Added selected duration into course branch mapping
+*/
+
+/*
+Edited by: Arun
+Date:18-4-2015
+Change:Added material assignment it batch and cascade mode activated 
+*/
+
+/*
+Edited by: Arun
+Date:24-4-2015
+Change:username added to userdetails
+*/
+
+/*
+Edited by: Arun
+Date:14-5-2015
+Change:added sylabus and markSheetElements to user course mappning and batch mapping 
+*/
+
+/*
+Edited by: Arun
+Date:15-5-2015
+Change:returning the objectid value of the registered user 
+*/
 
 db.system.js.save(
 {
@@ -436,7 +466,11 @@ db.system.js.save(
             resultmsg = "exsisting mentee new course";
         }
     }
-    var result = {result:resultmsg, evaluatorEmailLIst:evaluatorEmails,userId:userLoginDataId.valueOf()};
+    
+
+
+
+    var result = {result:resultmsg, evaluatorEmailLIst:evaluatorEmails,userId:userLoginDataId};
     return result;
 }
 });
@@ -447,8 +481,14 @@ db.system.js.save(
 db.system.js.save({
     "_id" : "fnEnrollUser",
     "value" : function (data) {
+        
+        var _id=db.clnUserDetails.findOne({fkUserLoginId:ObjectId(data.mandatoryData.userLoginId)},{_id:1});
+        
+        data._id=_id._id.valueOf();
+
+        fnRegisterUser(data)
+
         return data;
-        // var _id=db.findOne(ObjectId(data.mandatoryData.userLoginId)})
 
         
 

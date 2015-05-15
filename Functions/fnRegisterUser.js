@@ -396,7 +396,11 @@ db.system.js.save(
             resultmsg = "exsisting mentee new course";
         }
     }
-    var result = {result:resultmsg, evaluatorEmailLIst:evaluatorEmails,userId:userLoginDataId.valueOf()};
+    
+
+
+
+    var result = {result:resultmsg, evaluatorEmailLIst:evaluatorEmails,userId:userLoginDataId};
     return result;
 }
 });
