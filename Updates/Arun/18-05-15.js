@@ -1,21 +1,4 @@
-
-/*
-Created by : Jihin
-Created On : 23/03/2015
-Purpose    : Add User Nomination
-
-Updated On : 18/APR/2015
-Purpose : added customer details to clnCompanyCustomer collection
-
-Updated On : 15/May/2015
-Purpose : added customer details to clnCompanyCustomer collection
-
-Updated On : 14/May/2015
-Purpose : added user registration to nomination
-
-Updated On : 18/May/2015
-Purpose : added usercode to order form userinfo
-*/
+/* commit with changes in user nomination user code added in userinfo */
 
 db.system.js.save({_id: "fnAddUserNomination",
       value:function (orderObject, rmId) {
