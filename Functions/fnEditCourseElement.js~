@@ -23,6 +23,10 @@ Modified By: Jihin
 Date: 13-05-2015
 purpose: Added syllabus in element level
 
+Modified By: Arun
+Date: 14-05-2015
+purpose: Added total mark calculation in for random test 
+
 */
 
 db.system.js.save({
@@ -75,7 +79,7 @@ db.system.js.save({
             syllabusObj.element=[];
        }
     syllabusObj.element.push(tlPoint + "." + courseElemName + "." + innerIndex);
-      
+      if(course[0].courseTimeline[tlPoint][courseElemName][innerIndex].syllabus){
      syllabusKeyArray = course[0].courseTimeline[tlPoint][courseElemName][innerIndex].syllabus.key.split('.');
       syllabusObj=course[0].syllabus;
     for(var key in syllabusKeyArray){
@@ -90,7 +94,7 @@ db.system.js.save({
              syllabusObj.element.splice(index,1);
           }
          }
-    
+     }
     var tlPointMark = 0;
     if (course[0].courseTimeline[tlPoint].totalMark) {
         tlPointMark = course[0].courseTimeline[tlPoint].totalMark;
