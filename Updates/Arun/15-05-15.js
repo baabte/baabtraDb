@@ -9,7 +9,7 @@ db.system.js.save({_id: "fnAddUserNomination",
         var customCompanyCode = fnGetCode(codeData);
         var companyCustomerCode = fnGetCode(companyCustomerCodeData);
         orderObject.requesteeDetails.companyCustomerCode = companyCustomerCode;
-        var companyCustomerId = new ObjectId;
+        var companyCustomerId = new ObjectId();
         var companyCustomerDetails = JSON.parse(JSON.stringify(orderObject.requesteeDetails));
         companyCustomerDetails._id = companyCustomerId;
         companyCustomerDetails.companyId = ObjectId(orderObject.companyId);
@@ -35,6 +35,10 @@ db.system.js.save({_id: "fnAddUserNomination",
 
      if(orderObject.draftFlag==1){
         var companyId=orderObject.companyId;
+
+        if(typeof orderObject.companyId!='string'){
+            companyId=orderObject.companyId.valueOf();    
+        }
         var loggedusercrmid=rmId;
         for (var course in orderObject.orderDetails){
 
