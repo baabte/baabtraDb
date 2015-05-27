@@ -35,39 +35,39 @@ db.system.js.save({_id: "fun_load_publishedCourses",
         if (type != "") {
             switch (type) {
               case "Domains":
-                courses = db.clnCourses.find({Domains:searchKey, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+                courses = db.clnCourses.find({Domains:searchKey, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:-1}).toArray();
                 break;
               case "Technologies":
-                courses = db.clnCourses.find({Technologies:searchKey, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+                courses = db.clnCourses.find({Technologies:searchKey, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:-1}).toArray();
                 break;
               case "Branches":
-                courses = db.clnCourses.find({Branches:searchKey, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+                courses = db.clnCourses.find({Branches:searchKey, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:-1}).toArray();
                 break;
               case "Designation":
-                courses = db.clnCourses.find({Designation:searchKey, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+                courses = db.clnCourses.find({Designation:searchKey, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:-1}).toArray();
                 break;
               case "Tags":
-                courses = db.clnCourses.find({Tags:searchKey, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+                courses = db.clnCourses.find({Tags:searchKey, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:-1}).toArray();
                 break;
               case "Delivery":
                 if (searchKey == "online") {
-                    courses = db.clnCourses.find({'Delivery.online':true, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+                    courses = db.clnCourses.find({'Delivery.online':true, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:-1}).toArray();
                 } else {
-                    courses = db.clnCourses.find({'Delivery.offline':true, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+                    courses = db.clnCourses.find({'Delivery.offline':true, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:-1}).toArray();
                 }
                 break;
               default:;
             }
         } else {
-            courses = db.clnCourses.find({$text:{$search:searchKey}, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+            courses = db.clnCourses.find({$text:{$search:searchKey}, _id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:-1}).toArray();
         }
     } else {
         if (type == "next") {
-            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1, _id:{$lt:ObjectId(lastId)}}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1, _id:{$lt:ObjectId(lastId)}}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:-1}).toArray();
         } else if (type == "prev") {
-            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1, _id:{$gt:ObjectId(firstId)}}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:1}).toArray();
+            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1, _id:{$gt:ObjectId(firstId)}}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:1}).toArray();
         } else {
-            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1}).limit(12).sort({_id:-1}).toArray();
         }
     }
     if (courses.length != 0) {
