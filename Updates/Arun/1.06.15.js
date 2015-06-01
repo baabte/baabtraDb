@@ -1,11 +1,3 @@
-//GetAuthUserData
-/*
-created by : midhun
-
-updated by: arun 
-on:28.05.15
-purpose:to update the user pic of the user if available in user details;
-*/
 db.system.js.save({_id: "GetAuthUserData",
     value:function (data, ip_address, from_where) {
     ip_addresses = [];
