@@ -1,11 +1,13 @@
 //fnLoadCustomFormforRegistration
 db.system.js.save({
     "_id" : "fnLoadCustomFormforRegistration",
-    "value" : function(formId) {
+    "value" : function(companyId, formName) {
 
     try{
-    var companyCustomForm = db.clnCompanyCustomForm.findOne({_id:ObjectId(formId),activeFlag:1});
-    var customFormsMain = db.clnCustomFormsMain.findOne({_id:companyCustomForm.formId,activeFlag:1});
+        
+    var customFormsMain = db.clnCustomFormsMain.findOne({formName:formName,activeFlag:1});
+    var companyCustomForm = db.clnCompanyCustomForm.findOne({formId:customFormsMain._id,companyId:ObjectId(companyId),activeFlag:1});
+   
     
     var form = {};
     form[customFormsMain.formSchema.formName] = customFormsMain.formSchema;
@@ -19,3 +21,6 @@ catch(e){
     return {};
 }
 }});
+
+
+
