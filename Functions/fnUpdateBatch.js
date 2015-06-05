@@ -2,6 +2,9 @@ db.system.js.save({_id: "fnUpdateBatch",
 		value: function (batchObj) 
 {
    // write your code here
+    if(batchObj.Codes){
+      delete batchObj.Codes;
+    }
     batchObj.createdDate=ISODate();
     batchObj.updatedDate=ISODate();
     batchObj.startDate=ISODate(batchObj.startDate);
@@ -25,6 +28,6 @@ db.system.js.save({_id: "fnUpdateBatch",
       batchObj.courseType="offline"
     result= db.clnBatches.save(batchObj);
    }
-    return result;
+    return batchObj;
 }});
 
