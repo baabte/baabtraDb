@@ -1,39 +1,63 @@
-// to register a user 
-/*
-Edited by: Lijin
-Date:14-4-2015
-Change:Added selected duration into course branch mapping
-*/
 
-/*
-Edited by: Arun
-Date:18-4-2015
-Change:Added material assignment it batch and cascade mode activated 
-*/
+db.system.js.save({"_id" : "fnGetCurrentCourseElement",
+value:function (userLoginId, courseMappingId, direction) {
+    var course = db.clnUserCourseMapping.findOne({_id:ObjectId(courseMappingId), fkUserLoginId:ObjectId(userLoginId), activeFlag:1});
+    var lastViewedOrder = 0;
+    var elemArray = [];
+    var element = {};
+    var lastElement = false;
+    var totalMark = 0;
+    var markScored = 0;
+    var tlPoint = "";
+    var selectedDuration = 0;
+    var courseAssignedDate = "";
+    if (course != null) {
+        totalMark = course.totalMark;
+        //added by Anoop
+        courseAssignedDate = course.createdDate;
+        selectedDuration = course.selectedDuration;
+        if (course.markScored) {
+            markScored = course.markScored;
+        }
+        if (course.lastViewedOrder) {
+            lastViewedOrder = course.lastViewedOrder;
+        }else{
+           var keyArray= Object.keys(course.elementOrder);
+           lastViewedOrder=keyArray[0]*1;
+        }
+        switch (direction) {
+          case "":
+            lastViewedOrder = lastViewedOrder;
+            break;
+          case "next":
+            lastViewedOrder = lastViewedOrder + 1;
+            break;
+          case "previous":
+            lastViewedOrder = lastViewedOrder - 1;
+            break;
+          default:;
+        }
+        course.lastViewedOrder = lastViewedOrder;
+        if (course.elementOrder[lastViewedOrder]) {
+            elemArray = course.elementOrder[lastViewedOrder].split(".");
+            tlPoint = elemArray[0];
+            var elemType = elemArray[1];
+            var innerIndex = elemArray[2];
+            element = course.courseTimeline[tlPoint][elemType][innerIndex];
+            db.clnUserCourseMapping.save(course);
 
-/*
-Edited by: Arun
-Date:24-4-2015
-Change:username added to userdetails
-*/
+        } else {
+            lastElement = true;
+        }
+        return {tlPoint:tlPoint, selectedDuration:selectedDuration, totalMark:totalMark, markScored:markScored, element:element, courseId:course.fkCourseId, lastViewedOrder:lastViewedOrder, lastElement:lastElement, courseAssignedDate: courseAssignedDate };
+    } else {
+        return "error";
+    }
+}});
 
-/*
-Edited by: Arun
-Date:14-5-2015
-Change:added sylabus and markSheetElements to user course mappning and batch mapping 
-*/
 
-/*
-Edited by: Arun
-Date:15-5-2015
-Change:returning the objectid value of the registered user 
-*/
 
-/*
-Edited by: Arun
-Date:10-6-2015
-Change:fix in course batch mapping id in usercoursemaping
-*/
+
 
 db.system.js.save(
 {
@@ -422,3 +446,71 @@ db.system.js.save(
 });
 
 
+db.system.js.save({_id: "fnChangeBatchStatus",
+    value: function (data){
+    	var courseBatchMappingId=ObjectId(data.courseBatchMappingId);
+    	var companyId=ObjectId(data.companyId);
+    	var rmId=ObjectId(data.rmId);
+
+
+    	var courseBatch=db.clnCourseBatchMapping.findOne({_id:courseBatchMappingId},{status:1,statusHistory:1,batchId:1});
+
+    	  var enrollmentBefore =new Date();
+            var enrollmentAfter =new Date();
+         if(data.startDate!=null){
+            var batchObj= db.clnBatches.findOne({_id:courseBatch.batchId},{Admission:1,_id:0});
+              data.startDate=ISODate(data.startDate);
+
+            enrollmentAfter=new Date(data.startDate.getTime() - batchObj.Admission.beforeDaysCount*24*60*60*1000);//to get the enrollment before date
+            enrollmentBefore=new Date(data.startDate.getTime() + batchObj.Admission.afterDaysCount*24*60*60*1000);//to get the enrollment after days   
+ 
+        }
+
+
+        var oldStatus;
+    	var statusHistoryObj={};
+    	var statusHistory=[];
+    	if ((courseBatch.status)&&(courseBatch.statusHistory)){
+    		oldStatus=courseBatch.status;
+    		statusHistoryObj.statusChangedOn=Date();
+    		statusHistoryObj.previousStatus=oldStatus;
+    		statusHistoryObj.statusChangedby=data.rmId;
+    		statusHistoryObj.statusChangedTo=data.status;
+    		statusHistory=courseBatch.statusHistory;
+    		statusHistory.push(statusHistoryObj);
+    	}
+    	else if(courseBatch.status){
+    		oldStatus=courseBatch.status;
+    		statusHistoryObj.statusChangedOn=Date();
+    		statusHistoryObj.previousStatus=oldStatus;
+    		statusHistoryObj.statusChangedby=data.rmId;
+    		statusHistoryObj.statusChangedTo=data.status;
+    		statusHistory.push(statusHistoryObj);
+    	}else{
+    		statusHistoryObj.statusChangedOn=Date();
+    		statusHistoryObj.previousStatus=null;
+    		statusHistoryObj.statusChangedby=data.rmId;
+    		statusHistoryObj.statusChangedTo=data.status;
+    		statusHistory.push(statusHistoryObj);
+    	}
+    	
+        if(data.startDate!=null){
+    	db.clnCourseBatchMapping.update({_id:courseBatchMappingId},{$set:{status:data.status,statusHistory:statusHistory,startDate:data.startDate,enrollmentBefore:enrollmentBefore,enrollmentAfter:enrollmentAfter, updatedDate:Date(),urmId:rmId}});
+        }else{
+        db.clnCourseBatchMapping.update({_id:courseBatchMappingId},{$set:{status:data.status,statusHistory:statusHistory, updatedDate:Date(),urmId:rmId}});
+
+        }
+    	var NotificationTriggersData={
+    		type:'batch-status-update',
+			data:{batchMappingId:data.rmId,
+			date:Date()},
+			companyId:data.companyId,
+			crmId:data.rmId,
+			status:1
+		};
+
+    	db.clnNotificationTriggers.insert(NotificationTriggersData)
+    	return data;
+
+
+}});

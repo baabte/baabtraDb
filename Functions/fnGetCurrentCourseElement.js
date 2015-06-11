@@ -5,6 +5,8 @@ Purpose: for loading current course element for candidate course full view
 
 Edited by Anoop on 22nd April 2015 for returning the course assigned date too
 
+Edited by Arun on 10th June 2015 to fix error when manual material assignment
+
 
 
 */
@@ -32,6 +34,9 @@ value:function (userLoginId, courseMappingId, direction) {
         }
         if (course.lastViewedOrder) {
             lastViewedOrder = course.lastViewedOrder;
+        }else{
+           var keyArray= Object.keys(course.elementOrder);
+           lastViewedOrder=keyArray[0]*1;
         }
         switch (direction) {
           case "":
@@ -46,13 +51,14 @@ value:function (userLoginId, courseMappingId, direction) {
           default:;
         }
         course.lastViewedOrder = lastViewedOrder;
-        db.clnUserCourseMapping.save(course);
         if (course.elementOrder[lastViewedOrder]) {
             elemArray = course.elementOrder[lastViewedOrder].split(".");
             tlPoint = elemArray[0];
             var elemType = elemArray[1];
             var innerIndex = elemArray[2];
             element = course.courseTimeline[tlPoint][elemType][innerIndex];
+            db.clnUserCourseMapping.save(course);
+
         } else {
             lastElement = true;
         }
