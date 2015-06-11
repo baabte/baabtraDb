@@ -58,7 +58,8 @@ db.system.js.save({_id: "fnChangeBatchStatus",
         }
     	var NotificationTriggersData={
     		type:'batch-status-update',
-			data:{batchMappingId:data.rmId,
+			data:{batchMappingId:data.courseBatchMappingId,
+            rmId:data.rmId,
 			date:Date()},
 			companyId:data.companyId,
 			crmId:data.rmId,
