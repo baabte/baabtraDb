@@ -1,3 +1,13 @@
+/*
+
+  Created by : Akshath
+
+  Modified by : Lijin
+  Date : 8-6-2015
+  Purpose:Fix in element order generation
+
+*/
+
 
 db.system.js.save({
     "_id" : "fnAssignCourseMaterials4Batch",
@@ -50,9 +60,9 @@ db.system.js.save({
           batchObj.elementOrder = {};
         }
         
-        elemLength=Object.keys(batchObj.elementOrder).length;
+        //elemLength=Object.keys(batchObj.elementOrder).length;
         //for (var i in userCourseObj.elementOrder){
-            batchObj.elementOrder[elemLength]=elemOrder;
+            batchObj.elementOrder[dataObj[key].courseElement.order]=elemOrder;
         //}
         batchObj.totalMark = currentMark + totalMark;
         batchObj.courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;
@@ -100,9 +110,9 @@ db.system.js.save({
                           users.elementOrder = {};
                         }
                         
-                        elemLength=Object.keys(users.elementOrder).length;
+                        //elemLength=Object.keys(users.elementOrder).length;
                         //for (var i in userCourseObj.elementOrder){
-                            users.elementOrder[elemLength]=elemOrder;
+                            users.elementOrder[dataObj[key].courseElement.order]=elemOrder;
                         //}
                         users.totalMark = currentMark + totalMark;
                         users.courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;

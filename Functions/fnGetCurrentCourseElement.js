@@ -6,6 +6,7 @@ Purpose: for loading current course element for candidate course full view
 Edited by Anoop on 22nd April 2015 for returning the course assigned date too
 
 
+
 */
 
 
