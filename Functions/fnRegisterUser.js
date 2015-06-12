@@ -98,6 +98,12 @@ db.system.js.save(
         var companyId = "";
     }
     var resultmsg;
+
+    var check=fnUserNameValid({eMail:mandatoryData.eMail,fetch:'data'});
+    if(check.userCheck==1){
+        data._id=check.UserDetails._id.valueOf();
+    }
+
     if (data._id == undefined || data._id == null) {
         var UserRoleMappingDataId = new ObjectId;
         var userLoginDataId = new ObjectId;
@@ -247,6 +253,7 @@ db.system.js.save(
     if (data._id != undefined || data._id != null) {
         var userDetalisId = ObjectId(data._id);
         var userId = db.clnUserDetails.findOne({_id:userDetalisId}, {_id:0, fkUserLoginId:1});
+        var userLoginDataId=userId.fkUserLoginId;
         delete data._id;
         delete mandatoryData.eMail;
         delete mandatoryData.password;
@@ -280,6 +287,7 @@ db.system.js.save(
             resultmsg = "exsisting user new role";
         }
         if (roleId == 3) { //user is mentee
+        if (course != undefined) {
             if (data.batch != undefined || data.batch != null) { //have a batch
                 var batchCourseId = new ObjectId;
                 if (materialAssignment) {  //material assignment method
@@ -409,6 +417,7 @@ db.system.js.save(
                 db.clnUserCourseMapping.insert(UserCourseMappingData);
             }
             resultmsg = "exsisting mentee new course";
+        }
         }
     }
     
