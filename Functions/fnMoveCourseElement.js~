@@ -1,0 +1,61 @@
+
+/*
+Creted By : Jihin Raju
+Date : 08/06/2015
+Purpose: For move course elements
+*/
+
+db.system.js.save({
+	"_id" : "fnMoveCourseElement",
+	"value" : function(moveObject) {
+        var course = db.clnCourses.findOne({_id:ObjectId(moveObject.courseId)});
+        var fromElementArray = moveObject.elementFrom.split('.');
+        var toElementArray = moveObject.elementTo.split('.');
+        //var moveElement = course.courseTimeline[];
+        var order = 0;
+        var gotOrderFlag = false;
+        var moveElement = course.courseTimeline;
+        for(var elem in fromElementArray){
+            //element to move
+            moveElement = moveElement[fromElementArray[elem]];
+        }
+        
+        for(var tmpOrder in course.elementOrder){
+            var orderKeys = course.elementOrder[tmpOrder].split(".");
+            orderKeys[0] = parseInt(orderKeys[0]);
+            tlPoint = parseInt(toElementArray[0]);
+            tmpOrder = parseInt(tmpOrder);
+            
+            if (orderKeys[0] == tlPoint){
+                gotOrderFlag = true;
+                order = tmpOrder + 1 > order ? tmpOrder + 1 : order;
+                }
+            
+            if ((!gotOrderFlag) && (orderKeys[0] < tlPoint)) {
+                order = tmpOrder + 1 > order ? tmpOrder + 1 : order;
+            }
+            
+           }
+            if(moveObject.addType == "Above"){
+                order--;
+            }
+            else if(moveObject.addType == "Below"){
+                order++;
+            }
+            delete course.elementOrder[moveElement.order];
+            moveElement.order = order;
+            moveElement.index = parseInt(toElementArray[2]);
+            
+            var syllabusArray = moveElement.syllabus.key.split('.');
+            var moveElementSyllabus = course.syllabus;
+            for(var syllabus in syllabusArray){
+                //element to move
+                moveElementSyllabus = moveElementSyllabus[syllabusArray[syllabus]];
+            }
+            
+            //splicing element refernce from syllabus
+            moveElementSyllabus.element.splice(moveElementSyllabus.element.indexOf(moveObject.elementFrom),1);
+            
+            return course.elementOrder;
+         }
+     })
