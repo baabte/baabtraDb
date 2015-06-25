@@ -106,4 +106,4 @@ db.system.js.save({_id: "GetAuthUserData",
     }
     var userinfos = ActiveUserDataId.concat(user.userLoginId);
     return fun_load_log_user_data(userinfos);
-}})
+}});

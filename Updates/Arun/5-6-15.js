@@ -1,3 +1,4 @@
+
 db.system.js.save({_id: "fnAddNewBatches",
     value: function (batchObj){
     // write your code here
@@ -104,4 +105,122 @@ db.system.js.save({_id: "fnAddNewBatches",
     return batchObj;
 }});
 
-// emptyBatch
+
+
+
+
+
+db.system.js.save({_id:'fnExistingMaterialsFetch',
+value:function(data) {
+  var courseId=ObjectId(data.courseId);
+
+  var course=db.clnCourses.findOne({_id:courseId},{courseTimeline:1,syllabus:1})
+
+	return course;
+
+}});
+
+
+
+db.system.js.save({_id: "fnUpdateBatch",
+		value: function (batchObj) 
+{
+   // write your code here
+    if(batchObj.Codes){
+      delete batchObj.Codes;
+    }
+    batchObj.createdDate=ISODate();
+    batchObj.updatedDate=ISODate();
+    batchObj.startDate=ISODate(batchObj.startDate);
+    batchObj.endDate=ISODate(batchObj.endDate);
+    if (batchObj.instructorLead == true &&  batchObj.offline == true ) {//checking whether the object is exist 
+       delete batchObj.instructorLead;
+       delete batchObj.offline;
+       batchObj.courseType="instructorLead"
+       result= db.clnBatches.save(batchObj);
+       delete batchObj._id; 
+       batchObj.courseType="offline"
+       result= db.clnBatches.insert(batchObj);
+    }else if(batchObj.instructorLead == true){
+        delete batchObj.instructorLead;
+       delete batchObj.offline;
+       batchObj.courseType="instructorLead"
+      result=  db.clnBatches.save(batchObj);
+   } else if(batchObj.offline == true){
+       delete batchObj.instructorLead;
+       delete batchObj.offline;
+      batchObj.courseType="offline"
+    result= db.clnBatches.save(batchObj);
+   }
+    return batchObj;
+}});
+
+
+
+db.system.js.save({_id: "fnChangeBatchStatus",
+    value: function (data){
+    	var courseBatchMappingId=ObjectId(data.courseBatchMappingId);
+    	var companyId=ObjectId(data.companyId);
+    	var rmId=ObjectId(data.rmId);
+
+    	var courseBatch=db.clnCourseBatchMapping.findOne({_id:courseBatchMappingId},{status:1,statusHistory:1});
+    	var oldStatus;
+    	var statusHistoryObj={};
+    	var statusHistory=[];
+    	if ((courseBatch.status)&&(courseBatch.statusHistory)){
+    		oldStatus=courseBatch.status;
+    		statusHistoryObj.statusChangedOn=Date();
+    		statusHistoryObj.previousStatus=oldStatus;
+    		statusHistoryObj.statusChangedby=data.rmId;
+    		statusHistoryObj.statusChangedTo=data.status;
+    		statusHistory=courseBatch.statusHistory;
+    		statusHistory.push(statusHistoryObj);
+    	}
+    	else if(courseBatch.status){
+    		oldStatus=courseBatch.status;
+    		statusHistoryObj.statusChangedOn=Date();
+    		statusHistoryObj.previousStatus=oldStatus;
+    		statusHistoryObj.statusChangedby=data.rmId;
+    		statusHistoryObj.statusChangedTo=data.status;
+    		statusHistory.push(statusHistoryObj);
+    	}else{
+    		statusHistoryObj.statusChangedOn=Date();
+    		statusHistoryObj.previousStatus=null;
+    		statusHistoryObj.statusChangedby=data.rmId;
+    		statusHistoryObj.statusChangedTo=data.status;
+    		statusHistory.push(statusHistoryObj);
+    	}
+    	
+
+    	db.clnCourseBatchMapping.update({_id:courseBatchMappingId},{$set:{status:data.status,statusHistory:statusHistory, updatedDate:Date(),urmId:rmId}});
+
+    	var NotificationTriggersData={
+    		type:'batch-status-update',
+			data:{batchMappingId:data.rmId,
+			date:Date()},
+			companyId:data.companyId,
+			crmId:data.rmId,
+			status:1
+		};
+
+    	db.clnNotificationTriggers.insert(NotificationTriggersData)
+    	return data;
+
+
+}});
+
+
+
+
+db.system.js.save({
+    "_id" : "fnGetCourses",
+    "value" : function(data) {
+
+    	var companyId=ObjectId(data.companyId);
+
+  var Courses=db.clnCourses.find({companyId:companyId,activeFlag:1,courseTimeline:{$exists:1},type:'course'},{_id:1,Name:1,draftFlag:1}).toArray();
+  
+	return Courses;
+
+}});
+
