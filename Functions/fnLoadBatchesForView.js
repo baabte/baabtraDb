@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=======
-//fnLoadBatchesForView
 
->>>>>>> c5743c8d76423fce6ad7498ee407de95f0b46ffc
 db.system.js.save({
     "_id" : "fnLoadBatchesForView",
     "value" : function(companyId,firstId,type,lastId,searchKey) {
@@ -12,7 +8,6 @@ db.system.js.save({
     resultObj={};
     if(searchKey==""){
     if(type=='initial'){
-<<<<<<< HEAD
         batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1},{courseTimeline:0,syllabus:0}).limit(9).sort({_id:-1}).toArray();
 }else if(type=='next'){
 	batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1,_id:{$lt:ObjectId(lastId)}},{courseTimeline:0,syllabus:0}).limit(9).sort({_id:-1}).toArray();
@@ -23,18 +18,6 @@ db.system.js.save({
 
 }else{
 	batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1,$text:{$search:searchKey}},{courseTimeline:0,syllabus:0}).limit(9).sort({_id:-1}).toArray();
-=======
-        batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1}).limit(9).sort({_id:-1}).toArray();
-}else if(type=='next'){
-	batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1,_id:{$lt:ObjectId(lastId)}}).limit(9).sort({_id:-1}).toArray();
-
-}else if(type=='prev'){
-	batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1,_id:{$gt:ObjectId(firstId)}}).limit(9).sort({_id:1}).toArray();
-}
-
-}else{
-	batches=db.clnCourseBatchMapping.find({fkCompanyId:ObjectId(companyId),activeFlag:1,$text:{$search:searchKey}}).limit(9).sort({_id:-1}).toArray();
->>>>>>> c5743c8d76423fce6ad7498ee407de95f0b46ffc
 
 }
 
@@ -72,11 +55,5 @@ db.system.js.save({
     resultObj.firstId=first;
     resultObj.lastId=last;     
     return resultObj;
-<<<<<<< HEAD
-}});
-
-
-=======
 }
 });
->>>>>>> c5743c8d76423fce6ad7498ee407de95f0b46ffc
