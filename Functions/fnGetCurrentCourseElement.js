@@ -7,8 +7,7 @@ Edited by Anoop on 22nd April 2015 for returning the course assigned date too
 
 Edited by Arun on 10th June 2015 to fix error when manual material assignment
 
-
-
+Edited by Jihin on 17th June 2015 to fix error when element order undefined
 */
 
 
@@ -33,7 +32,7 @@ value:function (userLoginId, courseMappingId, direction) {
             markScored = course.markScored;
         }
         if (course.lastViewedOrder) {
-            lastViewedOrder = course.lastViewedOrder;
+            lastViewedOrder = parseInt(course.lastViewedOrder);
         }else{
            var keyArray= Object.keys(course.elementOrder);
            lastViewedOrder=keyArray[0]*1;
@@ -43,14 +42,32 @@ value:function (userLoginId, courseMappingId, direction) {
             lastViewedOrder = lastViewedOrder;
             break;
           case "next":
-            lastViewedOrder = lastViewedOrder + 1;
+            lastViewedOrder = parseInt(lastViewedOrder);
+            if (course.elementOrder[lastViewedOrder + 1] == undefined) {
+                var elementOrderArray = Object.keySet(course.elementOrder);
+                elementOrderArray = elementOrderArray.sort(function(a, b){return a-b});
+                var indexOfElementOrder = elementOrderArray.indexOf(lastViewedOrder+'')+1;
+                lastViewedOrder =  elementOrderArray[indexOfElementOrder];
+            }
+            else{
+                lastViewedOrder = parseInt(lastViewedOrder) + 1;
+            }
             break;
           case "previous":
-            lastViewedOrder = lastViewedOrder - 1;
+            lastViewedOrder = parseInt(lastViewedOrder);
+            if (course.elementOrder[lastViewedOrder - 1] == undefined) {
+                var elementOrderArray = Object.keySet(course.elementOrder);
+                elementOrderArray = elementOrderArray.sort(function(a, b){return a-b});
+                var indexOfElementOrder = elementOrderArray.indexOf(lastViewedOrder+'')-1;
+                lastViewedOrder =  elementOrderArray[indexOfElementOrder];
+            }
+            else{
+                lastViewedOrder = parseInt(lastViewedOrder) - 1;
+            }
             break;
           default:;
         }
-        course.lastViewedOrder = lastViewedOrder;
+        course.lastViewedOrder = parseInt(lastViewedOrder);
         if (course.elementOrder[lastViewedOrder]) {
             elemArray = course.elementOrder[lastViewedOrder].split(".");
             tlPoint = elemArray[0];
