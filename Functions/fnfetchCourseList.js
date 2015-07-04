@@ -2,6 +2,12 @@
 db.system.js.save({_id: "fnfetchCourseList",
       value: function (courseFetchData) {
     var companyId=ObjectId(courseFetchData.fkcompanyId);
+    if(courseFetchData.type!=undefined){
+      var type=courseFetchData.type;
+    }else{
+      var type='all';
+
+    }
 
     var providerArray=db.clnReseller.distinct('providers.companyId',{fkCompanyId:companyId});
 	if(providerArray==null) {
@@ -21,8 +27,12 @@ db.system.js.save({_id: "fnfetchCourseList",
     	}
   	}
 
-
+    if(type=='all'){
     var courselist = db.clnCourses.find({_id:{$in:coursesArray},
                           companyId:{$in:providerArray},draftFlag:1, activeFlag:1}, {_id:1, Name:1}).toArray();
+  }else{
+     var courselist = db.clnCourses.find({_id:{$in:coursesArray},
+                          companyId:{$in:providerArray},type:type,draftFlag:1, activeFlag:1}, {_id:1, Name:1}).toArray();
+  }
     return courselist;
 }});
