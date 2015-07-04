@@ -117,4 +117,37 @@ db.clnCustomFormsMaster.insert({
     "createdDate" : Date(),
     "updatedDate" : Date(),
     "activeFlag" : 1
-})
+});
+
+
+
+db.system.js.save({_id:'fnLoadParents',
+'value':function (data) {
+    var loginIds =  db.clnUserRoleMapping.distinct('fkUserLoginId',{fkRoleId:5,"profile.fkCompanyId":ObjectId(data.companyId)});
+    var datas = db.clnUserDetails.find({fkUserLoginId:{$in:loginIds},$or:[{"profile.firstName":{$regex:new RegExp(data.searchKey,'i')}},{"profile.lastName":{$regex:new RegExp(data.searchKey,'i')}},{"userName":{$regex:new RegExp(data.searchKey,'i')}}]}).toArray();
+    return datas;
+}});
+
+
+db.system.js.save({
+_id:'fnLoadMappedCandidatesForParent',
+value:function(data){
+    var candidateIds = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(data.fkLoginId)},{_id:0,candidates:1});
+    for(var key in candidateIds.candidates){
+     candidateIds.candidates[key]=ObjectId(candidateIds.candidates[key]);
+    }
+    var candidates = [];
+    if(candidateIds.candidates){
+       candidates = db.clnUserDetails.find({"fkUserLoginId":{$in:candidateIds.candidates}}).toArray();    
+    }
+    return candidates;
+}});
+
+
+db.system.js.save({
+_id:'fnSaveCandidateMapping',
+value:function(data){
+db.clnUserDetails.update({fkUserLoginId:ObjectId(data.fkLoginId)},{$set:{candidates:data.candidateArray}});
+return 'ok';
+}    
+});
