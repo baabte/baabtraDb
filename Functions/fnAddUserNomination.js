@@ -69,7 +69,8 @@ db.system.js.save({_id: "fnAddUserNomination",
                 var uniqueCode=fnGetCode(codeData);
                 
                 var mandatoryData=JSON.parse(JSON.stringify(orderObject.orderDetails[course].userInfo[user]));
-                delete mandatoryData.userId;
+                
+                //delete mandatoryData.userId;
                 delete mandatoryData.status;
                 mandatoryData.userCode=uniqueCode;
                 mandatoryData.orderFormId=orderObject._id.valueOf();

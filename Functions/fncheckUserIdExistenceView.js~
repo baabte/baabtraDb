@@ -1,0 +1,6 @@
+
+db.system.js.save({
+    "_id" : "fncheckUserIdExistenceView",
+    "value" : function (data) {
+	
+}});
