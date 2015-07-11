@@ -49,7 +49,7 @@ db.system.js.save({
         		var tempuserCourse=db.clnUserCourseMapping.findOne({fkCourseId:ObjectId(course._id),fkUserLoginId:user.fkUserLoginId},{totalMark:1,markScored:1,_id:0});
         		user.totalMark=tempuserCourse.totalMark;
         		user.markScored=tempuserCourse.markScored;
-        		tempArray=[user.profile.firstName+' '+user.profile.lastName,user.profile.CollegeName,user.markScored+'/'+user.totalMark];
+        		tempArray=[user.profile.firstName+' '+user.profile.lastName,user.profile.CollegeName,user.markScored+'/'+user.totalMark,user.profile.YearOfPassing,user.profile.course];
         		resultArray.push(tempArray);
 
         	}
