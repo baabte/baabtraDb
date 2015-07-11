@@ -1,0 +1,9 @@
+db.system.js.save({
+    "_id" : "fnFetchUsersByDynamicSearch",
+    "value" : function (companyId, firstId, type, lastId, searchKey) {
+	var userloginIds = db.clnUserRoleMapping.distinct("fkUserLoginId", {fkRoleId:3, 'profile.fkCompanyId':ObjectId(companyId), activeFlag:1});
+
+var result = db.clnUserDetails.find({fkUserLoginId:{$in:userloginIds},'profile.gender':"Male", activeFlag:1}, {fkUserLoginId:1, _id:1, userName:1, profile:1}).limit(9).toArray();
+
+    return result;
+}});

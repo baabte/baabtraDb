@@ -8,6 +8,9 @@ purpose:added markcalculation for marksheet
 */
 
 
+
+
+
 db.system.js.save({
     "_id" : "fnEvaluateAnswer",
     "value" : function (userCourseMappingId, element, elementOrder) {
@@ -15,6 +18,7 @@ db.system.js.save({
     var keyArray = elementOrder.split(".");
     var oldElement = course.courseTimeline[keyArray[0]][keyArray[1]][keyArray[2]];
     var result = "Added";
+    var temp = "";
     if (oldElement.markScored > 0) {
         course.markScored = course.markScored - oldElement.markScored;
         result = "Updated";
@@ -27,10 +31,19 @@ db.system.js.save({
                 syllabusObj = syllabusObj[syllabusKeyArray[key]];
             }
             if (element.markScored) {
+                var syllabusMarkScoredNew = false;
                 if (!syllabusObj.mark.markScored) {
-                    syllabusObj.mark.markScored = 0;
+                    syllabusObj.mark.markScored = element.markScored;
+                    syllabusMarkScoredNew = true;
                 }
-                syllabusObj.mark.markScored = syllabusObj.mark.markScored + (element.markScored - oldElement.markScored) / element.totalMark * syllabusObj.mark.maxMark / syllabusObj.element.length;
+                
+                //oldElement.markScored = 0;
+                
+                syllabusObj.mark.markScored = syllabusObj.mark.markScored + (element.markScored - oldElement.markScored) / element.totalMark * syllabusObj.mark.maxMark/ syllabusObj.element.length;
+                
+                if (syllabusMarkScoredNew) {
+                    syllabusObj.mark.markScored = syllabusObj.mark.markScored - element.markScored;
+                }
             }
         }
     }
