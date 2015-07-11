@@ -22,7 +22,7 @@ db.system.js.save({_id: "GetAuthUserData",
     user._id = ActiveUserDataId;
     ActiveUserDataId = ActiveUserDataId.valueOf();
     user.userLoginId = login_data[0]._id.valueOf();
-    var language = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(user.userLoginId)}, {profile:1, activeFlag:1});
+    var language = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(user.userLoginId)},{profile:1, activeFlag:1});
     if (language) {
         user.Preferedlanguage = language.profile.Preferedlanguage;
     }
@@ -40,9 +40,11 @@ db.system.js.save({_id: "GetAuthUserData",
         fkCompanyId = null;
     }
     user.roleMappingObj = role_id[0];
-    if (language && language.profile && language.profile.userPic) {
-        user.roleMappingObj.avatar = language.profile.userPic;
+    //added by arun to replace the user pic if present in user details
+    if((language)&&(language.profile)&&(language.profile.userPic)){
+    user.roleMappingObj.avatar=language.profile.userPic;
     }
+
     if (fkCompanyId) {
         user.roleMappingObj.fkCompanyId = fkCompanyId;
         companyData = db.clnCompany.findOne({_id:fkCompanyId}, {companyName:1, companyLogo:1, _id:0});
@@ -55,8 +57,7 @@ db.system.js.save({_id: "GetAuthUserData",
     user.loginDate = new Date;
     var userinfo = db.clnCompany.findOne({_id:login_data[0].companyId}, {companyName:1, eMail:1, appSettings:1});
     user.appSettings = userinfo.appSettings;
-    user.companyName = userinfo.companyName;
-    if (role_id[0].fkRoleId == 2) {
+    if (role_id[0].fkRoleId == 2) {  
         var globalConfi = db.clnGlobalSettings.findOne({companyId:role_id[0].fkCompanyId.valueOf(), activeFlag:1});
         if (globalConfi) {
             if (globalConfi.supervisorRoles) {
@@ -80,10 +81,11 @@ db.system.js.save({_id: "GetAuthUserData",
         user.eMail = data.userName;
     } else if (role_id[0].fkRoleId == 3) {
         var userdata = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(user.userLoginId)}, {profile:1, activeFlag:1});
-        var username = userdata.profile.firstName.concat(" " + userdata.profile.lastName === undefined ? userdata.profile.lastName : " ");
+        var username = userdata.profile.firstName.concat(" " +userdata.profile.lastName===undefined?userdata.profile.lastName:" ");
         var email = data.userName;
         user.username = username;
         user.eMail = email;
+        
     } else if (role_id[0].fkRoleId == 4) {
         var userinfo = db.clnReseller.findOne({fkuserLoginId:login_data[0]._id}, {resellerName:1, email:1});
         user.username = userinfo.resellerName;
