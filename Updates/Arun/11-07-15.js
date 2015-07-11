@@ -1,46 +1,3 @@
-// to register a user 
-/*
-Edited by: Lijin
-Date:14-4-2015
-Change:Added selected duration into course branch mapping
-*/
-
-/*
-Edited by: Arun
-Date:18-4-2015
-Change:Added material assignment it batch and cascade mode activated 
-*/
-
-/*
-Edited by: Arun
-Date:24-4-2015
-Change:username added to userdetails
-*/
-
-/*
-Edited by: Arun
-Date:14-5-2015
-Change:added sylabus and markSheetElements to user course mappning and batch mapping 
-*/
-
-/*
-Edited by: Arun
-Date:15-5-2015
-Change:returning the objectid value of the registered user 
-*/
-
-/*
-Edited by: Arun
-Date:10-6-2015
-Change:fix in course batch mapping id in usercoursemaping
-*/
-
-/*
-Edited by: Arun
-Date:11-7-2015
-Change:added companyId in all collection 
-*/
-
 
 db.system.js.save(
 {
@@ -416,3 +373,17 @@ db.system.js.save(
 });
 
 
+
+
+//fnRegisterCollege
+
+db.system.js.save({
+    "_id" : "fnRegisterCollege",
+    "value" : function (data) {
+        var college=JSON.parse(JSON.stringify(data.college));
+        var result=fnRegisterUser(college);
+        var collegeData={fkUserLoginId:result.userId,Courses:data.college.mandatoryData.Courses,address:data.college.mandatoryData.address,collegeName:data.college.mandatoryData.collegeName,contactPersons:data.college.mandatoryData.contactPersons,departments:data.college.mandatoryData.departments,eMail:data.college.mandatoryData.eMail,location:data.college.mandatoryData.location,companyId:ObjectId(data.college.companyId),crmId:ObjectId(data.college.loggedusercrmid),urmId:ObjectId(data.college.loggedusercrmid),createdDate:Date(),updatedDate:Date(),activeFlag:1};
+        db.clnCollege.save(collegeData);
+    
+    return result;
+}});
