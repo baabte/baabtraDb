@@ -3,7 +3,7 @@ db.system.js.save({
     "value" :function (loginId, type) {
 	
     var userDetails = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(loginId)});
-	var unWantedFeilds = {Description:0, courseImg:0, markSheetElements:0, courseTimeline:0,elementOrder:0}; 
+	var unWantedFeilds = {Description:0, courseImg:0, markSheetElements:0 ,courseTimeline:0,elementOrder:0}; 
 	if(type == "summary"){
 		unWantedFeilds.syllabus = 0;
 	}

@@ -39,8 +39,7 @@ db.system.js.save({
                 
                 //oldElement.markScored = 0;
                 
-                syllabusObj.mark.markScored = syllabusObj.mark.markScored + (element.markScored - oldElement.markScored) / element.totalMark * syllabusObj.mark.maxMark/ syllabusObj.element.length;
-                
+                syllabusObj.mark.markScored = syllabusObj.mark.markScored + (element.markScored - oldElement.markScored) / element.totalMark * syllabusObj.mark.maxMark / (syllabusObj.element.length?syllabusObj.element.length:1);
                 if (syllabusMarkScoredNew) {
                     syllabusObj.mark.markScored = syllabusObj.mark.markScored - element.markScored;
                 }
