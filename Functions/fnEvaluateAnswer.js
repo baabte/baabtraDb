@@ -24,7 +24,9 @@ db.system.js.save({
         result = "Updated";
     }
     if (course.markSheetElements) {
+        
         if (course.markSheetElements.indexOf(elementOrder) != -1) {
+            temp = elementOrder;
             var syllabusKeyArray = element.syllabus.key.split(".");
             var syllabusObj = course.syllabus;
             for (var key in syllabusKeyArray) {
@@ -40,6 +42,7 @@ db.system.js.save({
                 //oldElement.markScored = 0;
                 
                 syllabusObj.mark.markScored = syllabusObj.mark.markScored + (element.markScored - oldElement.markScored) / element.totalMark * syllabusObj.mark.maxMark / (syllabusObj.element.length?syllabusObj.element.length:1);
+                
                 if (syllabusMarkScoredNew) {
                     syllabusObj.mark.markScored = syllabusObj.mark.markScored - element.markScored;
                 }
@@ -50,7 +53,7 @@ db.system.js.save({
         course.markScored = course.markScored + element.markScored;
     }
     course.courseTimeline[keyArray[0]][keyArray[1]][keyArray[2]] = element;
-    db.clnUserCourseMapping.save(course);
-    return {result:result};
+    //db.clnUserCourseMapping.save(course);
+    return temp;//{result:result};
 }
 })

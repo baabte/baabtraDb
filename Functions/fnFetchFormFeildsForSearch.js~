@@ -7,7 +7,7 @@ var fields = [];
 if(formFields != null){
     formFields = formFields.formSchema.fields;
 for(var field in formFields){
-    fields.push({text:formFields[field].placeholder,model:formFields[field].mandatoryAttributes[0].text});
+    fields.push({text:formFields[field].DisplayName,model:formFields[field].mandatoryAttributes[0].text});
 }
 }
 return fields;
