@@ -3,8 +3,8 @@
 //fnComRegInsert
 db.system.js.save({
     "_id" : "fnComRegInsert",
-    "value" : function (data)
- {
+    "value" : function (data){
+
  //ids to insert into clnUserRoleMapping,clnUserLogin,clnCompany
  var companyAdminroleId=2;
  var UserRoleMappingDataId= new ObjectId();
@@ -20,13 +20,13 @@ db.system.js.save({
  db.clnUserRoleMapping.insert(UserRoleMappingData);
 
 //data to clnUserLogin
- UserLoginData={_id: userLoginDataId, userName: data.eMail, password: data.password, roleMappings:[UserRoleMappingDataId],lastLoggedRoleMapping:UserRoleMappingDataId,createdDate:Date(),updatedDate:Date(),crmId:data.loggedusercrmid,urmId:data.loggedusercrmid,activeFlag:1}
+ UserLoginData={_id: userLoginDataId, userName: data.eMail, password: data.password, roleMappings:[UserRoleMappingDataId],companyId:companyDataId,lastLoggedRoleMapping:UserRoleMappingDataId,createdDate:Date(),updatedDate:Date(),crmId:data.loggedusercrmid,urmId:data.loggedusercrmid,activeFlag:1}
 // insertion to clnUserLogin
 db.clnUserLogin.insert(UserLoginData);
 
 
 
- usermenuData={fkUserRoleMappingId :UserRoleMappingDataId,menuStructure :menu.menuStructure ,createdDate : Date(),updatedDate : Date(),crmId : data.loggedusercrmid,urmId : data.loggedusercrmid,"activeFlag" : 1}
+ usermenuData={fkUserRoleMappingId :UserRoleMappingDataId,companyId:companyDataId,menuStructure :menu.menuStructure ,createdDate : Date(),updatedDate : Date(),crmId : data.loggedusercrmid,urmId : data.loggedusercrmid,"activeFlag" : 1}
             
  db.clnUserMenuMapping.insert(usermenuData)
 
@@ -37,6 +37,22 @@ db.clnUserLogin.insert(UserLoginData);
 db.clnCompany.insert(companyData);
 var result={cmail:companyData.eMail,cLogo:companyLogo,companyId:companyDataId};
 
- return result;
+
+var globalconfigObj={
+    "companyId" :companyDataId.valueOf(),
+    "activeFlag" : 1,
+    "createdDate" :Date(),
+    "updatedDate" :Date(),
+    "crmId" : data.loggedusercrmid,
+    "urmId" : data.loggedusercrmid,
+    "menuColor" : "random",
+    "modernView" : "modern",
+    "subTitleAndBackColor" : "random",
+    "itemCodes" : []
+};
+
+db.clnGlobalSettings.insert(globalconfigObj);
+
+return result;
 
 }});
