@@ -1,3 +1,5 @@
+
+
 //fnComRegInsert
 db.system.js.save({
     "_id" : "fnComRegInsert",
