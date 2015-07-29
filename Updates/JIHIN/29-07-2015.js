@@ -1,4 +1,4 @@
-//fnSubmitTest
+
 db.system.js.save({
     "_id" : "fnSubmitTest",
     "value" : function (SubmitTestObj) {

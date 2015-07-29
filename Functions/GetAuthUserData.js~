@@ -53,9 +53,13 @@ db.system.js.save({_id: "GetAuthUserData",
     ip_addresses.push(ip_address);
     user.ip_address = ip_addresses;
     user.loginDate = new Date;
-    var userinfo = db.clnCompany.findOne({_id:login_data[0].companyId}, {companyName:1, eMail:1, appSettings:1});
-    user.appSettings = userinfo.appSettings;
-    user.companyName = userinfo.companyName;
+    if(login_data[0].companyId){
+        var userinfo = db.clnCompany.findOne({_id:login_data[0].companyId}, {companyName:1, eMail:1, appSettings:1});
+        user.appSettings = userinfo.appSettings;
+        user.companyName = userinfo.companyName;
+    }
+    
+    
     if (role_id[0].fkRoleId == 2) {
         var globalConfi = db.clnGlobalSettings.findOne({companyId:role_id[0].fkCompanyId.valueOf(), activeFlag:1});
         if (globalConfi) {
