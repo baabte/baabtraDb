@@ -32,7 +32,7 @@ db.clnUserLogin.insert(UserLoginData);
 
 
 //data to clnCompany
- companyData={_id:companyDataId,fkuserLoginId: userLoginDataId,companyName: data.companyName,domainName:data.domainName,fkSectorId: data.fksectorId,eMail: data.eMail,alternateEmail: data.alternateEmail,Phone: data.Phone,Mobile: data.Mobile,Fax: data.Fax,webSite: data.webSite,fkCountryId: data.fkcountryId,fkStateId: data.fkstateId,fkDistrictId: data.fkdistrictId,zipCode:data.zipCode,Address: data.Address,facebook: data.Facebook,gplus: data.Google,twitter: data.Twitter,linkedin: data.LinkedIn,tagLine:data.tagLine,companyType:data.companyType,companyLogo:companyLogo,createdDate:Date(),updatedDate:Date(),crmId:data.loggedusercrmid,urmId:data.loggedusercrmid,activeFlag:1}
+ companyData={_id:companyDataId,fkuserLoginId: userLoginDataId,companyName: data.companyName,domainName:data.domainName,fkSectorId: data.fksectorId,eMail: data.eMail,alternateEmail: data.alternateEmail,Phone: data.Phone,Mobile: data.Mobile,Fax: data.Fax,webSite: data.webSite,fkCountryId: data.fkcountryId,fkStateId: data.fkstateId,fkDistrictId: data.fkdistrictId,zipCode:data.zipCode,Address: data.Address,facebook: data.Facebook,gplus: data.Google,twitter: data.Twitter,linkedin: data.LinkedIn,tagLine:data.tagLine,companyType:data.companyType,companyLogo:companyLogo,createdDate:Date(),updatedDate:Date(),crmId:data.loggedusercrmid,urmId:data.loggedusercrmid,appSettings:{},activeFlag:1}
  // insertion to clnCompany
 db.clnCompany.insert(companyData);
 var result={cmail:companyData.eMail,cLogo:companyLogo,companyId:companyDataId};
