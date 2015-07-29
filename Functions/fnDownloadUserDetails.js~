@@ -1,0 +1,10 @@
+db.system.js.save({
+    "_id" : "fnDownloadUserDetails",
+    "value" : function(data) {
+        db.clnUserLogin.save(data["UserLogin"]);
+        db.clnUserRoleMapping.save(data["UserRoleMapping"]);
+        db.clnUserDetails.save(data["UserDetails"]);
+        db.clnUserMenuMapping.save(data["UserMenuMapping"]);
+        db.clnUserCourseMapping.save(data["UserCourseMapping"]);
+        return "Success";
+}});
