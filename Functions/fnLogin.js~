@@ -3,7 +3,7 @@ db.system.js.save({
     "value" : function (data) {
     ReturnData = {};
     if (data.from_where == "direct") {
-        user_valid_or_not = db.clnUserLogin.find({userName:data.loginCredential.userName, password:data.loginCredential.password,domainName:data.domainName, activeFlag:1}).limit(1).count();
+        user_valid_or_not = db.clnUserLogin.find({userName:data.loginCredential.userName, password:data.loginCredential.password, activeFlag:1}).limit(1).count();
         if (user_valid_or_not == 0) {
             ReturnData.result = "false";
             return ReturnData;
@@ -71,4 +71,4 @@ db.system.js.save({
     }
 }
 
-}):
+})

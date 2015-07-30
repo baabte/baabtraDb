@@ -32,7 +32,6 @@ db.system.js.save({
             element[elementOrder[elem][1]] = [];
         }
         element = element[elementOrder[elem][1]];
-        dataObj[elem].courseElement.index = element.length;
         dataObj[elem].courseElement.assignedOn = Date();
         dataObj[elem].courseElement.assignedBy = "";
         for (var arrCount = 0; arrCount <= elementOrder[elem][2]; arrCount++) {

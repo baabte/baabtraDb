@@ -34,6 +34,7 @@ db.system.js.save({
     if (!oldElement.markScored) {
         oldElement.markScored = 0;
     }
+
     element.evalStatus = evalStatus;
     course.courseTimeline[tlPointInmins][keyName][outerIndex][timeObj.key] = timeObj.value;
     var markToMinus = 0;
@@ -77,9 +78,9 @@ db.system.js.save({
         syllabusObj.mark.markScored = 0;
     }
     syllabusObj.mark.markScored = syllabusObj.mark.markScored + (element.markScored - oldElement.markScored) / element.totalMark * syllabusObj.mark.maxMark / (markElemCount ? markElemCount : 1);
-    temp = element.markScored - oldElement.markScored;
     db.clnUserCourseMapping.save(course);
     return course;
-}});
+}
+});
 
 
