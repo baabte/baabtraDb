@@ -22,6 +22,16 @@ db.system.js.save({
         sort = {_id:-1};
         conditions._id = {$lt:ObjectId(firstId)};
     }
+
+    if (searchKey.status){
+        var status=searchKey.status;
+        delete searchKey.status;
+        for(var key in status){
+            if(status[key]!=""){
+            conditions["status." + key]=status[key]
+            }
+        }
+    }
     if (Object.keySet(searchKey).length) {
         for (var key in searchKey) {
             if (typeof searchKey[key] != "string") {
