@@ -1,16 +1,4 @@
-
-/*
-Updated by Lijin
-Date:14-5-2015
-purpose:added markcalculation for marksheet
-
-
-*/
-
-
-
-
-
+//fnSubmitTest
 db.system.js.save({
     "_id" : "fnEvaluateAnswer",
     "value" : function (userCourseMappingId, element, elementOrder) {
@@ -47,7 +35,7 @@ db.system.js.save({
                     if (!syllabusObj.mark.markScored) {
                         syllabusObj.mark.markScored = 0;
                     }
-                    syllabusObj.mark.markScored = (syllabusObj.mark.markScored - oldSyllabusMark) + (element.markScored - oldElement.markScored) / element.totalMark * syllabusObj.mark.maxMark / (markElemCount ? markElemCount : 1);
+                    syllabusObj.mark.markScored = syllabusObj.mark.markScored - oldSyllabusMark + (element.markScored - oldElement.markScored) / element.totalMark * syllabusObj.mark.maxMark / (markElemCount ? markElemCount : 1);
                 }
             }
         }
@@ -61,4 +49,6 @@ db.system.js.save({
         return {result:"Wrong operation"};
     }
 }
-})
+});
+
+

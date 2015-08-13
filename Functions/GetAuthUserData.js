@@ -10,7 +10,7 @@ db.system.js.save({_id: "GetAuthUserData",
     value:function (data, ip_address, from_where) {
     ip_addresses = [];
     if (from_where == "direct") {
-        login_data = db.clnUserLogin.find(data, {_id:1, roleMappings:1, lastLoggedRoleMapping:1}).limit(1).toArray();
+        login_data = db.clnUserLogin.find(data, {_id:1, roleMappings:1, lastLoggedRoleMapping:1, companyId:1}).limit(1).toArray();
     } else if (from_where == "facebook") {
         login_data = db.clnUserLogin.find({facebookId:data}, {_id:1, roleMappings:1, lastLoggedRoleMapping:1}).limit(1).toArray();
     } else if (from_where == "linkedIn") {
@@ -53,8 +53,14 @@ db.system.js.save({_id: "GetAuthUserData",
     ip_addresses.push(ip_address);
     user.ip_address = ip_addresses;
     user.loginDate = new Date;
+    if(login_data[0].companyId){
+        var userinfo = db.clnCompany.findOne({_id:login_data[0].companyId}, {companyName:1, eMail:1, appSettings:1});
+        user.appSettings = userinfo.appSettings;
+        user.companyName = userinfo.companyName;
+    }
+    
+    
     if (role_id[0].fkRoleId == 2) {
-        var userinfo = db.clnCompany.findOne({_id:role_id[0].fkCompanyId}, {companyName:1, eMail:1, appSettings:1});
         var globalConfi = db.clnGlobalSettings.findOne({companyId:role_id[0].fkCompanyId.valueOf(), activeFlag:1});
         if (globalConfi) {
             if (globalConfi.supervisorRoles) {
@@ -77,7 +83,7 @@ db.system.js.save({_id: "GetAuthUserData",
         user.username = userinfo.companyName;
         user.eMail = data.userName;
     } else if (role_id[0].fkRoleId == 3) {
-        var userdata = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(user.userLoginId)}, {profile:1, activeFlag:1});
+        var userdata = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(user.userLoginId),activeFlag:1}, {profile:1, activeFlag:1});
         var username = userdata.profile.firstName.concat(" " + userdata.profile.lastName === undefined ? userdata.profile.lastName : " ");
         var email = data.userName;
         user.username = username;

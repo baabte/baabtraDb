@@ -1,30 +1,7 @@
 db.system.js.save({
-    "_id" : "fnFetchUsersByDynamicSearch",
+    "_id" : "fnFetchUsersReportBasedOnDynamicSearch",
     "value" : function (companyId, firstId, lastId, type, searchKey) {
-
-        function objectIdWithTimestamp(timestamp) {
-            // Convert string date to Date object (otherwise assume timestamp is a date)
-            if (typeof(timestamp) == 'string') {
-                timestamp = new Date(timestamp);
-            }
-
-            // Convert date object to hex seconds since Unix epoch
-            var hexSeconds = Math.floor(timestamp/1000).toString(16);
-
-            // Create an ObjectId with that hex timestamp
-            var constructedObjectId = ObjectId(hexSeconds + "0000000000000000");
-
-            return constructedObjectId
-        }
-
     var courseCondition = {fkCompanyId:ObjectId(companyId), activeFlag:1};
-
-    if(searchKey.course.fromDate && searchKey.course.toDate){
-        searchKey.course.fromDate = searchKey.course.fromDate.split('T')[0];
-        searchKey.course.toDate = searchKey.course.toDate.split('T')[0];
-        courseCondition._id = { $gte : objectIdWithTimestamp(searchKey.course.fromDate), $lte : objectIdWithTimestamp(searchKey.course.toDate)}; 
-    }
-
     if (searchKey.coursesSelected) {
         for (var course in searchKey.coursesSelected) {
             searchKey.coursesSelected[course] = ObjectId(searchKey.coursesSelected[course]);
@@ -35,7 +12,6 @@ db.system.js.save({
         if (searchKey.course.maxMark) {
             courseCondition.markScored = {$gte:searchKey.course.minMark, $lte:searchKey.course.maxMark};
         }
-
         delete searchKey.coursesSelected;
     }
     if (searchKey.course) {
@@ -74,11 +50,15 @@ db.system.js.save({
             }
         }
     }
+    
     result.users = db.clnUserDetails.find(conditions, {fkUserLoginId:1, _id:1, userName:1, profile:1}).sort(sort).limit(12).toArray();
-    if (conditions._id) {
+    
+    if(conditions._id){
         delete conditions._id;
     }
     result.usersCount = db.clnUserDetails.count(conditions);
+        
+    
     if (result.users.length) {
         result.firstUserId = result.users[0]._id.valueOf();
         result.lastUserId = result.users[result.users.length - 1]._id.valueOf();

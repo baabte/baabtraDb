@@ -1,6 +1,47 @@
+/*
+Modified by : Jihin
+Date : 05-08-2015
+Purpose: Load Interview Questions from QuestionBank
+*/
+
 
 db.system.js.save({_id: "fnLoadInterviewQuestionBank",
-    value: function(companyId, noQuestion) {
-    	return db.clnInterviewQuestionBank.find().limit(10).toArray();
-	}
+    value: function(interviewQuestionObj) {
+        try{
+            var interviewQuestions = db.clnInterviewQuestionBank.find({companyId:interviewQuestionObj.cmp_id},{_id:0}).limit(interviewQuestionObj.noOfQuestions).toArray();
+            var projection = {};
+            projection[interviewQuestionObj.elementOrder] = 1;
+            var userCourseMapping = db.clnUserCourseMapping.findOne({_id:ObjectId(interviewQuestionObj.courseMappingId)});
+            var element = userCourseMapping.courseTimeline;
+            var elementOrderArray = interviewQuestionObj.elementOrder.split(".");
+            for(var elem in elementOrderArray){
+                element = element[elementOrderArray[elem]];
+            }
+            var totalMark = 0;
+            for(var question in interviewQuestions){
+                totalMark = totalMark + parseFloat(interviewQuestions[question].mark);
+            }
+            element.totalMark = totalMark;
+            var elementNameLevel = userCourseMapping.courseTimeline[elementOrderArray[0]][elementOrderArray[1]];
+            if(!elementNameLevel){
+                elementNameLevel = 0;
+            }
+            
+            elementNameLevel.totalMark = elementNameLevel.totalMark + totalMark;
+            if(!userCourseMapping.totalMark){
+                userCourseMapping.totalMark = 0;
+            }
+            
+            userCourseMapping.totalMark = userCourseMapping.totalMark + totalMark;
+            
+            element.elements[interviewQuestionObj.index].value.questionArray = interviewQuestions;
+            element.elements[interviewQuestionObj.index].value.questionSelection.type = "manual"; 
+            userCourseMapping.updatedDate = Date();
+            db.clnUserCourseMapping.save(userCourseMapping);
+            return interviewQuestions;//db.clnInterviewQuestionBank.find().limit(10).toArray();
+        }
+        catch(err){
+            return "Error";
+        }
+    }
 });
