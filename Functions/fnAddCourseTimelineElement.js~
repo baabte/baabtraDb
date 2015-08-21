@@ -42,10 +42,11 @@ db.system.js.save({
     var elemType = keyArray[1];
     var key = "courseTimeline." + courseElement.key;
     var obj = {};
-    if (elemType == "Interview" || elemType == "Physical test") {
-        courseElement[courseElement.key].evalStatus = "Pending Evaluation";
+    if(elemType=='Interview'||elemType=='Physical test'){
+        courseElement[courseElement.key].evalStatus ='Pending Evaluation';
     }
-    obj[key] = courseElement[courseElement.key];
+    
+    obj[key] = courseElement[courseElement.key];//Interview
     db.clnCourses.update({_id:courseId}, {$push:obj});
     var course = db.clnCourses.find({_id:courseId}).toArray();
     var elements = courseElement[courseElement.key].elements;
@@ -117,23 +118,25 @@ db.system.js.save({
         if (elements[looper] != null) {
             if (elements[looper].type == "question-viewer" ||
                 elements[looper].type == "question-group-viewer" ||
-                elements[looper].type == "assignment-question-viewer" ||
-                elements[looper].type == "random-question-exam-viewer") {
+                elements[looper].type == "assignment-question-viewer"||
+                 elements[looper].type == "random-question-exam-viewer") {
                 totalMark = totalMark + elements[looper].value.mark.totalMark;
-            } else if (elements[looper].type == "interview-viewer") {
-                if (elements[looper].value.questionArray) {
-                    for (var question in elements[looper].value.questionArray) {
-                        totalMark = totalMark + elements[looper].value.questionArray[question].mark;
-                    }
-                }
             }
+	   else if(elements[looper].type == "interview-viewer"){
+		if(elements[looper].value.questionArray){
+			for(var question in elements[looper].value.questionArray){
+				totalMark = totalMark + elements[looper].value.questionArray[question].mark;
+			}
+		}
+	   }
         }
     }
     course[0].totalMark = currentMark + totalMark;
     course[0].courseTimeline[tlPoint].totalMark = tlPointMark + totalMark;
-    if (totalMark > 0) {
-        course[0].courseTimeline[tlPoint][elemType][innerIndex].totalMark = totalMark;
+    if(totalMark>0){
+    course[0].courseTimeline[tlPoint][elemType][innerIndex].totalMark = totalMark;    
     }
+    
     db.clnCourses.save(course[0]);
     return course[0].elementOrder;
 }

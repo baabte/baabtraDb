@@ -63,6 +63,7 @@ db.system.js.save({_id: "GetAuthUserData",
         user.appSettings = userinfo.appSettings;
         user.companyName = userinfo.companyName;
     }
+
     if (role_id[0].fkRoleId == 2) {
         var globalConfi = db.clnGlobalSettings.findOne({companyId:role_id[0].fkCompanyId.valueOf(), activeFlag:1});
         if (globalConfi) {
@@ -88,7 +89,7 @@ db.system.js.save({_id: "GetAuthUserData",
         user.eMail = data.userName;
 
     } else if (role_id[0].fkRoleId == 3) {
-        var userdata = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(user.userLoginId)}, {profile:1, activeFlag:1});
+        var userdata = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(user.userLoginId),activeFlag:1}, {profile:1, activeFlag:1});
         var username = userdata.profile.firstName.concat(" " + userdata.profile.lastName === undefined ? userdata.profile.lastName : " ");
         var email = data.userName;
         user.username = username;

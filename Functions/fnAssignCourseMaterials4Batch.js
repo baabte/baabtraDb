@@ -81,8 +81,9 @@ db.system.js.save({
                 element[elementOrder[elem][1]] = [];
             }
             element = element[elementOrder[elem][1]];
-            if(userCourse.markSheetElements == undefined)
+            if (userCourse.markSheetElements == undefined) {
                 userCourse.markSheetElements = [];
+            }
             userCourse.markSheetElements.push(elementOrder[elem][0] + "." + elementOrder[elem][1] + "." + elementOrder[elem][2]);
             dataObj[elem].courseElement.assignedOn = Date();
             dataObj[elem].courseElement.assignedBy = "";

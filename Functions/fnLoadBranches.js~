@@ -1,0 +1,5 @@
+db.system.js.save({_id: "fnLoadBranches",
+	value : function (cmp_id) {
+		var branches = db.clnBranches.find({companyId:cmp_id}).toArray();
+    return {result:branches};
+}});
