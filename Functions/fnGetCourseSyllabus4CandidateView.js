@@ -73,3 +73,4 @@ value:function (userLoginId, courseMappingId) {
     return {syllabus:course.syllabus};
 
 }});
+z
