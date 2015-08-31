@@ -69,11 +69,11 @@ db.system.js.save({_id: "fun_load_publishedCourses",
         }
     } else {
         if (type == "next") {
-            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1, _id:{$lt:ObjectId(lastId)}}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1, _id:{$lt:ObjectId(lastId)},type:courseType}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
         } else if (type == "prev") {
-            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1, _id:{$gt:ObjectId(firstId)}}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:1}).toArray();
+            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1, _id:{$gt:ObjectId(firstId)},type:courseType}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:1}).toArray();
         } else {
-            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
+            courses = db.clnCourses.find({_id:{$in:coursesArray}, companyId:{$in:providerArray}, draftFlag:1, activeFlag:1,type:courseType}, {Name:1, companyId:1, courseImg:1, courseDetails:1, type:1}).limit(12).sort({_id:-1}).toArray();
         }
     }
     if (courses.length != 0) {

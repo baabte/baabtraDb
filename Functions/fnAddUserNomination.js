@@ -15,6 +15,9 @@ Purpose : added user registration to nomination
 
 Updated On : 18/May/2015
 Purpose : added usercode to order form userinfo
+
+Updated On : 20/Aug/2015
+Purpose : added usercode to order form userinfo
 */
 
 db.system.js.save({_id: "fnAddUserNomination",
@@ -41,6 +44,9 @@ db.system.js.save({_id: "fnAddUserNomination",
         orderObject.requesteeDetails.companyCustomerId = companyCustomerId.valueOf();
         companyId=orderObject.companyId;
         orderObject.companyId = ObjectId(orderObject.companyId);
+        if(orderObject.childCompanyId){
+        orderObject.childCompanyId = ObjectId(orderObject.childCompanyId);            
+        }
         orderObject.customCompanyCode = customCompanyCode;
         orderObject.status = "Pending approval";
         orderObject.createdDate = ISODate();
@@ -57,7 +63,7 @@ db.system.js.save({_id: "fnAddUserNomination",
      if(orderObject.draftFlag==1){
       var orderObject=db.clnTrainingRequest.findOne({orderFormId:orderObject.orderFormId});
 
-
+        var childCompanyId=''
         var companyId=orderObject.companyId.valueOf();
 
 
@@ -75,8 +81,11 @@ db.system.js.save({_id: "fnAddUserNomination",
                 mandatoryData.userCode=uniqueCode;
                 mandatoryData.orderFormId=orderObject._id.valueOf();
                 var role={roleId: 3};
-
-                var userId=fnRegisterUser({companyId:companyId,loggedusercrmid:loggedusercrmid,mandatoryData:mandatoryData,role:role});
+                if(orderObject.childCompanyId){
+                var userId=fnRegisterUser({companyId:companyId,childCompanyId:orderObject.childCompanyId.valueOf(),loggedusercrmid:loggedusercrmid,mandatoryData:mandatoryData,role:role});                    
+                 }else{
+                var userId=fnRegisterUser({companyId:companyId,loggedusercrmid:loggedusercrmid,mandatoryData:mandatoryData,role:role});                    
+                 }
 
                 orderObject.orderDetails[course].userInfo[user].userLoginId=userId.userId.valueOf();
                 orderObject.orderDetails[course].userInfo[user].userCode=uniqueCode;

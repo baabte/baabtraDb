@@ -105,13 +105,13 @@ db.system.js.save({
 // db.mycollection.find({ _id: { $gt: objectIdWithTimestamp('1980/05/25') } });
 
     if((date.fromDate!=undefined)&&(date.toDate!=undefined)){
-        var userloginIds=db.clnUserCourseMapping.distinct('fkUserLoginId',{_id: { $gt: objectIdWithTimestamp(date.fromDate),$lt: objectIdWithTimestamp(date.toDate)  },fkCompanyId:ObjectId(companyId),fkCourseId:ObjectId(course._id)});
+        var userloginIds=db.clnUserCourseMapping.distinct('fkUserLoginId',{_id: { $gt: objectIdWithTimestamp(date.fromDate),$lt: objectIdWithTimestamp(date.toDate)  },fkCompanyId:ObjectId(companyId),fkCourseId:ObjectId(course._id),activeFlag:1});
     }else if (date.fromDate!=undefined){
-        var userloginIds=db.clnUserCourseMapping.distinct('fkUserLoginId',{_id: { $gt: objectIdWithTimestamp(date.fromDate)},fkCompanyId:ObjectId(companyId),fkCourseId:ObjectId(course._id)});
+        var userloginIds=db.clnUserCourseMapping.distinct('fkUserLoginId',{_id: { $gt: objectIdWithTimestamp(date.fromDate)},fkCompanyId:ObjectId(companyId),fkCourseId:ObjectId(course._id),activeFlag:1});
     }else if (date.toDate!=undefined){
-        var userloginIds=db.clnUserCourseMapping.distinct('fkUserLoginId',{_id: { $lt: objectIdWithTimestamp(date.toDate)},fkCompanyId:ObjectId(companyId),fkCourseId:ObjectId(course._id)});                
+        var userloginIds=db.clnUserCourseMapping.distinct('fkUserLoginId',{_id: { $lt: objectIdWithTimestamp(date.toDate)},fkCompanyId:ObjectId(companyId),fkCourseId:ObjectId(course._id),activeFlag:1});                
     }else{
-        var userloginIds=db.clnUserCourseMapping.distinct('fkUserLoginId',{fkCompanyId:ObjectId(companyId),fkCourseId:ObjectId(course._id)});
+        var userloginIds=db.clnUserCourseMapping.distinct('fkUserLoginId',{fkCompanyId:ObjectId(companyId),fkCourseId:ObjectId(course._id),activeFlag:1});
     }
 
     
@@ -133,7 +133,7 @@ db.system.js.save({
                 var tempuserCourse=db.clnUserCourseMapping.findOne({fkCourseId:ObjectId(course._id),fkUserLoginId:user.fkUserLoginId},{totalMark:1,markScored:1,_id:0});
                 user.totalMark=tempuserCourse.totalMark;
                 user.markScored=tempuserCourse.markScored;
-                tempArray=[user.profile.firstName+' '+user.profile.lastName,user.profile.CollegeName,user.markScored+'/'+user.totalMark,user.profile.YearOfPassing,user.profile.course,user.profile.branch,user.profile.mobile,user.profile.District,user.profile.Location,user.profile.PreferredWorkingLocations];
+                tempArray=[user.profile.firstName+' '+user.profile.lastName,user.profile.CollegeName,user.markScored+'/'+user.totalMark,user.profile.YearOfPassing,user.profile.course,user.profile.branch,user.profile.mobile,user.userName,user.profile.District,user.profile.Location,user.profile.PreferredWorkingLocations];
                 resultArray.push(tempArray);
 
             }

@@ -40,6 +40,11 @@ db.system.js.save({_id: "GetAuthUserData",
         fkCompanyId = null;
     }
     user.roleMappingObj = role_id[0];
+    if (user.roleMappingObj.parentCompanyId) {
+        var companyId = user.roleMappingObj.fkCompanyId;
+        user.roleMappingObj.childCompanyId = companyId;
+        user.roleMappingObj.fkCompanyId = ObjectId(user.roleMappingObj.parentCompanyId);
+    }
     if (language && language.profile && language.profile.userPic) {
         user.roleMappingObj.avatar = language.profile.userPic;
     }
@@ -53,13 +58,12 @@ db.system.js.save({_id: "GetAuthUserData",
     ip_addresses.push(ip_address);
     user.ip_address = ip_addresses;
     user.loginDate = new Date;
-    if(login_data[0].companyId){
-        var userinfo = db.clnCompany.findOne({_id:login_data[0].companyId}, {companyName:1, eMail:1, appSettings:1});
+    if (login_data[0].companyId) {
+        var userinfo = db.clnCompany.findOne({_id:login_data[0].companyId}, {companyName:1, eMail:1, appSettings:1,domainName:1});
         user.appSettings = userinfo.appSettings;
         user.companyName = userinfo.companyName;
     }
-    
-    
+
     if (role_id[0].fkRoleId == 2) {
         var globalConfi = db.clnGlobalSettings.findOne({companyId:role_id[0].fkCompanyId.valueOf(), activeFlag:1});
         if (globalConfi) {
@@ -81,7 +85,9 @@ db.system.js.save({_id: "GetAuthUserData",
         }
         user.appSettings = userinfo.appSettings;
         user.username = userinfo.companyName;
+        user.domainName=userinfo.domainName;
         user.eMail = data.userName;
+
     } else if (role_id[0].fkRoleId == 3) {
         var userdata = db.clnUserDetails.findOne({fkUserLoginId:ObjectId(user.userLoginId),activeFlag:1}, {profile:1, activeFlag:1});
         var username = userdata.profile.firstName.concat(" " + userdata.profile.lastName === undefined ? userdata.profile.lastName : " ");
